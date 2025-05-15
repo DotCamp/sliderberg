@@ -1,0 +1,10 @@
+.wp-block-sliderberg-slider {
+    margin: 0;
+    padding: 0;
+}
+ 
+.sliderberg-container {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+} 

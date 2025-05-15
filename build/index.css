@@ -1,0 +1,214 @@
+/*!********************************************************************************************************************************************************************!*\
+  !*** css ./node_modules/css-loader/dist/cjs.js??ruleSet[1].rules[2].use[1]!./node_modules/postcss-loader/dist/cjs.js??ruleSet[1].rules[2].use[2]!./src/editor.css ***!
+  \********************************************************************************************************************************************************************/
+.wp-block-sliderberg-sliderberg {
+    border: 1px dashed #ccc;
+    border-radius: 4px;
+}
+
+.wp-block-sliderberg-sliderberg.alignfull {
+    margin-left: calc(50% - 50vw);
+    margin-right: calc(50% - 50vw);
+    max-width: none;
+    border: none;
+    border-radius: 0;
+    padding: 0;
+}
+
+.wp-block-sliderberg-sliderberg.alignfull .sliderberg-container,
+.wp-block-sliderberg-sliderberg.alignfull .sliderberg-slides {
+    width: 100%;
+    max-width: none;
+    margin: 0;
+    padding: 0;
+    border-radius: 0;
+}
+
+.wp-block-sliderberg-sliderberg.alignfull .sliderberg-content {
+    padding: 0;
+}
+
+/* Remove extra margin/padding for all children in full width */
+.wp-block-sliderberg-sliderberg.alignfull * {
+    box-sizing: border-box;
+}
+
+.sliderberg-editor-placeholder {
+    text-align: center;
+    padding: 20px;
+    background: #f5f5f5;
+    border-radius: 4px;
+}
+
+.sliderberg-type-selector {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.sliderberg-title {
+    text-align: center;
+    margin-bottom: 2rem;
+    font-size: 1.5rem;
+    color: #1e1e1e;
+}
+
+.sliderberg-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    padding: 1rem;
+}
+
+.sliderberg-type-card {
+    background: #fff;
+    border: 1px solid #e2e4e7;
+    border-radius: 8px;
+    padding: 1.5rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.sliderberg-type-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.sliderberg-type-card.is-pro {
+    opacity: 0.8;
+    cursor: not-allowed;
+}
+
+.sliderberg-type-card.is-coming-soon {
+    background: #f8f9fa;
+    cursor: default;
+}
+
+.sliderberg-type-card.is-coming-soon:hover {
+    transform: none;
+    box-shadow: none;
+}
+
+.sliderberg-type-icon {
+    width: 48px;
+    height: 48px;
+    background: #f0f0f0;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1rem;
+}
+
+.sliderberg-type-icon svg {
+    width: 24px;
+    height: 24px;
+    color: #1e1e1e;
+}
+
+.sliderberg-pro-badge {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: #007cba;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.sliderberg-coming-soon-badge {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: #6c757d;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+}
+
+.sliderberg-pro-badge svg {
+    width: 12px;
+    height: 12px;
+}
+
+.sliderberg-type-title {
+    margin: 0 0 0.5rem;
+    font-size: 1.1rem;
+    color: #1e1e1e;
+}
+
+.sliderberg-type-description {
+    margin: 0;
+    font-size: 0.9rem;
+    color: #666;
+    line-height: 1.4;
+}
+
+/* Slider Content Styles */
+.sliderberg-content {
+    position: relative;
+    padding: 1rem;
+}
+
+.sliderberg-add-slide {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    z-index: 1;
+}
+
+.sliderberg-slides {
+    margin-top: 3rem;
+}
+
+/* Slide Navigation */
+.sliderberg-slide-navigation {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 1rem;
+    padding: 1rem;
+    background: #f8f9fa;
+    border-radius: 4px;
+}
+
+.sliderberg-slide-indicator {
+    font-size: 0.9rem;
+    color: #666;
+} 
+/*!*********************************************************************************************************************************************************************************!*\
+  !*** css ./node_modules/css-loader/dist/cjs.js??ruleSet[1].rules[2].use[1]!./node_modules/postcss-loader/dist/cjs.js??ruleSet[1].rules[2].use[2]!./src/blocks/slide/editor.css ***!
+  \*********************************************************************************************************************************************************************************/
+.sliderberg-slide {
+    position: relative;
+    min-height: 300px;
+    background: #fff;
+    border: 1px solid #e2e4e7;
+    border-radius: 8px;
+    padding: 2rem;
+    margin: 1rem 0;
+}
+
+.sliderberg-slide-content {
+    min-height: 200px;
+}
+
+.sliderberg-slide-number {
+    position: absolute;
+    bottom: 1rem;
+    right: 1rem;
+    background: #f0f0f0;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    color: #666;
+} 
+
+/*# sourceMappingURL=index.css.map*/

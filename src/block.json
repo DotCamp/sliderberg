@@ -1,0 +1,19 @@
+{
+    "$schema": "https://schemas.wp.org/trunk/block.json",
+    "apiVersion": 3,
+    "name": "sliderberg/sliderberg",
+    "version": "1.0.0",
+    "title": "SliderBerg",
+    "category": "widgets",
+    "icon": "slides",
+    "description": "Add a beautiful slider to your content.",
+    "supports": {
+        "html": false
+    },
+    "textdomain": "sliderberg",
+    "editorScript": "file:./index.js",
+    "editorStyle": "file:./index.css",
+    "style": "file:./style-index.css",
+    "render": "file:./save.js",
+    "viewScript": "file:./view.js"
+} 

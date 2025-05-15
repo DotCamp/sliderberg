@@ -1,0 +1,24 @@
+.sliderberg-slide {
+    position: relative;
+    min-height: 300px;
+    background: #fff;
+    border: 1px solid #e2e4e7;
+    border-radius: 8px;
+    padding: 2rem;
+    margin: 1rem 0;
+}
+
+.sliderberg-slide-content {
+    min-height: 200px;
+}
+
+.sliderberg-slide-number {
+    position: absolute;
+    bottom: 1rem;
+    right: 1rem;
+    background: #f0f0f0;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    color: #666;
+} 

@@ -1,0 +1,329 @@
+import React, { useState } from 'react';
+import { registerBlockType } from '@wordpress/blocks';
+import { __ } from '@wordpress/i18n';
+import {
+    useBlockProps,
+    InnerBlocks,
+    InspectorControls,
+    MediaUpload,
+    MediaUploadCheck,
+    BlockControls,
+    BlockAlignmentToolbar
+} from '@wordpress/block-editor';
+import {
+    PanelBody,
+    Button,
+    RangeControl,
+    ColorPicker,
+    SelectControl,
+    ToggleControl,
+    ToolbarGroup,
+    ToolbarButton
+} from '@wordpress/components';
+import './style.css';
+import './editor.css';
+import classnames from 'classnames';
+
+interface MediaObject {
+    id: number;
+    url: string;
+}
+
+interface FocalPoint {
+    x: number;
+    y: number;
+}
+
+interface SlideAttributes {
+    backgroundType: 'image' | 'color';
+    backgroundImage: MediaObject | null;
+    backgroundColor: string;
+    focalPoint: FocalPoint;
+    overlayColor: string;
+    overlayOpacity: number;
+    minHeight: number;
+    contentPosition: 'center' | 'top' | 'bottom' | 'left' | 'right';
+    isFixed: boolean;
+}
+
+const ALLOWED_BLOCKS = ['core/*'];
+
+const CONTENT_POSITIONS = [
+    { label: __('Center', 'sliderberg'), value: 'center' },
+    { label: __('Top', 'sliderberg'), value: 'top' },
+    { label: __('Bottom', 'sliderberg'), value: 'bottom' },
+    { label: __('Left', 'sliderberg'), value: 'left' },
+    { label: __('Right', 'sliderberg'), value: 'right' },
+];
+
+const COLOR_PALETTE = [
+    '#ffffff', '#000000', '#ffe066', '#e0aaff', '#5f4bb6', '#6c757d', '#f8f9fa', 'transparent'
+];
+
+registerBlockType('sliderberg/slide', {
+    title: __('Slide', 'sliderberg'),
+    description: __('A sophisticated slide with advanced background and content positioning options.', 'sliderberg'),
+    category: 'widgets',
+    icon: 'cover-image',
+    supports: {
+        html: false,
+        anchor: true,
+        inserter: false
+    },
+    attributes: {
+        backgroundType: {
+            type: 'string',
+            default: ''
+        },
+        backgroundImage: {
+            type: 'object',
+            default: null
+        },
+        backgroundColor: {
+            type: 'string',
+            default: ''
+        },
+        focalPoint: {
+            type: 'object',
+            default: { x: 0.5, y: 0.5 }
+        },
+        overlayColor: {
+            type: 'string',
+            default: '#000000'
+        },
+        overlayOpacity: {
+            type: 'number',
+            default: 0
+        },
+        minHeight: {
+            type: 'number',
+            default: 400
+        },
+        contentPosition: {
+            type: 'string',
+            default: 'center'
+        },
+        isFixed: {
+            type: 'boolean',
+            default: false
+        }
+    },
+    edit: ({ attributes, setAttributes, isSelected }: { attributes: SlideAttributes; setAttributes: (attrs: Partial<SlideAttributes>) => void; isSelected: boolean }) => {
+        const {
+            backgroundType,
+            backgroundImage,
+            backgroundColor,
+            focalPoint,
+            overlayColor,
+            overlayOpacity,
+            minHeight,
+            contentPosition,
+            isFixed
+        } = attributes;
+
+        // Placeholder UI logic
+        const hasBackground = (backgroundType === 'image' && backgroundImage) || (backgroundType === 'color' && backgroundColor);
+
+        const blockProps = useBlockProps({
+            className: classnames(
+                'sliderberg-slide',
+                `sliderberg-content-position-${contentPosition}`,
+            ),
+            style: {
+                minHeight: `${minHeight}px`,
+                backgroundColor: backgroundType === 'color' ? backgroundColor : 'transparent',
+                backgroundImage: backgroundType === 'image' && backgroundImage ? `url(${backgroundImage.url})` : 'none',
+                backgroundPosition: backgroundType === 'image' ? `${focalPoint.x * 100}% ${focalPoint.y * 100}%` : 'center',
+                backgroundSize: 'cover',
+                backgroundAttachment: isFixed ? 'fixed' : 'scroll'
+            }
+        });
+
+        // Placeholder UI (like Cover block)
+        if (!hasBackground) {
+            return (
+                <div className="sliderberg-slide-placeholder">
+                    <strong>{__('Slide', 'sliderberg')}</strong>
+                    <p>{__('Drag and drop an image, upload, or choose from your library.', 'sliderberg')}</p>
+                    <div className="sliderberg-placeholder-actions">
+                        <MediaUploadCheck>
+                            <MediaUpload
+                                onSelect={(media: MediaObject) => setAttributes({ backgroundType: 'image', backgroundImage: media })}
+                                allowedTypes={['image']}
+                                render={({ open }: { open: () => void }) => (
+                                    <Button onClick={open} variant="primary">{__('Upload', 'sliderberg')}</Button>
+                                )}
+                            />
+                        </MediaUploadCheck>
+                        <MediaUploadCheck>
+                            <MediaUpload
+                                onSelect={(media: MediaObject) => setAttributes({ backgroundType: 'image', backgroundImage: media })}
+                                allowedTypes={['image']}
+                                render={({ open }: { open: () => void }) => (
+                                    <Button onClick={open}>{__('Media Library', 'sliderberg')}</Button>
+                                )}
+                            />
+                        </MediaUploadCheck>
+                    </div>
+                    <div className="sliderberg-placeholder-colors">
+                        {COLOR_PALETTE.map((color) => (
+                            <button
+                                key={color}
+                                className="sliderberg-placeholder-color"
+                                style={{ background: color, border: color === backgroundColor ? '2px solid #007cba' : '1px solid #ccc' }}
+                                onClick={() => setAttributes({ backgroundType: 'color', backgroundColor: color })}
+                                aria-label={color}
+                            />
+                        ))}
+                    </div>
+                </div>
+            );
+        }
+
+        return (
+            <>
+                <InspectorControls>
+                    <PanelBody title={__('Background Settings', 'sliderberg')}>
+                        <SelectControl
+                            label={__('Background Type', 'sliderberg')}
+                            value={backgroundType}
+                            options={[
+                                { label: __('Color', 'sliderberg'), value: 'color' },
+                                { label: __('Image', 'sliderberg'), value: 'image' }
+                            ]}
+                            onChange={(value) => setAttributes({ backgroundType: value as 'color' | 'image' })}
+                        />
+                        {backgroundType === 'color' ? (
+                            <ColorPicker
+                                color={backgroundColor}
+                                onChangeComplete={(color) => setAttributes({ backgroundColor: typeof color === 'string' ? color : color.hex })}
+                            />
+                        ) : (
+                            <MediaUploadCheck>
+                                <MediaUpload
+                                    onSelect={(media: MediaObject) => setAttributes({ backgroundImage: media })}
+                                    allowedTypes={['image']}
+                                    value={backgroundImage?.id}
+                                    render={({ open }: { open: () => void }) => (
+                                        <Button
+                                            onClick={open}
+                                            variant="secondary"
+                                            className="editor-post-featured-image__toggle"
+                                        >
+                                            {backgroundImage ? __('Replace Image', 'sliderberg') : __('Add Image', 'sliderberg')}
+                                        </Button>
+                                    )}
+                                />
+                            </MediaUploadCheck>
+                        )}
+                        {backgroundType === 'image' && backgroundImage && (
+                            <>
+                                <ToggleControl
+                                    label={__('Fixed Background', 'sliderberg')}
+                                    checked={isFixed}
+                                    onChange={(value) => setAttributes({ isFixed: value })}
+                                />
+                                <div className="sliderberg-focal-point-picker">
+                                    <label>{__('Focal Point', 'sliderberg')}</label>
+                                    <div className="sliderberg-focal-point-grid">
+                                        {Array.from({ length: 9 }).map((_, index) => {
+                                            const x = (index % 3) / 2;
+                                            const y = Math.floor(index / 3) / 2;
+                                            return (
+                                                <button
+                                                    key={index}
+                                                    className={`sliderberg-focal-point ${focalPoint.x === x && focalPoint.y === y ? 'is-selected' : ''}`}
+                                                    onClick={() => setAttributes({ focalPoint: { x, y } })}
+                                                />
+                                            );
+                                        })}
+                                    </div>
+                                </div>
+                            </>
+                        )}
+                    </PanelBody>
+                    <PanelBody title={__('Overlay Settings', 'sliderberg')}>
+                        <ColorPicker
+                            color={overlayColor}
+                            onChangeComplete={(color) => setAttributes({ overlayColor: typeof color === 'string' ? color : color.hex })}
+                            enableAlpha
+                        />
+                        <RangeControl
+                            label={__('Overlay Opacity', 'sliderberg')}
+                            value={overlayOpacity}
+                            onChange={(value) => setAttributes({ overlayOpacity: value })}
+                            min={0}
+                            max={1}
+                            step={0.1}
+                        />
+                    </PanelBody>
+                    <PanelBody title={__('Layout Settings', 'sliderberg')}>
+                        <SelectControl
+                            label={__('Content Position', 'sliderberg')}
+                            value={contentPosition}
+                            options={CONTENT_POSITIONS}
+                            onChange={(value) => setAttributes({ contentPosition: value as SlideAttributes['contentPosition'] })}
+                        />
+                        <RangeControl
+                            label={__('Minimum Height', 'sliderberg')}
+                            value={minHeight}
+                            onChange={(value) => setAttributes({ minHeight: value })}
+                            min={100}
+                            max={1000}
+                            step={10}
+                        />
+                    </PanelBody>
+                </InspectorControls>
+                <div {...blockProps}>
+                    <div className="sliderberg-overlay" style={{ backgroundColor: overlayColor, opacity: overlayOpacity }} />
+                    <div className="sliderberg-slide-content">
+                        <InnerBlocks
+                            allowedBlocks={ALLOWED_BLOCKS}
+                            template={[
+                                ['core/heading', { placeholder: __('Add a heading...', 'sliderberg') }],
+                                ['core/paragraph', { placeholder: __('Add your content...', 'sliderberg') }]
+                            ]}
+                        />
+                    </div>
+                </div>
+            </>
+        );
+    },
+    save: ({ attributes }: { attributes: SlideAttributes }) => {
+        const {
+            backgroundType,
+            backgroundImage,
+            backgroundColor,
+            focalPoint,
+            overlayColor,
+            overlayOpacity,
+            minHeight,
+            contentPosition,
+            isFixed
+        } = attributes;
+
+        const blockProps = useBlockProps.save({
+            className: classnames(
+                'sliderberg-slide',
+                `sliderberg-content-position-${contentPosition}`,
+            ),
+            style: {
+                minHeight: `${minHeight}px`,
+                backgroundColor: backgroundType === 'color' ? backgroundColor : 'transparent',
+                backgroundImage: backgroundType === 'image' && backgroundImage ? `url(${backgroundImage.url})` : 'none',
+                backgroundPosition: backgroundType === 'image' ? `${focalPoint.x * 100}% ${focalPoint.y * 100}%` : 'center',
+                backgroundSize: 'cover',
+                backgroundAttachment: isFixed ? 'fixed' : 'scroll'
+            }
+        });
+
+        return (
+            <div {...blockProps}>
+                <div className="sliderberg-overlay" style={{ backgroundColor: overlayColor, opacity: overlayOpacity }} />
+                <div className="sliderberg-slide-content">
+                    <InnerBlocks.Content />
+                </div>
+            </div>
+        );
+    }
+}); 

@@ -1,0 +1,1 @@
+{"version":3,"file":"view.js","mappings":";;;;AAAA;AACAA,OAAO,CAACC,GAAG,CAAC,iCAAiC,CAAC,C","sources":["webpack://sliderberg/./src/view.ts"],"sourcesContent":["// Frontend initialization code will go here\nconsole.log('SliderBerg frontend initialized'); "],"names":["console","log"],"sourceRoot":""}

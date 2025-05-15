@@ -1,0 +1,157 @@
+/*!*******************************************************************************************************************************************************************!*\
+  !*** css ./node_modules/css-loader/dist/cjs.js??ruleSet[1].rules[2].use[1]!./node_modules/postcss-loader/dist/cjs.js??ruleSet[1].rules[2].use[2]!./src/style.css ***!
+  \*******************************************************************************************************************************************************************/
+.wp-block-sliderberg-slider {
+    margin: 0;
+    padding: 0;
+}
+ 
+.sliderberg-container {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+} 
+/*!********************************************************************************************************************************************************************************!*\
+  !*** css ./node_modules/css-loader/dist/cjs.js??ruleSet[1].rules[2].use[1]!./node_modules/postcss-loader/dist/cjs.js??ruleSet[1].rules[2].use[2]!./src/blocks/slide/style.css ***!
+  \********************************************************************************************************************************************************************************/
+.sliderberg-slide {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+}
+
+.sliderberg-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    pointer-events: none;
+}
+
+.sliderberg-slide-content {
+    position: relative;
+    z-index: 1;
+    padding: 2rem;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Content Positioning */
+.sliderberg-content-position-center .sliderberg-slide-content {
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+.sliderberg-content-position-top .sliderberg-slide-content {
+    justify-content: flex-start;
+    align-items: center;
+    text-align: center;
+}
+
+.sliderberg-content-position-bottom .sliderberg-slide-content {
+    justify-content: flex-end;
+    align-items: center;
+    text-align: center;
+}
+
+.sliderberg-content-position-left .sliderberg-slide-content {
+    justify-content: center;
+    align-items: flex-start;
+    text-align: left;
+}
+
+.sliderberg-content-position-right .sliderberg-slide-content {
+    justify-content: center;
+    align-items: flex-end;
+    text-align: right;
+}
+
+/* Fixed Background */
+.sliderberg-fixed-background {
+    background-attachment: fixed !important;
+}
+
+/* Focal Point Picker */
+.sliderberg-focal-point-picker {
+    margin-top: 1rem;
+}
+
+.sliderberg-focal-point-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 4px;
+    margin-top: 0.5rem;
+    background: #f0f0f0;
+    padding: 4px;
+    border-radius: 4px;
+}
+
+.sliderberg-focal-point {
+    aspect-ratio: 1;
+    border: none;
+    background: #fff;
+    cursor: pointer;
+    border-radius: 2px;
+    transition: background-color 0.2s;
+}
+
+.sliderberg-focal-point:hover {
+    background: #e0e0e0;
+}
+
+.sliderberg-focal-point.is-selected {
+    background: #007cba;
+}
+
+/* Responsive Design */
+@media (max-width: 782px) {
+    .sliderberg-fixed-background {
+        background-attachment: scroll !important;
+    }
+    
+    .sliderberg-slide-content {
+        padding: 1rem;
+    }
+}
+
+/* Placeholder UI styles */
+.sliderberg-slide-placeholder {
+    border: 2px dashed #d1d5db;
+    padding: 2rem;
+    text-align: center;
+    background: #f8f9fa;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+}
+.sliderberg-placeholder-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    margin: 1rem 0;
+}
+.sliderberg-placeholder-colors {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: center;
+    margin-top: 1rem;
+}
+.sliderberg-placeholder-color {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 1px solid #ccc;
+    cursor: pointer;
+    outline: none;
+    transition: border 0.2s;
+}
+.sliderberg-placeholder-color:focus {
+    border: 2px solid #007cba;
+}
+.sliderberg-placeholder-color[aria-label='transparent'] {
+    background: repeating-conic-gradient(#eee 0% 25%, #fff 0% 50%) 50% / 20px 20px;
+} 
+
+/*# sourceMappingURL=style-index.css.map*/
