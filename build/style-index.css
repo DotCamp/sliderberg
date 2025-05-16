@@ -10,6 +10,77 @@
     position: relative;
     width: 100%;
     overflow: hidden;
+}
+
+.sliderberg-slides {
+    position: relative;
+    overflow: hidden;
+}
+
+.sliderberg-slides-container {
+    display: flex;
+    transition: transform 0.3s ease;
+}
+
+.sliderberg-slides-container > * {
+    flex: 0 0 100%;
+    width: 100%;
+}
+
+/* Slide Navigation */
+.sliderberg-navigation {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 1rem;
+    padding: 1rem;
+    background: #f8f9fa;
+    border-radius: 4px;
+}
+
+.sliderberg-nav-button {
+    padding: 8px;
+    border-radius: 50%;
+    background: #fff;
+    border: 1px solid #ddd;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.sliderberg-nav-button:hover {
+    background: #f0f0f0;
+}
+
+.sliderberg-nav-button svg {
+    width: 20px;
+    height: 20px;
+}
+
+.sliderberg-slide-indicators {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.sliderberg-slide-indicator {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #ddd;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.sliderberg-slide-indicator:hover {
+    background: #bbb;
+}
+
+.sliderberg-slide-indicator.active {
+    background: #007cba;
+    transform: scale(1.2);
 } 
 /*!********************************************************************************************************************************************************************************!*\
   !*** css ./node_modules/css-loader/dist/cjs.js??ruleSet[1].rules[2].use[1]!./node_modules/postcss-loader/dist/cjs.js??ruleSet[1].rules[2].use[2]!./src/blocks/slide/style.css ***!

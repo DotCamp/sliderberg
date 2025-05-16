@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useBlockProps, InnerBlocks, BlockControls } from '@wordpress/block-editor';
 import { __ } from '@wordpress/i18n';
 import { Icon } from '@wordpress/icons';
-import { grid, store, post, plus } from '@wordpress/icons';
+import { grid, store, post, plus, chevronLeft, chevronRight } from '@wordpress/icons';
 import { Button } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { createBlock } from '@wordpress/blocks';
@@ -52,6 +52,7 @@ const ALLOWED_BLOCKS = ['sliderberg/slide'];
 
 export const Edit: React.FC = () => {
     const [selectedType, setSelectedType] = useState<string | null>(null);
+    const [currentSlide, setCurrentSlide] = useState(0);
     const blockProps = useBlockProps();
     const clientId = blockProps['data-block'];
 
@@ -73,6 +74,14 @@ export const Edit: React.FC = () => {
             return;
         }
         setSelectedType(typeId);
+    };
+
+    const handlePrevSlide = () => {
+        setCurrentSlide((prev) => (prev > 0 ? prev - 1 : innerBlocks.length - 1));
+    };
+
+    const handleNextSlide = () => {
+        setCurrentSlide((prev) => (prev < innerBlocks.length - 1 ? prev + 1 : 0));
     };
 
     const renderTypeSelector = () => (
@@ -109,22 +118,50 @@ export const Edit: React.FC = () => {
 
     const renderSliderContent = () => (
         <div className="sliderberg-content">
-            <div className="sliderberg-slides">
-                <InnerBlocks
-                    allowedBlocks={ALLOWED_BLOCKS}
-                    template={[['sliderberg/slide', {}]]}
-                    templateLock={false}
-                    renderAppender={() => (
+            <div className="sliderberg-navigation">
+                <Button
+                    variant="primary"
+                    className="sliderberg-add-slide"
+                    onClick={handleAddSlide}
+                >
+                    {__('Add Slide', 'sliderberg')}
+                </Button>
+                {innerBlocks.length > 1 && (
+                    <>
                         <Button
-                            variant="primary"
-                            className="sliderberg-add-slide"
-                            onClick={handleAddSlide}
-                        >
-                            {__('Add Slide', 'sliderberg')}
-                        </Button>
-                    )}
-                    orientation="horizontal"
-                />
+                            className="sliderberg-nav-button sliderberg-prev"
+                            onClick={handlePrevSlide}
+                            icon={chevronLeft}
+                            label={__('Previous Slide', 'sliderberg')}
+                        />
+                        <div className="sliderberg-slide-indicators">
+                            {innerBlocks.map((_, index) => (
+                                <button
+                                    key={index}
+                                    className={`sliderberg-slide-indicator ${index === currentSlide ? 'active' : ''}`}
+                                    onClick={() => setCurrentSlide(index)}
+                                    aria-label={__('Go to slide', 'sliderberg') + ' ' + (index + 1)}
+                                />
+                            ))}
+                        </div>
+                        <Button
+                            className="sliderberg-nav-button sliderberg-next"
+                            onClick={handleNextSlide}
+                            icon={chevronRight}
+                            label={__('Next Slide', 'sliderberg')}
+                        />
+                    </>
+                )}
+            </div>
+            <div className="sliderberg-slides" style={{ position: 'relative' }}>
+                <div className="sliderberg-slides-container" style={{ display: 'flex', transition: 'transform 0.3s ease' }}>
+                    <InnerBlocks
+                        allowedBlocks={ALLOWED_BLOCKS}
+                        template={[['sliderberg/slide', {}]]}
+                        templateLock={false}
+                        orientation="horizontal"
+                    />
+                </div>
             </div>
         </div>
     );
