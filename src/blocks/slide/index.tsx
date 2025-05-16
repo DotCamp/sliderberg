@@ -342,9 +342,6 @@ registerBlockType('sliderberg/slide', {
                                 }],
                                 ['core/paragraph', { 
                                     placeholder: __('Add your content here...', 'sliderberg') 
-                                }],
-                                ['core/buttons', {
-                                    layout: { type: 'flex', justifyContent: 'center' }
                                 }]
                             ]}
                             templateLock={false}

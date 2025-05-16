@@ -1992,11 +1992,6 @@ const COLOR_PALETTE = ['#ffffff', '#000000', '#ffe066', '#e0aaff', '#5f4bb6', '#
         placeholder: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__.__)('Add a heading...', 'sliderberg')
       }], ['core/paragraph', {
         placeholder: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__.__)('Add your content here...', 'sliderberg')
-      }], ['core/buttons', {
-        layout: {
-          type: 'flex',
-          justifyContent: 'center'
-        }
       }]],
       templateLock: false
     }))));

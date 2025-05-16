@@ -282,6 +282,17 @@
 
 .sliderberg-slide-content {
     min-height: 200px;
+    max-width: 90%;
+    margin: 0 auto;
+    width: 100%;
+}
+
+.sliderberg-slide-content .block-editor-inner-blocks {
+    width: 100%;
+}
+
+.sliderberg-slide-content .block-editor-block-list__layout {
+    width: 100%;
 }
 
 .sliderberg-slide-number {
@@ -293,6 +304,12 @@
     border-radius: 4px;
     font-size: 0.9rem;
     color: #666;
+}
+
+@media (max-width: 782px) {
+    .sliderberg-slide-content {
+        max-width: 100%;
+    }
 } 
 
 /*# sourceMappingURL=index.css.map*/
