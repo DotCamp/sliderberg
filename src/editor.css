@@ -155,7 +155,7 @@
 
 .sliderberg-navigation {
     display: flex;
-    justify-content: center;
+    justify-content: space-between;
     align-items: center;
     gap: 1rem;
     margin-bottom: 1rem;
@@ -165,11 +165,25 @@
     position: relative;
 }
 
-.sliderberg-add-slide {
+.sliderberg-action-buttons {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-left: auto;
+}
+
+.sliderberg-add-slide,
+.sliderberg-delete-slide {
+    margin: 0;
+}
+
+.sliderberg-nav-controls {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
     position: absolute;
-    right: 1rem;
-    top: 50%;
-    transform: translateY(-50%);
+    left: 50%;
+    transform: translateX(-50%);
 }
 
 .sliderberg-slides {

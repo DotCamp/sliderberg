@@ -2141,7 +2141,8 @@ const Edit = () => {
   }, [innerBlocks, currentSlideId]);
   const {
     insertBlock,
-    selectBlock
+    selectBlock,
+    removeBlock
   } = (0,_wordpress_data__WEBPACK_IMPORTED_MODULE_4__.useDispatch)('core/block-editor');
   const handleAddSlide = () => {
     const slideBlock = (0,_wordpress_blocks__WEBPACK_IMPORTED_MODULE_5__.createBlock)('sliderberg/slide');
@@ -2193,6 +2194,22 @@ const Edit = () => {
       setTimeout(() => window.updateSliderbergSlidesVisibility(), 0);
     }
   };
+  const handleDeleteSlide = () => {
+    if (innerBlocks.length <= 1 || !currentSlideId) return;
+    removeBlock(currentSlideId);
+    // After deletion, select the previous or next slide
+    setTimeout(() => {
+      const updatedBlocks = (0,_wordpress_data__WEBPACK_IMPORTED_MODULE_4__.select)('core/block-editor').getBlocks(clientId);
+      if (updatedBlocks.length > 0) {
+        const idx = Math.max(0, updatedBlocks.length - 1);
+        setCurrentSlideId(updatedBlocks[idx].clientId);
+        selectBlock(updatedBlocks[idx].clientId);
+        if (typeof window !== 'undefined' && window.updateSliderbergSlidesVisibility) {
+          setTimeout(() => window.updateSliderbergSlidesVisibility(), 0);
+        }
+      }
+    }, 50);
+  };
   const renderTypeSelector = () => (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
     className: "sliderberg-type-selector"
   }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("h2", {
@@ -2216,11 +2233,9 @@ const Edit = () => {
     className: "sliderberg-content"
   }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
     className: "sliderberg-navigation"
+  }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
+    className: "sliderberg-nav-controls"
   }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_components__WEBPACK_IMPORTED_MODULE_3__.Button, {
-    variant: "primary",
-    className: "sliderberg-add-slide",
-    onClick: handleAddSlide
-  }, (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__.__)('Add Slide', 'sliderberg')), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(react__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_components__WEBPACK_IMPORTED_MODULE_3__.Button, {
     className: "sliderberg-nav-button sliderberg-prev",
     onClick: handlePrevSlide,
     icon: _wordpress_icons__WEBPACK_IMPORTED_MODULE_11__["default"],
@@ -2237,7 +2252,22 @@ const Edit = () => {
     onClick: handleNextSlide,
     icon: _wordpress_icons__WEBPACK_IMPORTED_MODULE_12__["default"],
     label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__.__)('Next Slide', 'sliderberg')
-  }))), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
+  })), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
+    className: "sliderberg-action-buttons"
+  }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_components__WEBPACK_IMPORTED_MODULE_3__.Button, {
+    variant: "primary",
+    className: "sliderberg-add-slide",
+    onClick: handleAddSlide
+  }, (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__.__)('Add Slide', 'sliderberg')), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_components__WEBPACK_IMPORTED_MODULE_3__.Button, {
+    variant: "secondary",
+    className: "sliderberg-delete-slide",
+    onClick: handleDeleteSlide,
+    disabled: innerBlocks.length <= 1,
+    isDestructive: true,
+    style: {
+      marginLeft: '0.5rem'
+    }
+  }, (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__.__)('Delete Slide', 'sliderberg')))), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
     className: "sliderberg-slides",
     style: {
       position: 'relative'

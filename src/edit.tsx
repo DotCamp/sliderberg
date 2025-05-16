@@ -73,7 +73,7 @@ export const Edit: React.FC = () => {
         }
     }, [innerBlocks, currentSlideId]);
 
-    const { insertBlock, selectBlock } = useDispatch('core/block-editor');
+    const { insertBlock, selectBlock, removeBlock } = useDispatch('core/block-editor');
 
     const handleAddSlide = () => {
         const slideBlock = createBlock('sliderberg/slide');
@@ -130,6 +130,23 @@ export const Edit: React.FC = () => {
         }
     };
 
+    const handleDeleteSlide = () => {
+        if (innerBlocks.length <= 1 || !currentSlideId) return;
+        removeBlock(currentSlideId);
+        // After deletion, select the previous or next slide
+        setTimeout(() => {
+            const updatedBlocks = select('core/block-editor').getBlocks(clientId);
+            if (updatedBlocks.length > 0) {
+                const idx = Math.max(0, updatedBlocks.length - 1);
+                setCurrentSlideId(updatedBlocks[idx].clientId);
+                selectBlock(updatedBlocks[idx].clientId);
+                if (typeof window !== 'undefined' && window.updateSliderbergSlidesVisibility) {
+                    setTimeout(() => window.updateSliderbergSlidesVisibility(), 0);
+                }
+            }
+        }, 50);
+    };
+
     const renderTypeSelector = () => (
         <div className="sliderberg-type-selector">
             <h2 className="sliderberg-title">{__('Choose Slider Type', 'sliderberg')}</h2>
@@ -165,15 +182,7 @@ export const Edit: React.FC = () => {
     const renderSliderContent = () => (
         <div className="sliderberg-content">
             <div className="sliderberg-navigation">
-                <Button
-                    variant="primary"
-                    className="sliderberg-add-slide"
-                    onClick={handleAddSlide}
-                >
-                    {__('Add Slide', 'sliderberg')}
-                </Button>
-                {/* Always show navigation controls */}
-                <>
+                <div className="sliderberg-nav-controls">
                     <Button
                         className="sliderberg-nav-button sliderberg-prev"
                         onClick={handlePrevSlide}
@@ -196,7 +205,26 @@ export const Edit: React.FC = () => {
                         icon={chevronRight}
                         label={__('Next Slide', 'sliderberg')}
                     />
-                </>
+                </div>
+                <div className="sliderberg-action-buttons">
+                    <Button
+                        variant="primary"
+                        className="sliderberg-add-slide"
+                        onClick={handleAddSlide}
+                    >
+                        {__('Add Slide', 'sliderberg')}
+                    </Button>
+                    <Button
+                        variant="secondary"
+                        className="sliderberg-delete-slide"
+                        onClick={handleDeleteSlide}
+                        disabled={innerBlocks.length <= 1}
+                        isDestructive
+                        style={{ marginLeft: '0.5rem' }}
+                    >
+                        {__('Delete Slide', 'sliderberg')}
+                    </Button>
+                </div>
             </div>
             <div className="sliderberg-slides" style={{ position: 'relative' }}>
                 <div className="sliderberg-slides-container" style={{ width: '100%' }} data-current-slide-id={currentSlideId || ''}>
