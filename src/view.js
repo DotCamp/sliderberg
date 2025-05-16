@@ -51,5 +51,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Initialize
         updateIndicators();
+        goToSlide(0); // Ensure first slide is shown initially
     });
 }); 

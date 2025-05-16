@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import { useBlockProps, InnerBlocks, BlockControls } from '@wordpress/block-editor';
+import { useBlockProps, InnerBlocks, BlockControls, BlockListBlock } from '@wordpress/block-editor';
 import { __ } from '@wordpress/i18n';
 import { Icon } from '@wordpress/icons';
 import { grid, store, post, plus, chevronLeft, chevronRight } from '@wordpress/icons';
 import { Button } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { createBlock } from '@wordpress/blocks';
+import { createBlock, getBlockType } from '@wordpress/blocks';
 
 interface SliderType {
     id: string;
@@ -52,7 +52,7 @@ const ALLOWED_BLOCKS = ['sliderberg/slide'];
 
 export const Edit: React.FC = () => {
     const [selectedType, setSelectedType] = useState<string | null>(null);
-    const [currentSlide, setCurrentSlide] = useState(0);
+    const [currentSlideId, setCurrentSlideId] = useState<string | null>(null);
     const blockProps = useBlockProps();
     const clientId = blockProps['data-block'];
 
@@ -61,6 +61,13 @@ export const Edit: React.FC = () => {
         (select: any) => clientId ? select('core/block-editor').getBlocks(clientId) : [],
         [clientId]
     );
+
+    // Set the first slide as current by default if not set
+    React.useEffect(() => {
+        if (innerBlocks.length > 0 && (!currentSlideId || !innerBlocks.find((b: any) => b.clientId === currentSlideId))) {
+            setCurrentSlideId(innerBlocks[0].clientId);
+        }
+    }, [innerBlocks, currentSlideId]);
 
     const { insertBlock } = useDispatch('core/block-editor');
 
@@ -77,11 +84,17 @@ export const Edit: React.FC = () => {
     };
 
     const handlePrevSlide = () => {
-        setCurrentSlide((prev) => (prev > 0 ? prev - 1 : innerBlocks.length - 1));
+        if (!currentSlideId || innerBlocks.length === 0) return;
+        const idx = innerBlocks.findIndex((b: any) => b.clientId === currentSlideId);
+        const prevIdx = idx > 0 ? idx - 1 : innerBlocks.length - 1;
+        setCurrentSlideId(innerBlocks[prevIdx].clientId);
     };
 
     const handleNextSlide = () => {
-        setCurrentSlide((prev) => (prev < innerBlocks.length - 1 ? prev + 1 : 0));
+        if (!currentSlideId || innerBlocks.length === 0) return;
+        const idx = innerBlocks.findIndex((b: any) => b.clientId === currentSlideId);
+        const nextIdx = idx < innerBlocks.length - 1 ? idx + 1 : 0;
+        setCurrentSlideId(innerBlocks[nextIdx].clientId);
     };
 
     const renderTypeSelector = () => (
@@ -135,12 +148,12 @@ export const Edit: React.FC = () => {
                             label={__('Previous Slide', 'sliderberg')}
                         />
                         <div className="sliderberg-slide-indicators">
-                            {innerBlocks.map((_, index) => (
+                            {innerBlocks.map((block: any) => (
                                 <button
-                                    key={index}
-                                    className={`sliderberg-slide-indicator ${index === currentSlide ? 'active' : ''}`}
-                                    onClick={() => setCurrentSlide(index)}
-                                    aria-label={__('Go to slide', 'sliderberg') + ' ' + (index + 1)}
+                                    key={block.clientId}
+                                    className={`sliderberg-slide-indicator ${block.clientId === currentSlideId ? 'active' : ''}`}
+                                    onClick={() => setCurrentSlideId(block.clientId)}
+                                    aria-label={__('Go to slide', 'sliderberg') + ' ' + (innerBlocks.findIndex((b: any) => b.clientId === block.clientId) + 1)}
                                 />
                             ))}
                         </div>
@@ -154,7 +167,7 @@ export const Edit: React.FC = () => {
                 )}
             </div>
             <div className="sliderberg-slides" style={{ position: 'relative' }}>
-                <div className="sliderberg-slides-container" style={{ display: 'flex', transition: 'transform 0.3s ease' }}>
+                <div className="sliderberg-slides-container" style={{ width: '100%' }} data-current-slide-id={currentSlideId || ''}>
                     <InnerBlocks
                         allowedBlocks={ALLOWED_BLOCKS}
                         template={[['sliderberg/slide', {}]]}

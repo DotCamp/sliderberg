@@ -1797,11 +1797,13 @@ const COLOR_PALETTE = ['#ffffff', '#000000', '#ffe066', '#e0aaff', '#5f4bb6', '#
       default: false
     }
   },
-  edit: ({
-    attributes,
-    setAttributes,
-    isSelected
-  }) => {
+  edit: props => {
+    const {
+      attributes,
+      setAttributes,
+      isSelected,
+      clientId
+    } = props;
     const {
       backgroundType,
       backgroundImage,
@@ -1825,7 +1827,8 @@ const COLOR_PALETTE = ['#ffffff', '#000000', '#ffe066', '#e0aaff', '#5f4bb6', '#
         backgroundPosition: backgroundType === 'image' ? `${focalPoint.x * 100}% ${focalPoint.y * 100}%` : 'center',
         backgroundSize: 'cover',
         backgroundAttachment: isFixed ? 'fixed' : 'scroll'
-      }
+      },
+      'data-client-id': clientId
     });
 
     // Placeholder UI (like Cover block)
@@ -2115,12 +2118,19 @@ const sliderTypes = [{
 const ALLOWED_BLOCKS = ['sliderberg/slide'];
 const Edit = () => {
   const [selectedType, setSelectedType] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(null);
-  const [currentSlide, setCurrentSlide] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(0);
+  const [currentSlideId, setCurrentSlideId] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(null);
   const blockProps = (0,_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_1__.useBlockProps)();
   const clientId = blockProps['data-block'];
 
   // Get the current inner blocks for this slider
   const innerBlocks = (0,_wordpress_data__WEBPACK_IMPORTED_MODULE_4__.useSelect)(select => clientId ? select('core/block-editor').getBlocks(clientId) : [], [clientId]);
+
+  // Set the first slide as current by default if not set
+  react__WEBPACK_IMPORTED_MODULE_0___default().useEffect(() => {
+    if (innerBlocks.length > 0 && (!currentSlideId || !innerBlocks.find(b => b.clientId === currentSlideId))) {
+      setCurrentSlideId(innerBlocks[0].clientId);
+    }
+  }, [innerBlocks, currentSlideId]);
   const {
     insertBlock
   } = (0,_wordpress_data__WEBPACK_IMPORTED_MODULE_4__.useDispatch)('core/block-editor');
@@ -2135,10 +2145,16 @@ const Edit = () => {
     setSelectedType(typeId);
   };
   const handlePrevSlide = () => {
-    setCurrentSlide(prev => prev > 0 ? prev - 1 : innerBlocks.length - 1);
+    if (!currentSlideId || innerBlocks.length === 0) return;
+    const idx = innerBlocks.findIndex(b => b.clientId === currentSlideId);
+    const prevIdx = idx > 0 ? idx - 1 : innerBlocks.length - 1;
+    setCurrentSlideId(innerBlocks[prevIdx].clientId);
   };
   const handleNextSlide = () => {
-    setCurrentSlide(prev => prev < innerBlocks.length - 1 ? prev + 1 : 0);
+    if (!currentSlideId || innerBlocks.length === 0) return;
+    const idx = innerBlocks.findIndex(b => b.clientId === currentSlideId);
+    const nextIdx = idx < innerBlocks.length - 1 ? idx + 1 : 0;
+    setCurrentSlideId(innerBlocks[nextIdx].clientId);
   };
   const renderTypeSelector = () => (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
     className: "sliderberg-type-selector"
@@ -2174,11 +2190,11 @@ const Edit = () => {
     label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__.__)('Previous Slide', 'sliderberg')
   }), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
     className: "sliderberg-slide-indicators"
-  }, innerBlocks.map((_, index) => (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("button", {
-    key: index,
-    className: `sliderberg-slide-indicator ${index === currentSlide ? 'active' : ''}`,
-    onClick: () => setCurrentSlide(index),
-    "aria-label": (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__.__)('Go to slide', 'sliderberg') + ' ' + (index + 1)
+  }, innerBlocks.map(block => (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("button", {
+    key: block.clientId,
+    className: `sliderberg-slide-indicator ${block.clientId === currentSlideId ? 'active' : ''}`,
+    onClick: () => setCurrentSlideId(block.clientId),
+    "aria-label": (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__.__)('Go to slide', 'sliderberg') + ' ' + (innerBlocks.findIndex(b => b.clientId === block.clientId) + 1)
   }))), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_components__WEBPACK_IMPORTED_MODULE_3__.Button, {
     className: "sliderberg-nav-button sliderberg-next",
     onClick: handleNextSlide,
@@ -2192,9 +2208,9 @@ const Edit = () => {
   }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
     className: "sliderberg-slides-container",
     style: {
-      display: 'flex',
-      transition: 'transform 0.3s ease'
-    }
+      width: '100%'
+    },
+    "data-current-slide-id": currentSlideId || ''
   }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_1__.InnerBlocks, {
     allowedBlocks: ALLOWED_BLOCKS,
     template: [['sliderberg/slide', {}]],

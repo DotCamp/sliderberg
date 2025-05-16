@@ -108,7 +108,13 @@ registerBlockType('sliderberg/slide', {
             default: false
         }
     },
-    edit: ({ attributes, setAttributes, isSelected }: { attributes: SlideAttributes; setAttributes: (attrs: Partial<SlideAttributes>) => void; isSelected: boolean }) => {
+    edit: (props: { attributes: SlideAttributes; setAttributes: (attrs: Partial<SlideAttributes>) => void; isSelected: boolean; clientId: string }) => {
+        const {
+            attributes,
+            setAttributes,
+            isSelected,
+            clientId
+        } = props;
         const {
             backgroundType,
             backgroundImage,
@@ -136,7 +142,8 @@ registerBlockType('sliderberg/slide', {
                 backgroundPosition: backgroundType === 'image' ? `${focalPoint.x * 100}% ${focalPoint.y * 100}%` : 'center',
                 backgroundSize: 'cover',
                 backgroundAttachment: isFixed ? 'fixed' : 'scroll'
-            }
+            },
+            'data-client-id': clientId
         });
 
         // Placeholder UI (like Cover block)

@@ -178,12 +178,15 @@
 }
 
 .sliderberg-slides-container {
+    display: flex;
+    transition: transform 0.3s ease;
     width: 100%;
 }
 
 .sliderberg-slides-container > * {
     flex: 0 0 100%;
     width: 100%;
+    min-width: 100%;
 }
 
 /* Slide Navigation */
@@ -229,4 +232,21 @@
 .sliderberg-slide-indicator.active {
     background: #007cba;
     transform: scale(1.2);
+}
+
+/* Only show the current slide in the editor, regardless of wrappers */
+.sliderberg-slides-container[data-current-slide] .sliderberg-slide {
+    display: none !important;
+}
+.sliderberg-slides-container[data-current-slide="0"] .sliderberg-slide:nth-of-type(1),
+.sliderberg-slides-container[data-current-slide="1"] .sliderberg-slide:nth-of-type(2),
+.sliderberg-slides-container[data-current-slide="2"] .sliderberg-slide:nth-of-type(3),
+.sliderberg-slides-container[data-current-slide="3"] .sliderberg-slide:nth-of-type(4),
+.sliderberg-slides-container[data-current-slide="4"] .sliderberg-slide:nth-of-type(5),
+.sliderberg-slides-container[data-current-slide="5"] .sliderberg-slide:nth-of-type(6),
+.sliderberg-slides-container[data-current-slide="6"] .sliderberg-slide:nth-of-type(7),
+.sliderberg-slides-container[data-current-slide="7"] .sliderberg-slide:nth-of-type(8),
+.sliderberg-slides-container[data-current-slide="8"] .sliderberg-slide:nth-of-type(9),
+.sliderberg-slides-container[data-current-slide="9"] .sliderberg-slide:nth-of-type(10) {
+    display: block !important;
 } 
