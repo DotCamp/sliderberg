@@ -1728,7 +1728,9 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-const ALLOWED_BLOCKS = ['core/*'];
+const ALLOWED_BLOCKS = ['core/paragraph', 'core/heading', 'core/image', 'core/gallery', 'core/list', 'core/list-item', 'core/quote', 'core/audio', 'core/cover', 'core/file', 'core/media-text', 'core/video', 'core/button', 'core/buttons', 'core/code', 'core/preformatted', 'core/pullquote', 'core/separator', 'core/spacer', 'core/table', 'core/columns', 'core/column', 'core/group', 'core/html', 'core/shortcode', 'core/embed', 'core/block',
+// reusable block
+'core/more', 'core/page-break', 'core/read-more', 'core/latest-posts', 'core/categories', 'core/tag-cloud', 'core/archives', 'core/search', 'core/rss', 'core/navigation', 'core/navigation-link', 'core/social-links', 'core/social-link', 'core/site-title', 'core/site-tagline', 'core/site-logo'];
 const CONTENT_POSITIONS = [{
   label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__.__)('Center', 'sliderberg'),
   value: 'center'
@@ -1986,10 +1988,17 @@ const COLOR_PALETTE = ['#ffffff', '#000000', '#ffe066', '#e0aaff', '#5f4bb6', '#
     }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_3__.InnerBlocks, {
       allowedBlocks: ALLOWED_BLOCKS,
       template: [['core/heading', {
+        level: 2,
         placeholder: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__.__)('Add a heading...', 'sliderberg')
       }], ['core/paragraph', {
-        placeholder: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__.__)('Add your content...', 'sliderberg')
-      }]]
+        placeholder: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__.__)('Add your content here...', 'sliderberg')
+      }], ['core/buttons', {
+        layout: {
+          type: 'flex',
+          justifyContent: 'center'
+        }
+      }]],
+      templateLock: false
     }))));
   },
   save: ({
