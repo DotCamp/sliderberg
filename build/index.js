@@ -2132,7 +2132,8 @@ const Edit = () => {
     }
   }, [innerBlocks, currentSlideId]);
   const {
-    insertBlock
+    insertBlock,
+    selectBlock
   } = (0,_wordpress_data__WEBPACK_IMPORTED_MODULE_4__.useDispatch)('core/block-editor');
   const handleAddSlide = () => {
     const slideBlock = (0,_wordpress_blocks__WEBPACK_IMPORTED_MODULE_5__.createBlock)('sliderberg/slide');
@@ -2148,13 +2149,21 @@ const Edit = () => {
     if (!currentSlideId || innerBlocks.length === 0) return;
     const idx = innerBlocks.findIndex(b => b.clientId === currentSlideId);
     const prevIdx = idx > 0 ? idx - 1 : innerBlocks.length - 1;
-    setCurrentSlideId(innerBlocks[prevIdx].clientId);
+    const newId = innerBlocks[prevIdx].clientId;
+    setCurrentSlideId(newId);
+    selectBlock(newId);
   };
   const handleNextSlide = () => {
     if (!currentSlideId || innerBlocks.length === 0) return;
     const idx = innerBlocks.findIndex(b => b.clientId === currentSlideId);
     const nextIdx = idx < innerBlocks.length - 1 ? idx + 1 : 0;
-    setCurrentSlideId(innerBlocks[nextIdx].clientId);
+    const newId = innerBlocks[nextIdx].clientId;
+    setCurrentSlideId(newId);
+    selectBlock(newId);
+  };
+  const handleIndicatorClick = clientId => {
+    setCurrentSlideId(clientId);
+    selectBlock(clientId);
   };
   const renderTypeSelector = () => (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
     className: "sliderberg-type-selector"
@@ -2193,7 +2202,7 @@ const Edit = () => {
   }, innerBlocks.map(block => (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("button", {
     key: block.clientId,
     className: `sliderberg-slide-indicator ${block.clientId === currentSlideId ? 'active' : ''}`,
-    onClick: () => setCurrentSlideId(block.clientId),
+    onClick: () => handleIndicatorClick(block.clientId),
     "aria-label": (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__.__)('Go to slide', 'sliderberg') + ' ' + (innerBlocks.findIndex(b => b.clientId === block.clientId) + 1)
   }))), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_components__WEBPACK_IMPORTED_MODULE_3__.Button, {
     className: "sliderberg-nav-button sliderberg-next",

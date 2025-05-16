@@ -69,7 +69,7 @@ export const Edit: React.FC = () => {
         }
     }, [innerBlocks, currentSlideId]);
 
-    const { insertBlock } = useDispatch('core/block-editor');
+    const { insertBlock, selectBlock } = useDispatch('core/block-editor');
 
     const handleAddSlide = () => {
         const slideBlock = createBlock('sliderberg/slide');
@@ -87,14 +87,23 @@ export const Edit: React.FC = () => {
         if (!currentSlideId || innerBlocks.length === 0) return;
         const idx = innerBlocks.findIndex((b: any) => b.clientId === currentSlideId);
         const prevIdx = idx > 0 ? idx - 1 : innerBlocks.length - 1;
-        setCurrentSlideId(innerBlocks[prevIdx].clientId);
+        const newId = innerBlocks[prevIdx].clientId;
+        setCurrentSlideId(newId);
+        selectBlock(newId);
     };
 
     const handleNextSlide = () => {
         if (!currentSlideId || innerBlocks.length === 0) return;
         const idx = innerBlocks.findIndex((b: any) => b.clientId === currentSlideId);
         const nextIdx = idx < innerBlocks.length - 1 ? idx + 1 : 0;
-        setCurrentSlideId(innerBlocks[nextIdx].clientId);
+        const newId = innerBlocks[nextIdx].clientId;
+        setCurrentSlideId(newId);
+        selectBlock(newId);
+    };
+
+    const handleIndicatorClick = (clientId: string) => {
+        setCurrentSlideId(clientId);
+        selectBlock(clientId);
     };
 
     const renderTypeSelector = () => (
@@ -152,7 +161,7 @@ export const Edit: React.FC = () => {
                                 <button
                                     key={block.clientId}
                                     className={`sliderberg-slide-indicator ${block.clientId === currentSlideId ? 'active' : ''}`}
-                                    onClick={() => setCurrentSlideId(block.clientId)}
+                                    onClick={() => handleIndicatorClick(block.clientId)}
                                     aria-label={__('Go to slide', 'sliderberg') + ' ' + (innerBlocks.findIndex((b: any) => b.clientId === block.clientId) + 1)}
                                 />
                             ))}
