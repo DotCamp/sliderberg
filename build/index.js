@@ -2220,7 +2220,7 @@ const Edit = () => {
     variant: "primary",
     className: "sliderberg-add-slide",
     onClick: handleAddSlide
-  }, (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__.__)('Add Slide', 'sliderberg')), innerBlocks.length > 1 && (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(react__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_components__WEBPACK_IMPORTED_MODULE_3__.Button, {
+  }, (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__.__)('Add Slide', 'sliderberg')), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(react__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_components__WEBPACK_IMPORTED_MODULE_3__.Button, {
     className: "sliderberg-nav-button sliderberg-prev",
     onClick: handlePrevSlide,
     icon: _wordpress_icons__WEBPACK_IMPORTED_MODULE_11__["default"],

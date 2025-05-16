@@ -172,32 +172,31 @@ export const Edit: React.FC = () => {
                 >
                     {__('Add Slide', 'sliderberg')}
                 </Button>
-                {innerBlocks.length > 1 && (
-                    <>
-                        <Button
-                            className="sliderberg-nav-button sliderberg-prev"
-                            onClick={handlePrevSlide}
-                            icon={chevronLeft}
-                            label={__('Previous Slide', 'sliderberg')}
-                        />
-                        <div className="sliderberg-slide-indicators">
-                            {innerBlocks.map((block: any) => (
-                                <button
-                                    key={block.clientId}
-                                    className={`sliderberg-slide-indicator ${block.clientId === currentSlideId ? 'active' : ''}`}
-                                    onClick={() => handleIndicatorClick(block.clientId)}
-                                    aria-label={__('Go to slide', 'sliderberg') + ' ' + (innerBlocks.findIndex((b: any) => b.clientId === block.clientId) + 1)}
-                                />
-                            ))}
-                        </div>
-                        <Button
-                            className="sliderberg-nav-button sliderberg-next"
-                            onClick={handleNextSlide}
-                            icon={chevronRight}
-                            label={__('Next Slide', 'sliderberg')}
-                        />
-                    </>
-                )}
+                {/* Always show navigation controls */}
+                <>
+                    <Button
+                        className="sliderberg-nav-button sliderberg-prev"
+                        onClick={handlePrevSlide}
+                        icon={chevronLeft}
+                        label={__('Previous Slide', 'sliderberg')}
+                    />
+                    <div className="sliderberg-slide-indicators">
+                        {innerBlocks.map((block: any) => (
+                            <button
+                                key={block.clientId}
+                                className={`sliderberg-slide-indicator ${block.clientId === currentSlideId ? 'active' : ''}`}
+                                onClick={() => handleIndicatorClick(block.clientId)}
+                                aria-label={__('Go to slide', 'sliderberg') + ' ' + (innerBlocks.findIndex((b: any) => b.clientId === block.clientId) + 1)}
+                            />
+                        ))}
+                    </div>
+                    <Button
+                        className="sliderberg-nav-button sliderberg-next"
+                        onClick={handleNextSlide}
+                        icon={chevronRight}
+                        label={__('Next Slide', 'sliderberg')}
+                    />
+                </>
             </div>
             <div className="sliderberg-slides" style={{ position: 'relative' }}>
                 <div className="sliderberg-slides-container" style={{ width: '100%' }} data-current-slide-id={currentSlideId || ''}>
