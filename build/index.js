@@ -1732,20 +1732,32 @@ const ALLOWED_BLOCKS = ['core/paragraph', 'core/heading', 'core/image', 'core/ga
 // reusable block
 'core/more', 'core/page-break', 'core/read-more', 'core/latest-posts', 'core/categories', 'core/tag-cloud', 'core/archives', 'core/search', 'core/rss', 'core/navigation', 'core/navigation-link', 'core/social-links', 'core/social-link', 'core/site-title', 'core/site-tagline', 'core/site-logo'];
 const CONTENT_POSITIONS = [{
-  label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__.__)('Center', 'sliderberg'),
-  value: 'center'
+  label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__.__)('Top Left', 'sliderberg'),
+  value: 'top-left'
 }, {
-  label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__.__)('Top', 'sliderberg'),
-  value: 'top'
+  label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__.__)('Top Center', 'sliderberg'),
+  value: 'top-center'
 }, {
-  label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__.__)('Bottom', 'sliderberg'),
-  value: 'bottom'
+  label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__.__)('Top Right', 'sliderberg'),
+  value: 'top-right'
 }, {
-  label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__.__)('Left', 'sliderberg'),
-  value: 'left'
+  label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__.__)('Center Left', 'sliderberg'),
+  value: 'center-left'
 }, {
-  label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__.__)('Right', 'sliderberg'),
-  value: 'right'
+  label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__.__)('Center Center', 'sliderberg'),
+  value: 'center-center'
+}, {
+  label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__.__)('Center Right', 'sliderberg'),
+  value: 'center-right'
+}, {
+  label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__.__)('Bottom Left', 'sliderberg'),
+  value: 'bottom-left'
+}, {
+  label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__.__)('Bottom Center', 'sliderberg'),
+  value: 'bottom-center'
+}, {
+  label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__.__)('Bottom Right', 'sliderberg'),
+  value: 'bottom-right'
 }];
 const COLOR_PALETTE = ['#ffffff', '#000000', '#ffe066', '#e0aaff', '#5f4bb6', '#6c757d', '#f8f9fa', 'transparent'];
 (0,_wordpress_blocks__WEBPACK_IMPORTED_MODULE_1__.registerBlockType)('sliderberg/slide', {
@@ -1792,7 +1804,7 @@ const COLOR_PALETTE = ['#ffffff', '#000000', '#ffe066', '#e0aaff', '#5f4bb6', '#
     },
     contentPosition: {
       type: 'string',
-      default: 'center'
+      default: 'center-center'
     },
     isFixed: {
       type: 'boolean',

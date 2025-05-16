@@ -42,7 +42,7 @@ interface SlideAttributes {
     overlayColor: string;
     overlayOpacity: number;
     minHeight: number;
-    contentPosition: 'center' | 'top' | 'bottom' | 'left' | 'right';
+    contentPosition: 'top-left' | 'top-center' | 'top-right' | 'center-left' | 'center-center' | 'center-right' | 'bottom-left' | 'bottom-center' | 'bottom-right';
     isFixed: boolean;
 }
 
@@ -94,11 +94,15 @@ const ALLOWED_BLOCKS = [
 
 
 const CONTENT_POSITIONS = [
-    { label: __('Center', 'sliderberg'), value: 'center' },
-    { label: __('Top', 'sliderberg'), value: 'top' },
-    { label: __('Bottom', 'sliderberg'), value: 'bottom' },
-    { label: __('Left', 'sliderberg'), value: 'left' },
-    { label: __('Right', 'sliderberg'), value: 'right' },
+    { label: __('Top Left', 'sliderberg'), value: 'top-left' },
+    { label: __('Top Center', 'sliderberg'), value: 'top-center' },
+    { label: __('Top Right', 'sliderberg'), value: 'top-right' },
+    { label: __('Center Left', 'sliderberg'), value: 'center-left' },
+    { label: __('Center Center', 'sliderberg'), value: 'center-center' },
+    { label: __('Center Right', 'sliderberg'), value: 'center-right' },
+    { label: __('Bottom Left', 'sliderberg'), value: 'bottom-left' },
+    { label: __('Bottom Center', 'sliderberg'), value: 'bottom-center' },
+    { label: __('Bottom Right', 'sliderberg'), value: 'bottom-right' },
 ];
 
 const COLOR_PALETTE = [
@@ -146,7 +150,7 @@ registerBlockType('sliderberg/slide', {
         },
         contentPosition: {
             type: 'string',
-            default: 'center'
+            default: 'center-center'
         },
         isFixed: {
             type: 'boolean',
