@@ -34,9 +34,12 @@ declare module '@wordpress/block-editor' {
         children: ReactNode;
     }
 
+    interface BlockEditorStore {
+        getBlocks: (clientId: string) => Block[];
+    }
+
     export function useBlockProps(props?: BlockProps): BlockProps;
     export function useBlockProps(props?: { className?: string }): { className: string };
-    export function createBlock(name: string, attributes?: Record<string, any>): Block;
     export function useInnerBlocksProps(props?: InnerBlocksProps): InnerBlocksProps;
     export function useBlockEditorContext(): {
         insertBlock: (block: Block, clientId?: string, targetClientId?: string) => void;
@@ -53,3 +56,8 @@ declare module '@wordpress/block-editor' {
     export const BlockAlignmentToolbar: ComponentType<BlockAlignmentToolbarProps>;
 
 } 
+
+declare module '@wordpress/blocks' {
+    export function createBlock(name: string, attributes?: Record<string, any>): Block;
+
+}

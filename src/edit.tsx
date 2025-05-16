@@ -57,7 +57,7 @@ export const Edit: React.FC = () => {
 
     // Get the current inner blocks for this slider
     const innerBlocks = useSelect(
-        (select) => clientId ? select('core/block-editor').getBlocks(clientId) : [],
+        (select: any) => clientId ? select('core/block-editor').getBlocks(clientId) : [],
         [clientId]
     );
 
