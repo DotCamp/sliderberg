@@ -149,7 +149,11 @@ registerBlockType('sliderberg/slide', {
         // Placeholder UI (like Cover block)
         if (!hasBackground) {
             return (
-                <div className="sliderberg-slide-placeholder">
+                <div
+                    className={`sliderberg-slide sliderberg-slide-placeholder sliderberg-content-position-${contentPosition}`}
+                    data-client-id={clientId}
+                    style={{ minHeight: `${minHeight}px` }}
+                >
                     <strong>{__('Slide', 'sliderberg')}</strong>
                     <p>{__('Drag and drop an image, upload, or choose from your library.', 'sliderberg')}</p>
                     <div className="sliderberg-placeholder-actions">

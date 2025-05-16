@@ -4,7 +4,7 @@ import { __ } from '@wordpress/i18n';
 import { Icon } from '@wordpress/icons';
 import { grid, store, post, plus, chevronLeft, chevronRight } from '@wordpress/icons';
 import { Button } from '@wordpress/components';
-import { useDispatch, useSelect } from '@wordpress/data';
+import { useDispatch, useSelect, select } from '@wordpress/data';
 import { createBlock, getBlockType } from '@wordpress/blocks';
 
 interface SliderType {
@@ -67,6 +67,10 @@ export const Edit: React.FC = () => {
         if (innerBlocks.length > 0 && (!currentSlideId || !innerBlocks.find((b: any) => b.clientId === currentSlideId))) {
             setCurrentSlideId(innerBlocks[0].clientId);
         }
+        // Ensure correct slide is shown on initial render
+        if (typeof window !== 'undefined' && window.updateSliderbergSlidesVisibility) {
+            setTimeout(() => window.updateSliderbergSlidesVisibility(), 0);
+        }
     }, [innerBlocks, currentSlideId]);
 
     const { insertBlock, selectBlock } = useDispatch('core/block-editor');
@@ -74,6 +78,17 @@ export const Edit: React.FC = () => {
     const handleAddSlide = () => {
         const slideBlock = createBlock('sliderberg/slide');
         insertBlock(slideBlock, innerBlocks.length, clientId);
+        setTimeout(() => {
+            const updatedBlocks = select('core/block-editor').getBlocks(clientId);
+            const newBlock = updatedBlocks[updatedBlocks.length - 1];
+            if (newBlock) {
+                setCurrentSlideId(newBlock.clientId);
+                selectBlock(newBlock.clientId);
+                if (typeof window !== 'undefined' && window.updateSliderbergSlidesVisibility) {
+                    setTimeout(() => window.updateSliderbergSlidesVisibility(), 0);
+                }
+            }
+        }, 50);
     };
 
     const handleTypeSelect = (typeId: string) => {
@@ -90,6 +105,9 @@ export const Edit: React.FC = () => {
         const newId = innerBlocks[prevIdx].clientId;
         setCurrentSlideId(newId);
         selectBlock(newId);
+        if (typeof window !== 'undefined' && window.updateSliderbergSlidesVisibility) {
+            setTimeout(() => window.updateSliderbergSlidesVisibility(), 0);
+        }
     };
 
     const handleNextSlide = () => {
@@ -99,11 +117,17 @@ export const Edit: React.FC = () => {
         const newId = innerBlocks[nextIdx].clientId;
         setCurrentSlideId(newId);
         selectBlock(newId);
+        if (typeof window !== 'undefined' && window.updateSliderbergSlidesVisibility) {
+            setTimeout(() => window.updateSliderbergSlidesVisibility(), 0);
+        }
     };
 
     const handleIndicatorClick = (clientId: string) => {
         setCurrentSlideId(clientId);
         selectBlock(clientId);
+        if (typeof window !== 'undefined' && window.updateSliderbergSlidesVisibility) {
+            setTimeout(() => window.updateSliderbergSlidesVisibility(), 0);
+        }
     };
 
     const renderTypeSelector = () => (

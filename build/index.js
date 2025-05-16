@@ -1834,7 +1834,11 @@ const COLOR_PALETTE = ['#ffffff', '#000000', '#ffe066', '#e0aaff', '#5f4bb6', '#
     // Placeholder UI (like Cover block)
     if (!hasBackground) {
       return (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
-        className: "sliderberg-slide-placeholder"
+        className: `sliderberg-slide sliderberg-slide-placeholder sliderberg-content-position-${contentPosition}`,
+        "data-client-id": clientId,
+        style: {
+          minHeight: `${minHeight}px`
+        }
       }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("strong", null, (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__.__)('Slide', 'sliderberg')), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("p", null, (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__.__)('Drag and drop an image, upload, or choose from your library.', 'sliderberg')), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
         className: "sliderberg-placeholder-actions"
       }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_3__.MediaUploadCheck, null, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_3__.MediaUpload, {
@@ -2130,6 +2134,10 @@ const Edit = () => {
     if (innerBlocks.length > 0 && (!currentSlideId || !innerBlocks.find(b => b.clientId === currentSlideId))) {
       setCurrentSlideId(innerBlocks[0].clientId);
     }
+    // Ensure correct slide is shown on initial render
+    if (typeof window !== 'undefined' && window.updateSliderbergSlidesVisibility) {
+      setTimeout(() => window.updateSliderbergSlidesVisibility(), 0);
+    }
   }, [innerBlocks, currentSlideId]);
   const {
     insertBlock,
@@ -2138,6 +2146,17 @@ const Edit = () => {
   const handleAddSlide = () => {
     const slideBlock = (0,_wordpress_blocks__WEBPACK_IMPORTED_MODULE_5__.createBlock)('sliderberg/slide');
     insertBlock(slideBlock, innerBlocks.length, clientId);
+    setTimeout(() => {
+      const updatedBlocks = (0,_wordpress_data__WEBPACK_IMPORTED_MODULE_4__.select)('core/block-editor').getBlocks(clientId);
+      const newBlock = updatedBlocks[updatedBlocks.length - 1];
+      if (newBlock) {
+        setCurrentSlideId(newBlock.clientId);
+        selectBlock(newBlock.clientId);
+        if (typeof window !== 'undefined' && window.updateSliderbergSlidesVisibility) {
+          setTimeout(() => window.updateSliderbergSlidesVisibility(), 0);
+        }
+      }
+    }, 50);
   };
   const handleTypeSelect = typeId => {
     if (sliderTypes.find(type => type.id === typeId)?.isPro || sliderTypes.find(type => type.id === typeId)?.isComingSoon) {
@@ -2152,6 +2171,9 @@ const Edit = () => {
     const newId = innerBlocks[prevIdx].clientId;
     setCurrentSlideId(newId);
     selectBlock(newId);
+    if (typeof window !== 'undefined' && window.updateSliderbergSlidesVisibility) {
+      setTimeout(() => window.updateSliderbergSlidesVisibility(), 0);
+    }
   };
   const handleNextSlide = () => {
     if (!currentSlideId || innerBlocks.length === 0) return;
@@ -2160,10 +2182,16 @@ const Edit = () => {
     const newId = innerBlocks[nextIdx].clientId;
     setCurrentSlideId(newId);
     selectBlock(newId);
+    if (typeof window !== 'undefined' && window.updateSliderbergSlidesVisibility) {
+      setTimeout(() => window.updateSliderbergSlidesVisibility(), 0);
+    }
   };
   const handleIndicatorClick = clientId => {
     setCurrentSlideId(clientId);
     selectBlock(clientId);
+    if (typeof window !== 'undefined' && window.updateSliderbergSlidesVisibility) {
+      setTimeout(() => window.updateSliderbergSlidesVisibility(), 0);
+    }
   };
   const renderTypeSelector = () => (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
     className: "sliderberg-type-selector"

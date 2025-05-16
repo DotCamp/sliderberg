@@ -8,6 +8,9 @@ function updateSliderbergSlidesVisibility() {
   });
 }
 
+// Expose globally for React to call
+window.updateSliderbergSlidesVisibility = updateSliderbergSlidesVisibility;
+
 // Run on DOM changes (Gutenberg editor is dynamic)
 const observer = new MutationObserver(updateSliderbergSlidesVisibility);
 observer.observe(document.body, { childList: true, subtree: true });
