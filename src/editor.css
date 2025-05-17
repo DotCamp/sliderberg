@@ -153,23 +153,12 @@
     padding: 1rem;
 }
 
-.sliderberg-navigation {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 1rem;
-    margin-bottom: 1rem;
-    padding: 1rem;
-    background: #f8f9fa;
-    border-radius: 4px;
-    position: relative;
-}
-
 .sliderberg-action-buttons {
     display: flex;
+    justify-content: center;
     align-items: center;
     gap: 0.5rem;
-    margin-left: auto;
+    margin-bottom: 1rem;
 }
 
 .sliderberg-add-slide,
@@ -177,13 +166,22 @@
     margin: 0;
 }
 
+.sliderberg-navigation {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    z-index: 10;
+}
+
 .sliderberg-nav-controls {
     display: flex;
     align-items: center;
     gap: 1rem;
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
 }
 
 .sliderberg-slides {
@@ -207,14 +205,16 @@
 .sliderberg-nav-button {
     padding: 8px;
     border-radius: 50%;
-    background: #fff;
-    border: 1px solid #ddd;
+    background: rgba(255, 255, 255, 0.8);
+    border: 1px solid rgba(0, 0, 0, 0.1);
     cursor: pointer;
     transition: all 0.2s ease;
+    backdrop-filter: blur(4px);
 }
 
 .sliderberg-nav-button:hover {
-    background: #f0f0f0;
+    background: rgba(255, 255, 255, 0.95);
+    transform: scale(1.05);
 }
 
 .sliderberg-nav-button svg {
@@ -232,19 +232,20 @@
     width: 8px;
     height: 8px;
     border-radius: 50%;
-    background: #ddd;
-    border: none;
+    background: rgba(255, 255, 255, 0.5);
+    border: 1px solid rgba(0, 0, 0, 0.1);
     padding: 0;
     cursor: pointer;
     transition: all 0.2s ease;
 }
 
 .sliderberg-slide-indicator:hover {
-    background: #bbb;
+    background: rgba(255, 255, 255, 0.8);
+    transform: scale(1.2);
 }
 
 .sliderberg-slide-indicator.active {
-    background: #007cba;
+    background: rgba(255, 255, 255, 0.95);
     transform: scale(1.2);
 }
 

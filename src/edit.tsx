@@ -187,6 +187,34 @@ export const Edit: React.FC<EditProps> = ({ attributes, setAttributes }) => {
 
     const renderSliderContent = () => (
         <div className="sliderberg-content">
+            <div className="sliderberg-action-buttons">
+                <Button
+                    variant="primary"
+                    className="sliderberg-add-slide"
+                    onClick={handleAddSlide}
+                >
+                    {__('Add Slide', 'sliderberg')}
+                </Button>
+                <Button
+                    variant="secondary"
+                    className="sliderberg-delete-slide"
+                    onClick={handleDeleteSlide}
+                    disabled={innerBlocks.length <= 1}
+                    isDestructive
+                >
+                    {__('Delete Slide', 'sliderberg')}
+                </Button>
+            </div>
+            <div className="sliderberg-slides" style={{ position: 'relative' }}>
+                <div className="sliderberg-slides-container" style={{ width: '100%' }} data-current-slide-id={currentSlideId || ''}>
+                    <InnerBlocks
+                        allowedBlocks={ALLOWED_BLOCKS}
+                        template={[['sliderberg/slide', {}]]}
+                        templateLock={false}
+                        orientation="horizontal"
+                    />
+                </div>
+            </div>
             <div className="sliderberg-navigation">
                 <div className="sliderberg-nav-controls">
                     <Button
@@ -210,35 +238,6 @@ export const Edit: React.FC<EditProps> = ({ attributes, setAttributes }) => {
                         onClick={handleNextSlide}
                         icon={chevronRight}
                         label={__('Next Slide', 'sliderberg')}
-                    />
-                </div>
-                <div className="sliderberg-action-buttons">
-                    <Button
-                        variant="primary"
-                        className="sliderberg-add-slide"
-                        onClick={handleAddSlide}
-                    >
-                        {__('Add Slide', 'sliderberg')}
-                    </Button>
-                    <Button
-                        variant="secondary"
-                        className="sliderberg-delete-slide"
-                        onClick={handleDeleteSlide}
-                        disabled={innerBlocks.length <= 1}
-                        isDestructive
-                        style={{ marginLeft: '0.5rem' }}
-                    >
-                        {__('Delete Slide', 'sliderberg')}
-                    </Button>
-                </div>
-            </div>
-            <div className="sliderberg-slides" style={{ position: 'relative' }}>
-                <div className="sliderberg-slides-container" style={{ width: '100%' }} data-current-slide-id={currentSlideId || ''}>
-                    <InnerBlocks
-                        allowedBlocks={ALLOWED_BLOCKS}
-                        template={[['sliderberg/slide', {}]]}
-                        templateLock={false}
-                        orientation="horizontal"
                     />
                 </div>
             </div>
