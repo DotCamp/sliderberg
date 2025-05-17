@@ -216,4 +216,72 @@
     width: 24px;
     height: 24px;
     fill: currentColor;
+}
+
+.sliderberg-nav-controls-grouped {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    width: auto;
+    position: static;
+    height: auto;
+    background: transparent;
+    box-shadow: none;
+}
+
+.sliderberg-nav-controls-grouped .sliderberg-nav-button {
+    position: static;
+    top: auto;
+    left: auto;
+    right: auto;
+    transform: none;
+    margin: 0 0.5rem;
+}
+
+.sliderberg-nav-controls-grouped .sliderberg-slide-indicators {
+    margin: 0;
+    gap: 0.5rem;
+}
+
+.sliderberg-navigation[data-type="top"] {
+    top: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    position: absolute;
+    transform: none;
+    margin: 0;
+    z-index: 10;
+}
+
+.sliderberg-navigation[data-type="bottom"] {
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    position: absolute;
+    transform: none;
+    margin: 0;
+    z-index: 10;
+}
+
+.sliderberg-navigation-bar {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 48px;
+    background: transparent;
+    position: relative;
+    z-index: 10;
+}
+
+.sliderberg-navigation-bar-top {
+    margin-bottom: 8px;
+}
+
+.sliderberg-navigation-bar-bottom {
+    margin-top: 8px;
 } 

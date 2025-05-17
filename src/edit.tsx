@@ -225,58 +225,103 @@ export const Edit: React.FC<EditProps> = ({ attributes, setAttributes }) => {
                     />
                 </div>
             </div>
-            <div className="sliderberg-navigation"
-                data-type={attributes.navigationType}
-                data-placement={attributes.navigationPlacement}
-                style={{
-                    opacity: attributes.navigationOpacity
-                }}
-            >
-                <div className="sliderberg-nav-controls">
-                    <Button
-                        className="sliderberg-nav-button sliderberg-prev"
-                        onClick={handlePrevSlide}
-                        icon={chevronLeft}
-                        label={__('Previous Slide', 'sliderberg')}
-                        data-shape={attributes.navigationShape}
-                        data-size={attributes.navigationSize}
-                        style={{ 
-                            color: attributes.navigationColor,
-                            backgroundColor: attributes.navigationBgColor,
-                            ...(attributes.navigationType === 'split' && {
-                                transform: `translateY(calc(-50% + ${attributes.navigationVerticalPosition}px))`,
-                                left: `${attributes.navigationHorizontalPosition}px`
-                            })
-                        }}
-                    />
-                    <Button
-                        className="sliderberg-nav-button sliderberg-next"
-                        onClick={handleNextSlide}
-                        icon={chevronRight}
-                        label={__('Next Slide', 'sliderberg')}
-                        data-shape={attributes.navigationShape}
-                        data-size={attributes.navigationSize}
-                        style={{ 
-                            color: attributes.navigationColor,
-                            backgroundColor: attributes.navigationBgColor,
-                            ...(attributes.navigationType === 'split' && {
-                                transform: `translateY(calc(-50% + ${attributes.navigationVerticalPosition}px))`,
-                                right: `${attributes.navigationHorizontalPosition}px`
-                            })
-                        }}
-                    />
+            {attributes.navigationType === 'top' || attributes.navigationType === 'bottom' ? (
+                <div className="sliderberg-navigation"
+                    data-type={attributes.navigationType}
+                    data-placement={attributes.navigationPlacement}
+                    style={{ opacity: attributes.navigationOpacity }}
+                >
+                    <div className="sliderberg-nav-controls sliderberg-nav-controls-grouped">
+                        <Button
+                            className="sliderberg-nav-button sliderberg-prev"
+                            onClick={handlePrevSlide}
+                            icon={chevronLeft}
+                            label={__('Previous Slide', 'sliderberg')}
+                            data-shape={attributes.navigationShape}
+                            data-size={attributes.navigationSize}
+                            style={{
+                                color: attributes.navigationColor,
+                                backgroundColor: attributes.navigationBgColor
+                            }}
+                        />
+                        <div className="sliderberg-slide-indicators">
+                            {innerBlocks.map((block: any) => (
+                                <button
+                                    key={block.clientId}
+                                    className={`sliderberg-slide-indicator ${block.clientId === currentSlideId ? 'active' : ''}`}
+                                    onClick={() => handleIndicatorClick(block.clientId)}
+                                    aria-label={__('Go to slide', 'sliderberg') + ' ' + (innerBlocks.findIndex((b: any) => b.clientId === block.clientId) + 1)}
+                                />
+                            ))}
+                        </div>
+                        <Button
+                            className="sliderberg-nav-button sliderberg-next"
+                            onClick={handleNextSlide}
+                            icon={chevronRight}
+                            label={__('Next Slide', 'sliderberg')}
+                            data-shape={attributes.navigationShape}
+                            data-size={attributes.navigationSize}
+                            style={{
+                                color: attributes.navigationColor,
+                                backgroundColor: attributes.navigationBgColor
+                            }}
+                        />
+                    </div>
                 </div>
-            </div>
-            <div className="sliderberg-slide-indicators">
-                {innerBlocks.map((block: any) => (
-                    <button
-                        key={block.clientId}
-                        className={`sliderberg-slide-indicator ${block.clientId === currentSlideId ? 'active' : ''}`}
-                        onClick={() => handleIndicatorClick(block.clientId)}
-                        aria-label={__('Go to slide', 'sliderberg') + ' ' + (innerBlocks.findIndex((b: any) => b.clientId === block.clientId) + 1)}
-                    />
-                ))}
-            </div>
+            ) : (
+                <>
+                    <div className="sliderberg-navigation"
+                        data-type={attributes.navigationType}
+                        data-placement={attributes.navigationPlacement}
+                        style={{ opacity: attributes.navigationOpacity }}
+                    >
+                        <div className="sliderberg-nav-controls">
+                            <Button
+                                className="sliderberg-nav-button sliderberg-prev"
+                                onClick={handlePrevSlide}
+                                icon={chevronLeft}
+                                label={__('Previous Slide', 'sliderberg')}
+                                data-shape={attributes.navigationShape}
+                                data-size={attributes.navigationSize}
+                                style={{
+                                    color: attributes.navigationColor,
+                                    backgroundColor: attributes.navigationBgColor,
+                                    ...(attributes.navigationType === 'split' && {
+                                        transform: `translateY(calc(-50% + ${attributes.navigationVerticalPosition}px))`,
+                                        left: `${attributes.navigationHorizontalPosition}px`
+                                    })
+                                }}
+                            />
+                            <Button
+                                className="sliderberg-nav-button sliderberg-next"
+                                onClick={handleNextSlide}
+                                icon={chevronRight}
+                                label={__('Next Slide', 'sliderberg')}
+                                data-shape={attributes.navigationShape}
+                                data-size={attributes.navigationSize}
+                                style={{
+                                    color: attributes.navigationColor,
+                                    backgroundColor: attributes.navigationBgColor,
+                                    ...(attributes.navigationType === 'split' && {
+                                        transform: `translateY(calc(-50% + ${attributes.navigationVerticalPosition}px))`,
+                                        right: `${attributes.navigationHorizontalPosition}px`
+                                    })
+                                }}
+                            />
+                        </div>
+                    </div>
+                    <div className="sliderberg-slide-indicators">
+                        {innerBlocks.map((block: any) => (
+                            <button
+                                key={block.clientId}
+                                className={`sliderberg-slide-indicator ${block.clientId === currentSlideId ? 'active' : ''}`}
+                                onClick={() => handleIndicatorClick(block.clientId)}
+                                aria-label={__('Go to slide', 'sliderberg') + ' ' + (innerBlocks.findIndex((b: any) => b.clientId === block.clientId) + 1)}
+                            />
+                        ))}
+                    </div>
+                </>
+            )}
         </div>
     );
 
@@ -302,6 +347,7 @@ export const Edit: React.FC<EditProps> = ({ attributes, setAttributes }) => {
                             { label: __('Outside Content', 'sliderberg'), value: 'outside' }
                         ]}
                         onChange={(value) => setAttributes({ navigationPlacement: value as 'overlay' | 'outside' })}
+                        disabled={attributes.navigationType === 'top' || attributes.navigationType === 'bottom'}
                     />
                     <SelectControl
                         label={__('Shape', 'sliderberg')}
@@ -370,10 +416,185 @@ export const Edit: React.FC<EditProps> = ({ attributes, setAttributes }) => {
         );
     };
 
+    React.useEffect(() => {
+        if (attributes.navigationType === 'top' || attributes.navigationType === 'bottom') {
+            if (attributes.navigationPlacement !== 'outside') {
+                setAttributes({ navigationPlacement: 'outside' });
+            }
+        }
+    }, [attributes.navigationType, attributes.navigationPlacement, setAttributes]);
+
     return (
         <div {...blockProps}>
             {renderInspectorControls()}
-            {!attributes.type ? renderTypeSelector() : renderSliderContent()}
+            {!attributes.type ? renderTypeSelector() : (
+                <>
+                    <div className="sliderberg-action-buttons">
+                        <Button
+                            variant="primary"
+                            className="sliderberg-add-slide"
+                            onClick={handleAddSlide}
+                        >
+                            {__('Add Slide', 'sliderberg')}
+                        </Button>
+                        <Button
+                            variant="secondary"
+                            className="sliderberg-delete-slide"
+                            onClick={handleDeleteSlide}
+                            disabled={innerBlocks.length <= 1}
+                            isDestructive
+                        >
+                            {__('Delete Slide', 'sliderberg')}
+                        </Button>
+                    </div>
+                    {attributes.navigationType === 'top' && (
+                        <div className="sliderberg-navigation-bar sliderberg-navigation-bar-top">
+                            <div className="sliderberg-nav-controls sliderberg-nav-controls-grouped">
+                                <Button
+                                    className="sliderberg-nav-button sliderberg-prev"
+                                    onClick={handlePrevSlide}
+                                    icon={chevronLeft}
+                                    label={__('Previous Slide', 'sliderberg')}
+                                    data-shape={attributes.navigationShape}
+                                    data-size={attributes.navigationSize}
+                                    style={{
+                                        color: attributes.navigationColor,
+                                        backgroundColor: attributes.navigationBgColor
+                                    }}
+                                />
+                                <div className="sliderberg-slide-indicators">
+                                    {innerBlocks.map((block: any) => (
+                                        <button
+                                            key={block.clientId}
+                                            className={`sliderberg-slide-indicator ${block.clientId === currentSlideId ? 'active' : ''}`}
+                                            onClick={() => handleIndicatorClick(block.clientId)}
+                                            aria-label={__('Go to slide', 'sliderberg') + ' ' + (innerBlocks.findIndex((b: any) => b.clientId === block.clientId) + 1)}
+                                        />
+                                    ))}
+                                </div>
+                                <Button
+                                    className="sliderberg-nav-button sliderberg-next"
+                                    onClick={handleNextSlide}
+                                    icon={chevronRight}
+                                    label={__('Next Slide', 'sliderberg')}
+                                    data-shape={attributes.navigationShape}
+                                    data-size={attributes.navigationSize}
+                                    style={{
+                                        color: attributes.navigationColor,
+                                        backgroundColor: attributes.navigationBgColor
+                                    }}
+                                />
+                            </div>
+                        </div>
+                    )}
+                    <div className="sliderberg-content">
+                        <div className="sliderberg-slides" style={{ position: 'relative' }}>
+                            <div className="sliderberg-slides-container" style={{ width: '100%' }} data-current-slide-id={currentSlideId || ''}>
+                                <InnerBlocks
+                                    allowedBlocks={ALLOWED_BLOCKS}
+                                    template={[['sliderberg/slide', {}]]}
+                                    templateLock={false}
+                                    orientation="horizontal"
+                                />
+                            </div>
+                        </div>
+                        {attributes.navigationType === 'split' && (
+                            <>
+                                <div className="sliderberg-navigation"
+                                    data-type={attributes.navigationType}
+                                    data-placement={attributes.navigationPlacement}
+                                    style={{ opacity: attributes.navigationOpacity }}
+                                >
+                                    <div className="sliderberg-nav-controls">
+                                        <Button
+                                            className="sliderberg-nav-button sliderberg-prev"
+                                            onClick={handlePrevSlide}
+                                            icon={chevronLeft}
+                                            label={__('Previous Slide', 'sliderberg')}
+                                            data-shape={attributes.navigationShape}
+                                            data-size={attributes.navigationSize}
+                                            style={{
+                                                color: attributes.navigationColor,
+                                                backgroundColor: attributes.navigationBgColor,
+                                                ...(attributes.navigationType === 'split' && {
+                                                    transform: `translateY(calc(-50% + ${attributes.navigationVerticalPosition}px))`,
+                                                    left: `${attributes.navigationHorizontalPosition}px`
+                                                })
+                                            }}
+                                        />
+                                        <Button
+                                            className="sliderberg-nav-button sliderberg-next"
+                                            onClick={handleNextSlide}
+                                            icon={chevronRight}
+                                            label={__('Next Slide', 'sliderberg')}
+                                            data-shape={attributes.navigationShape}
+                                            data-size={attributes.navigationSize}
+                                            style={{
+                                                color: attributes.navigationColor,
+                                                backgroundColor: attributes.navigationBgColor,
+                                                ...(attributes.navigationType === 'split' && {
+                                                    transform: `translateY(calc(-50% + ${attributes.navigationVerticalPosition}px))`,
+                                                    right: `${attributes.navigationHorizontalPosition}px`
+                                                })
+                                            }}
+                                        />
+                                    </div>
+                                </div>
+                                <div className="sliderberg-slide-indicators">
+                                    {innerBlocks.map((block: any) => (
+                                        <button
+                                            key={block.clientId}
+                                            className={`sliderberg-slide-indicator ${block.clientId === currentSlideId ? 'active' : ''}`}
+                                            onClick={() => handleIndicatorClick(block.clientId)}
+                                            aria-label={__('Go to slide', 'sliderberg') + ' ' + (innerBlocks.findIndex((b: any) => b.clientId === block.clientId) + 1)}
+                                        />
+                                    ))}
+                                </div>
+                            </>
+                        )}
+                    </div>
+                    {attributes.navigationType === 'bottom' && (
+                        <div className="sliderberg-navigation-bar sliderberg-navigation-bar-bottom">
+                            <div className="sliderberg-nav-controls sliderberg-nav-controls-grouped">
+                                <Button
+                                    className="sliderberg-nav-button sliderberg-prev"
+                                    onClick={handlePrevSlide}
+                                    icon={chevronLeft}
+                                    label={__('Previous Slide', 'sliderberg')}
+                                    data-shape={attributes.navigationShape}
+                                    data-size={attributes.navigationSize}
+                                    style={{
+                                        color: attributes.navigationColor,
+                                        backgroundColor: attributes.navigationBgColor
+                                    }}
+                                />
+                                <div className="sliderberg-slide-indicators">
+                                    {innerBlocks.map((block: any) => (
+                                        <button
+                                            key={block.clientId}
+                                            className={`sliderberg-slide-indicator ${block.clientId === currentSlideId ? 'active' : ''}`}
+                                            onClick={() => handleIndicatorClick(block.clientId)}
+                                            aria-label={__('Go to slide', 'sliderberg') + ' ' + (innerBlocks.findIndex((b: any) => b.clientId === block.clientId) + 1)}
+                                        />
+                                    ))}
+                                </div>
+                                <Button
+                                    className="sliderberg-nav-button sliderberg-next"
+                                    onClick={handleNextSlide}
+                                    icon={chevronRight}
+                                    label={__('Next Slide', 'sliderberg')}
+                                    data-shape={attributes.navigationShape}
+                                    data-size={attributes.navigationSize}
+                                    style={{
+                                        color: attributes.navigationColor,
+                                        backgroundColor: attributes.navigationBgColor
+                                    }}
+                                />
+                            </div>
+                        </div>
+                    )}
+                </>
+            )}
         </div>
     );
 }; 
