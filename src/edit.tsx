@@ -50,8 +50,14 @@ const sliderTypes: SliderType[] = [
 
 const ALLOWED_BLOCKS = ['sliderberg/slide'];
 
-export const Edit: React.FC = () => {
-    const [selectedType, setSelectedType] = useState<string | null>(null);
+interface EditProps {
+    attributes: {
+        type: string;
+    };
+    setAttributes: (attrs: { type?: string }) => void;
+}
+
+export const Edit: React.FC<EditProps> = ({ attributes, setAttributes }) => {
     const [currentSlideId, setCurrentSlideId] = useState<string | null>(null);
     const blockProps = useBlockProps();
     const clientId = blockProps['data-block'];
@@ -95,7 +101,7 @@ export const Edit: React.FC = () => {
         if (sliderTypes.find(type => type.id === typeId)?.isPro || sliderTypes.find(type => type.id === typeId)?.isComingSoon) {
             return;
         }
-        setSelectedType(typeId);
+        setAttributes({ type: typeId });
     };
 
     const handlePrevSlide = () => {
@@ -241,7 +247,7 @@ export const Edit: React.FC = () => {
 
     return (
         <div {...blockProps}>
-            {!selectedType ? renderTypeSelector() : renderSliderContent()}
+            {!attributes.type ? renderTypeSelector() : renderSliderContent()}
         </div>
     );
 }; 

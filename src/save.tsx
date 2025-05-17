@@ -1,7 +1,13 @@
 import React from 'react';
 import { useBlockProps, InnerBlocks } from '@wordpress/block-editor';
 
-export const Save: React.FC = () => {
+interface SaveProps {
+    attributes: {
+        type: string;
+    };
+}
+
+export const Save: React.FC<SaveProps> = ({ attributes }) => {
     const blockProps = useBlockProps.save();
 
     return (

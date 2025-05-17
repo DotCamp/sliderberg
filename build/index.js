@@ -2138,8 +2138,10 @@ const sliderTypes = [{
   isComingSoon: true
 }];
 const ALLOWED_BLOCKS = ['sliderberg/slide'];
-const Edit = () => {
-  const [selectedType, setSelectedType] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(null);
+const Edit = ({
+  attributes,
+  setAttributes
+}) => {
   const [currentSlideId, setCurrentSlideId] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(null);
   const blockProps = (0,_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_1__.useBlockProps)();
   const clientId = blockProps['data-block'];
@@ -2181,7 +2183,9 @@ const Edit = () => {
     if (sliderTypes.find(type => type.id === typeId)?.isPro || sliderTypes.find(type => type.id === typeId)?.isComingSoon) {
       return;
     }
-    setSelectedType(typeId);
+    setAttributes({
+      type: typeId
+    });
   };
   const handlePrevSlide = () => {
     if (!currentSlideId || innerBlocks.length === 0) return;
@@ -2304,7 +2308,7 @@ const Edit = () => {
   }))));
   return (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
     ...blockProps
-  }, !selectedType ? renderTypeSelector() : renderSliderContent());
+  }, !attributes.type ? renderTypeSelector() : renderSliderContent());
 };
 
 /***/ }),
@@ -2369,6 +2373,10 @@ __webpack_require__.r(__webpack_exports__);
     align: {
       type: 'string',
       default: 'full'
+    },
+    type: {
+      type: 'string',
+      default: ''
     }
   },
   edit: _edit__WEBPACK_IMPORTED_MODULE_4__.Edit,
@@ -2395,7 +2403,9 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-const Save = () => {
+const Save = ({
+  attributes
+}) => {
   const blockProps = _wordpress_block_editor__WEBPACK_IMPORTED_MODULE_1__.useBlockProps.save();
   return (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
     ...blockProps

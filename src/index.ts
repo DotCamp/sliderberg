@@ -28,6 +28,10 @@ registerBlockType('sliderberg/sliderberg', {
         align: {
             type: 'string',
             default: 'full'
+        },
+        type: {
+            type: 'string',
+            default: ''
         }
     },
     edit: Edit,
