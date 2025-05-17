@@ -1,6 +1,6 @@
 node_modules
-build
-dist
+/build
+dist/
 .DS_Store
 .idea
 .vscode
@@ -13,3 +13,4 @@ dist
 .env.test
 .env.production
 .env.local.example
+package-lock.json
