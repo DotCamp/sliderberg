@@ -1,56 +1,73 @@
-document.addEventListener('DOMContentLoaded', () => {
-    const sliders = document.querySelectorAll('.sliderberg-container');
-
+document.addEventListener('DOMContentLoaded', function() {
+    const sliders = document.querySelectorAll('.wp-block-sliderberg-sliderberg');
+    
     sliders.forEach(slider => {
-        const slidesContainer = slider.querySelector('.sliderberg-slides-container');
-        const slides = slidesContainer.children;
+        const container = slider.querySelector('.sliderberg-slides-container');
+        const slides = container.children;
         const prevButton = slider.querySelector('.sliderberg-prev');
         const nextButton = slider.querySelector('.sliderberg-next');
-        const indicatorsContainer = slider.querySelector('.sliderberg-slide-indicators');
+        const indicators = slider.querySelector('.sliderberg-slide-indicators');
         let currentSlide = 0;
-
-        // Create slide indicators
+        
+        // Create indicators
         Array.from(slides).forEach((_, index) => {
             const indicator = document.createElement('button');
             indicator.className = 'sliderberg-slide-indicator';
             indicator.setAttribute('aria-label', `Go to slide ${index + 1}`);
             indicator.addEventListener('click', () => goToSlide(index));
-            indicatorsContainer.appendChild(indicator);
+            indicators.appendChild(indicator);
         });
-
+        
         // Update indicators
-        const updateIndicators = () => {
-            const indicators = indicatorsContainer.children;
-            Array.from(indicators).forEach((indicator, index) => {
-                indicator.classList.toggle('active', index === currentSlide);
+        function updateIndicators() {
+            const dots = indicators.children;
+            Array.from(dots).forEach((dot, index) => {
+                dot.classList.toggle('active', index === currentSlide);
             });
-        };
-
+        }
+        
         // Go to specific slide
-        const goToSlide = (index) => {
+        function goToSlide(index) {
             currentSlide = index;
-            slidesContainer.style.transform = `translateX(-${currentSlide * 100}%)`;
+            container.style.transform = `translateX(-${currentSlide * 100}%)`;
             updateIndicators();
-        };
-
-        // Previous slide
-        const prevSlide = () => {
-            currentSlide = (currentSlide > 0) ? currentSlide - 1 : slides.length - 1;
-            goToSlide(currentSlide);
-        };
-
+        }
+        
         // Next slide
-        const nextSlide = () => {
-            currentSlide = (currentSlide < slides.length - 1) ? currentSlide + 1 : 0;
+        function nextSlide() {
+            currentSlide = (currentSlide + 1) % slides.length;
             goToSlide(currentSlide);
-        };
-
-        // Add event listeners
+        }
+        
+        // Previous slide
+        function prevSlide() {
+            currentSlide = (currentSlide - 1 + slides.length) % slides.length;
+            goToSlide(currentSlide);
+        }
+        
+        // Event listeners
         prevButton.addEventListener('click', prevSlide);
         nextButton.addEventListener('click', nextSlide);
-
+        
         // Initialize
         updateIndicators();
-        goToSlide(0); // Ensure first slide is shown initially
+        
+        // Optional: Auto-play
+        let autoplayInterval;
+        
+        function startAutoplay() {
+            autoplayInterval = setInterval(nextSlide, 5000);
+        }
+        
+        function stopAutoplay() {
+            clearInterval(autoplayInterval);
+        }
+        
+        // Start autoplay
+        startAutoplay();
+        
+        // Pause on hover
+        slider.addEventListener('mouseenter', stopAutoplay);
+        slider.addEventListener('mouseleave', startAutoplay);
     });
 }); 

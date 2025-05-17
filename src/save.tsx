@@ -4,6 +4,15 @@ import { useBlockProps, InnerBlocks } from '@wordpress/block-editor';
 interface SaveProps {
     attributes: {
         type: string;
+        navigationType: string;
+        navigationPlacement: string;
+        navigationOpacity: number;
+        navigationBgColor: string;
+        navigationShape: string;
+        navigationSize: string;
+        navigationColor: string;
+        navigationVerticalPosition: number;
+        navigationHorizontalPosition: number;
     };
 }
 
@@ -17,20 +26,55 @@ export const Save: React.FC<SaveProps> = ({ attributes }) => {
                     <div className="sliderberg-slides-container">
                         <InnerBlocks.Content />
                     </div>
-                    <div className="sliderberg-navigation">
-                        <button className="sliderberg-nav-button sliderberg-prev" aria-label="Previous Slide">
-                            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M14.6 7.4L13.2 6l-6 6 6 6 1.4-1.4L9.4 12z"/>
-                            </svg>
-                        </button>
-                        <div className="sliderberg-slide-indicators">
-                            {/* Slide indicators will be added dynamically via JavaScript */}
+                    <div 
+                        className="sliderberg-navigation"
+                        data-type={attributes.navigationType}
+                        data-placement={attributes.navigationPlacement}
+                        style={{
+                            opacity: attributes.navigationOpacity
+                        }}
+                    >
+                        <div className="sliderberg-nav-controls">
+                            <button 
+                                className="sliderberg-nav-button sliderberg-prev" 
+                                aria-label="Previous Slide"
+                                data-shape={attributes.navigationShape}
+                                data-size={attributes.navigationSize}
+                                style={{ 
+                                    color: attributes.navigationColor,
+                                    backgroundColor: attributes.navigationBgColor,
+                                    ...(attributes.navigationType === 'split' && {
+                                        transform: `translateY(calc(-50% + ${attributes.navigationVerticalPosition}px))`,
+                                        left: `${attributes.navigationHorizontalPosition}px`
+                                    })
+                                }}
+                            >
+                                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M14.6 7.4L13.2 6l-6 6 6 6 1.4-1.4L9.4 12z"/>
+                                </svg>
+                            </button>
+                            <button 
+                                className="sliderberg-nav-button sliderberg-next" 
+                                aria-label="Next Slide"
+                                data-shape={attributes.navigationShape}
+                                data-size={attributes.navigationSize}
+                                style={{ 
+                                    color: attributes.navigationColor,
+                                    backgroundColor: attributes.navigationBgColor,
+                                    ...(attributes.navigationType === 'split' && {
+                                        transform: `translateY(calc(-50% + ${attributes.navigationVerticalPosition}px))`,
+                                        right: `${attributes.navigationHorizontalPosition}px`
+                                    })
+                                }}
+                            >
+                                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M9.4 7.4l1.4-1.4 6 6-6 6-1.4-1.4L14.6 12z"/>
+                                </svg>
+                            </button>
                         </div>
-                        <button className="sliderberg-nav-button sliderberg-next" aria-label="Next Slide">
-                            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M9.4 7.4l1.4-1.4 6 6-6 6-1.4-1.4L14.6 12z"/>
-                            </svg>
-                        </button>
+                    </div>
+                    <div className="sliderberg-slide-indicators">
+                        {/* Slide indicators will be added dynamically via JavaScript or server-side rendering */}
                     </div>
                 </div>
             </div>

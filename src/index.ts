@@ -32,6 +32,42 @@ registerBlockType('sliderberg/sliderberg', {
         type: {
             type: 'string',
             default: ''
+        },
+        navigationType: {
+            type: 'string',
+            default: 'split'
+        },
+        navigationPlacement: {
+            type: 'string',
+            default: 'overlay'
+        },
+        navigationShape: {
+            type: 'string',
+            default: 'circle'
+        },
+        navigationSize: {
+            type: 'string',
+            default: 'medium'
+        },
+        navigationColor: {
+            type: 'string',
+            default: '#ffffff'
+        },
+        navigationBgColor: {
+            type: 'string',
+            default: 'rgba(0, 0, 0, 0.5)'
+        },
+        navigationOpacity: {
+            type: 'number',
+            default: 1
+        },
+        navigationVerticalPosition: {
+            type: 'number',
+            default: 20
+        },
+        navigationHorizontalPosition: {
+            type: 'number',
+            default: 20
         }
     },
     edit: Edit,

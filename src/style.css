@@ -29,40 +29,72 @@
 /* Slide Navigation */
 .sliderberg-navigation {
     position: absolute;
-    bottom: 20px;
-    left: 50%;
-    transform: translateX(-50%);
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    z-index: 10;
+    transition: opacity 0.3s ease;
+    width: 100%;
+    background: transparent !important;
+    pointer-events: none;
+}
+
+.sliderberg-nav-controls {
+    position: relative;
+    width: 100%;
+    max-width: 1200px;
+    padding: 0 20px;
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 1rem;
-    z-index: 10;
+    height: 100%;
+    pointer-events: auto;
 }
 
 .sliderberg-nav-button {
-    padding: 8px;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.8);
-    border: 1px solid rgba(0, 0, 0, 0.1);
-    cursor: pointer;
-    transition: all 0.2s ease;
-    backdrop-filter: blur(4px);
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: auto;
 }
 
-.sliderberg-nav-button:hover {
-    background: rgba(255, 255, 255, 0.95);
-    transform: scale(1.05);
+.sliderberg-nav-button.sliderberg-prev {
+    left: 0;
 }
 
-.sliderberg-nav-button svg {
-    width: 20px;
-    height: 20px;
+.sliderberg-nav-button.sliderberg-next {
+    right: 0;
 }
 
+.sliderberg-navigation[data-placement="overlay"] {
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    transform: none;
+}
+
+.sliderberg-navigation[data-placement="outside"] {
+    position: relative;
+    margin: 1rem 0 0 0;
+    height: 56px; /* Ensure enough height for arrows */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Slide indicators always below the slides */
 .sliderberg-slide-indicators {
     display: flex;
     gap: 0.5rem;
     align-items: center;
+    justify-content: center;
+    margin: 24px 0 0 0;
+    width: 100%;
+    position: relative;
+    z-index: 1;
 }
 
 .sliderberg-slide-indicator {
@@ -84,4 +116,104 @@
 .sliderberg-slide-indicator.active {
     background: rgba(255, 255, 255, 0.95);
     transform: scale(1.2);
+}
+
+/* Navigation Types */
+.sliderberg-navigation[data-type="split"] {
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.sliderberg-navigation[data-type="top"] {
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.sliderberg-navigation[data-type="bottom"] {
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+/* Navigation Styles */
+.sliderberg-nav-button[data-style="chevron"] svg {
+    /* Default chevron style is already in place */
+}
+
+.sliderberg-nav-button[data-style="arrow"] svg {
+    /* Arrow style */
+    transform: scale(1.2);
+}
+
+.sliderberg-nav-button[data-style="caret"] svg {
+    /* Caret style */
+    transform: scale(1.1);
+}
+
+.sliderberg-nav-button[data-style="angle"] svg {
+    /* Angle style */
+    transform: scale(1.3);
+}
+
+/* Navigation Shapes */
+.sliderberg-nav-button[data-shape="circle"] {
+    border-radius: 50%;
+}
+
+.sliderberg-nav-button[data-shape="square"] {
+    border-radius: 4px;
+}
+
+/* Navigation Sizes */
+.sliderberg-nav-button[data-size="small"] {
+    padding: 6px;
+}
+
+.sliderberg-nav-button[data-size="small"] svg {
+    width: 16px;
+    height: 16px;
+}
+
+.sliderberg-nav-button[data-size="medium"] {
+    padding: 8px;
+}
+
+.sliderberg-nav-button[data-size="medium"] svg {
+    width: 20px;
+    height: 20px;
+}
+
+.sliderberg-nav-button[data-size="large"] {
+    padding: 12px;
+}
+
+.sliderberg-nav-button[data-size="large"] svg {
+    width: 24px;
+    height: 24px;
+}
+
+.sliderberg-nav-button {
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.8);
+    min-width: 40px;
+    min-height: 40px;
+}
+
+.sliderberg-nav-button:hover {
+    transform: scale(1.05);
+    background: rgba(255, 255, 255, 0.95);
+}
+
+.sliderberg-nav-button svg {
+    width: 24px;
+    height: 24px;
+    fill: currentColor;
 } 
