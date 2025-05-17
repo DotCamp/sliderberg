@@ -243,7 +243,23 @@ registerBlockType('sliderberg/slide', {
         return (
             <>
                 <InspectorControls>
-                    <PanelBody title={__('Background Settings', 'sliderberg')}>
+                    <PanelBody title={__('Layout Settings', 'sliderberg')}>
+                        <SelectControl
+                            label={__('Content Position', 'sliderberg')}
+                            value={contentPosition}
+                            options={CONTENT_POSITIONS}
+                            onChange={(value) => setAttributes({ contentPosition: value as SlideAttributes['contentPosition'] })}
+                        />
+                        <RangeControl
+                            label={__('Minimum Height', 'sliderberg')}
+                            value={minHeight}
+                            onChange={(value) => setAttributes({ minHeight: value })}
+                            min={100}
+                            max={1000}
+                            step={10}
+                        />
+                    </PanelBody>
+                    <PanelBody title={__('Background Settings', 'sliderberg')} initialOpen={false}>
                         <SelectControl
                             label={__('Background Type', 'sliderberg')}
                             value={backgroundType}
@@ -302,7 +318,7 @@ registerBlockType('sliderberg/slide', {
                             </>
                         )}
                     </PanelBody>
-                    <PanelBody title={__('Overlay Settings', 'sliderberg')}>
+                    <PanelBody title={__('Overlay Settings', 'sliderberg')} initialOpen={false}>
                         <ColorPicker
                             color={overlayColor}
                             onChangeComplete={(color) => setAttributes({ overlayColor: typeof color === 'string' ? color : color.hex })}
@@ -315,22 +331,6 @@ registerBlockType('sliderberg/slide', {
                             min={0}
                             max={1}
                             step={0.1}
-                        />
-                    </PanelBody>
-                    <PanelBody title={__('Layout Settings', 'sliderberg')}>
-                        <SelectControl
-                            label={__('Content Position', 'sliderberg')}
-                            value={contentPosition}
-                            options={CONTENT_POSITIONS}
-                            onChange={(value) => setAttributes({ contentPosition: value as SlideAttributes['contentPosition'] })}
-                        />
-                        <RangeControl
-                            label={__('Minimum Height', 'sliderberg')}
-                            value={minHeight}
-                            onChange={(value) => setAttributes({ minHeight: value })}
-                            min={100}
-                            max={1000}
-                            step={10}
                         />
                     </PanelBody>
                 </InspectorControls>
