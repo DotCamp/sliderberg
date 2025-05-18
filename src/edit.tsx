@@ -63,13 +63,20 @@ interface EditProps {
         navigationOpacity: number;
         navigationVerticalPosition: number;
         navigationHorizontalPosition: number;
+        dotColor: string;
+        dotActiveColor: string;
     };
     setAttributes: (attrs: Partial<EditProps['attributes']>) => void;
 }
 
 export const Edit: React.FC<EditProps> = ({ attributes, setAttributes }) => {
     const [currentSlideId, setCurrentSlideId] = useState<string | null>(null);
-    const blockProps = useBlockProps();
+    const blockProps = useBlockProps({
+        style: {
+            '--sliderberg-dot-color': attributes.dotColor,
+            '--sliderberg-dot-active-color': attributes.dotActiveColor
+        } as React.CSSProperties
+    });
     const clientId = blockProps['data-block'];
 
     // Get the current inner blocks for this slider
@@ -251,6 +258,9 @@ export const Edit: React.FC<EditProps> = ({ attributes, setAttributes }) => {
                                     className={`sliderberg-slide-indicator ${block.clientId === currentSlideId ? 'active' : ''}`}
                                     onClick={() => handleIndicatorClick(block.clientId)}
                                     aria-label={__('Go to slide', 'sliderberg') + ' ' + (innerBlocks.findIndex((b: any) => b.clientId === block.clientId) + 1)}
+                                    style={{
+                                        backgroundColor: block.clientId === currentSlideId ? attributes.dotActiveColor : attributes.dotColor
+                                    }}
                                 />
                             ))}
                         </div>
@@ -317,6 +327,9 @@ export const Edit: React.FC<EditProps> = ({ attributes, setAttributes }) => {
                                 className={`sliderberg-slide-indicator ${block.clientId === currentSlideId ? 'active' : ''}`}
                                 onClick={() => handleIndicatorClick(block.clientId)}
                                 aria-label={__('Go to slide', 'sliderberg') + ' ' + (innerBlocks.findIndex((b: any) => b.clientId === block.clientId) + 1)}
+                                style={{
+                                    backgroundColor: block.clientId === currentSlideId ? attributes.dotActiveColor : attributes.dotColor
+                                }}
                             />
                         ))}
                     </div>
@@ -411,6 +424,22 @@ export const Edit: React.FC<EditProps> = ({ attributes, setAttributes }) => {
                         step={1}
                         help={__('Adjust the horizontal position of the navigation arrows (in pixels)', 'sliderberg')}
                     />
+                    <div className="sliderberg-dot-colors">
+                        <p className="components-base-control__label">{__('Dot Color', 'sliderberg')}</p>
+                        <ColorPicker
+                            color={attributes.dotColor}
+                            onChangeComplete={(color) => setAttributes({ dotColor: typeof color === 'string' ? color : color.hex })}
+                            enableAlpha
+                        />
+                        </div>
+                    <div className="sliderberg-dot-colors">
+                        <p className="components-base-control__label">{__('Active Dot Color', 'sliderberg')}</p>
+                        <ColorPicker
+                            color={attributes.dotActiveColor}
+                            onChangeComplete={(color) => setAttributes({ dotActiveColor: typeof color === 'string' ? color : color.hex })}
+                            enableAlpha
+                        />
+                        </div>
                 </PanelBody>
             </InspectorControls>
         );
@@ -469,6 +498,9 @@ export const Edit: React.FC<EditProps> = ({ attributes, setAttributes }) => {
                                             className={`sliderberg-slide-indicator ${block.clientId === currentSlideId ? 'active' : ''}`}
                                             onClick={() => handleIndicatorClick(block.clientId)}
                                             aria-label={__('Go to slide', 'sliderberg') + ' ' + (innerBlocks.findIndex((b: any) => b.clientId === block.clientId) + 1)}
+                                            style={{
+                                                backgroundColor: block.clientId === currentSlideId ? attributes.dotActiveColor : attributes.dotColor
+                                            }}
                                         />
                                     ))}
                                 </div>
@@ -547,6 +579,9 @@ export const Edit: React.FC<EditProps> = ({ attributes, setAttributes }) => {
                                             className={`sliderberg-slide-indicator ${block.clientId === currentSlideId ? 'active' : ''}`}
                                             onClick={() => handleIndicatorClick(block.clientId)}
                                             aria-label={__('Go to slide', 'sliderberg') + ' ' + (innerBlocks.findIndex((b: any) => b.clientId === block.clientId) + 1)}
+                                            style={{
+                                                backgroundColor: block.clientId === currentSlideId ? attributes.dotActiveColor : attributes.dotColor
+                                            }}
                                         />
                                     ))}
                                 </div>
@@ -575,6 +610,9 @@ export const Edit: React.FC<EditProps> = ({ attributes, setAttributes }) => {
                                             className={`sliderberg-slide-indicator ${block.clientId === currentSlideId ? 'active' : ''}`}
                                             onClick={() => handleIndicatorClick(block.clientId)}
                                             aria-label={__('Go to slide', 'sliderberg') + ' ' + (innerBlocks.findIndex((b: any) => b.clientId === block.clientId) + 1)}
+                                            style={{
+                                                backgroundColor: block.clientId === currentSlideId ? attributes.dotActiveColor : attributes.dotColor
+                                            }}
                                         />
                                     ))}
                                 </div>

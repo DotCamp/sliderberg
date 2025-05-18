@@ -35,7 +35,7 @@ registerBlockType('sliderberg/sliderberg', {
         },
         navigationType: {
             type: 'string',
-            default: 'split'
+            default: 'bottom'
         },
         navigationPlacement: {
             type: 'string',
@@ -68,6 +68,14 @@ registerBlockType('sliderberg/sliderberg', {
         navigationHorizontalPosition: {
             type: 'number',
             default: 20
+        },
+        dotColor: {
+            type: 'string',
+            default: '#6c757d'  // grey
+        },
+        dotActiveColor: {
+            type: 'string',
+            default: '#ffffff'  // white
         }
     },
     edit: Edit,

@@ -101,7 +101,7 @@
     width: 8px;
     height: 8px;
     border-radius: 50%;
-    background: rgba(255, 255, 255, 0.5);
+    background: var(--sliderberg-dot-color, rgba(255, 255, 255, 0.5));
     border: 1px solid rgba(0, 0, 0, 0.1);
     padding: 0;
     cursor: pointer;
@@ -109,12 +109,12 @@
 }
 
 .sliderberg-slide-indicator:hover {
-    background: rgba(255, 255, 255, 0.8);
+    background: var(--sliderberg-dot-active-color, rgba(255, 255, 255, 0.8));
     transform: scale(1.2);
 }
 
 .sliderberg-slide-indicator.active {
-    background: rgba(255, 255, 255, 0.95);
+    background: var(--sliderberg-dot-active-color, rgba(255, 255, 255, 0.95));
     transform: scale(1.2);
 }
 

@@ -13,6 +13,8 @@ interface SaveProps {
         navigationColor: string;
         navigationVerticalPosition: number;
         navigationHorizontalPosition: number;
+        dotColor: string;
+        dotActiveColor: string;
     };
 }
 
@@ -20,7 +22,10 @@ export const Save: React.FC<SaveProps> = ({ attributes }) => {
     const blockProps = useBlockProps.save();
 
     return (
-        <div {...blockProps}>
+        <div {...blockProps} style={{
+            '--sliderberg-dot-color': attributes.dotColor,
+            '--sliderberg-dot-active-color': attributes.dotActiveColor
+        } as React.CSSProperties}>
             {attributes.navigationType === 'top' && (
                 <div className="sliderberg-navigation-bar sliderberg-navigation-bar-top">
                     <div className="sliderberg-nav-controls sliderberg-nav-controls-grouped">
