@@ -64,6 +64,26 @@ document.addEventListener('DOMContentLoaded', function() {
                     slide.style.width = '100%';
                     slide.style.minWidth = '100%';
                 });
+                
+                // Create clones for infinite loop effect if needed
+                if (slides.length > 1) {
+                    // Clone first and last slides for seamless looping
+                    const firstSlideClone = slides[0].cloneNode(true);
+                    const lastSlideClone = slides[slides.length - 1].cloneNode(true);
+                    
+                    firstSlideClone.setAttribute('aria-hidden', 'true');
+                    lastSlideClone.setAttribute('aria-hidden', 'true');
+                    firstSlideClone.classList.add('sliderberg-clone');
+                    lastSlideClone.classList.add('sliderberg-clone');
+                    
+                    // Add the clones to the container
+                    container.appendChild(firstSlideClone);
+                    container.insertBefore(lastSlideClone, slides[0]);
+                    
+                    // Start at the first real slide (index 1 now, since we added a clone at the beginning)
+                    container.style.transform = 'translateX(-100%)';
+                    currentSlide = 1; // Adjust current slide index to account for the clone
+                }
             } else if (transitionEffect === 'fade' || transitionEffect === 'zoom') {
                 // For fade/zoom effects, we need absolute positioning
                 container.style.display = 'block';
@@ -113,69 +133,137 @@ document.addEventListener('DOMContentLoaded', function() {
                 const indicator = document.createElement('button');
                 indicator.className = `sliderberg-slide-indicator ${index === 0 ? 'active' : ''}`;
                 indicator.setAttribute('aria-label', `Go to slide ${index + 1}`);
-                indicator.addEventListener('click', () => goToSlide(index));
+                indicator.addEventListener('click', () => goToSlide(index, null));
                 indicators.appendChild(indicator);
             });
             
-            // Update indicators
+            // Update indicators - adjusted for clone slides
             function updateIndicators() {
                 const dots = indicators.children;
+                let indicatorIndex = currentSlide;
+                
+                // Adjust indicator index for clone slides
+                if (transitionEffect === 'slide' && slides.length > 1) {
+                    if (currentSlide === 0) {
+                        indicatorIndex = slides.length - 1;
+                    } else if (currentSlide === slides.length + 1) {
+                        indicatorIndex = 0;
+                    } else {
+                        indicatorIndex = currentSlide - 1;
+                    }
+                }
+                
                 Array.from(dots).forEach((dot, index) => {
-                    dot.classList.toggle('active', index === currentSlide);
+                    dot.classList.toggle('active', index === indicatorIndex);
                 });
             }
             
             // Go to specific slide
-            function goToSlide(index) {
-                if (isAnimating || index === currentSlide) return;
+            // direction: 'next', 'prev', or null (for direct jumps)
+            function goToSlide(index, direction) {
+                if (isAnimating) return;
                 isAnimating = true;
                 
                 const previousSlide = currentSlide;
-                currentSlide = index;
                 
-                // Apply different transitions based on effect
-                if (transitionEffect === 'slide') {
-                    container.style.transform = `translateX(-${currentSlide * 100}%)`;
-                    
-                    // Reset animation flag after transition completes
-                    setTimeout(() => {
-                        isAnimating = false;
-                    }, transitionDuration + 50);
-                } 
-                else if (transitionEffect === 'fade' || transitionEffect === 'zoom') {
-                    // Update z-index to ensure current slide is on top
-                    slides[previousSlide].style.zIndex = '0';
-                    slides[currentSlide].style.zIndex = '1';
-                    
-                    // Fade out current slide
-                    slides[previousSlide].style.opacity = '0';
-                    if (transitionEffect === 'zoom') {
-                        slides[previousSlide].style.transform = 'scale(0.95)';
+                // For slide effect with clones, we need special handling
+                if (transitionEffect === 'slide' && slides.length > 1) {
+                    // If we're using indicator or direct navigation
+                    if (direction === null) {
+                        // Adjust for clones (real slides are at index 1 to slides.length)
+                        currentSlide = index + 1;
+                        container.style.transition = `transform ${transitionDuration}ms ${transitionEasing}`;
+                        container.style.transform = `translateX(-${currentSlide * 100}%)`;
+                    } 
+                    // For next/prev navigation, handle direction
+                    else {
+                        if (direction === 'next') {
+                            currentSlide++;
+                            container.style.transition = `transform ${transitionDuration}ms ${transitionEasing}`;
+                            container.style.transform = `translateX(-${currentSlide * 100}%)`;
+                            
+                            // If we've moved to the clone of the first slide
+                            if (currentSlide === slides.length + 1) {
+                                // After transition, jump to the real first slide without animation
+                                setTimeout(() => {
+                                    container.style.transition = 'none';
+                                    currentSlide = 1;
+                                    container.style.transform = `translateX(-${currentSlide * 100}%)`;
+                                    setTimeout(() => {
+                                        container.style.transition = `transform ${transitionDuration}ms ${transitionEasing}`;
+                                        isAnimating = false;
+                                    }, 50);
+                                }, transitionDuration);
+                            } else {
+                                setTimeout(() => { isAnimating = false; }, transitionDuration);
+                            }
+                        } else if (direction === 'prev') {
+                            currentSlide--;
+                            container.style.transition = `transform ${transitionDuration}ms ${transitionEasing}`;
+                            container.style.transform = `translateX(-${currentSlide * 100}%)`;
+                            
+                            // If we've moved to the clone of the last slide
+                            if (currentSlide === 0) {
+                                // After transition, jump to the real last slide without animation
+                                setTimeout(() => {
+                                    container.style.transition = 'none';
+                                    currentSlide = slides.length;
+                                    container.style.transform = `translateX(-${currentSlide * 100}%)`;
+                                    setTimeout(() => {
+                                        container.style.transition = `transform ${transitionDuration}ms ${transitionEasing}`;
+                                        isAnimating = false;
+                                    }, 50);
+                                }, transitionDuration);
+                            } else {
+                                setTimeout(() => { isAnimating = false; }, transitionDuration);
+                            }
+                        }
                     }
+                }
+                // For fade/zoom effects or sliders with only one slide
+                else {
+                    currentSlide = index;
                     
-                    // Set next slide to visible but transparent
-                    slides[currentSlide].style.opacity = '0';
-                    slides[currentSlide].style.visibility = 'visible';
-                    slides[currentSlide].style.display = 'block';
-                    
-                    if (transitionEffect === 'zoom') {
-                        slides[currentSlide].style.transform = 'scale(1.05)';
-                    }
-                    
-                    // Small delay to ensure the browser recognizes the change
-                    setTimeout(() => {
-                        // Fade in next slide
-                        slides[currentSlide].style.opacity = '1';
+                    // Apply different transitions based on effect
+                    if (transitionEffect === 'slide') {
+                        container.style.transform = `translateX(-${currentSlide * 100}%)`;
+                        setTimeout(() => { isAnimating = false; }, transitionDuration + 50);
+                    } 
+                    else if (transitionEffect === 'fade' || transitionEffect === 'zoom') {
+                        // Update z-index to ensure current slide is on top
+                        slides[previousSlide].style.zIndex = '0';
+                        slides[currentSlide].style.zIndex = '1';
                         
+                        // Fade out current slide
+                        slides[previousSlide].style.opacity = '0';
                         if (transitionEffect === 'zoom') {
-                            slides[currentSlide].style.transform = 'scale(1)';
+                            slides[previousSlide].style.transform = direction === 'next' ? 'scale(0.95)' : 'scale(1.05)';
                         }
                         
-                        // Reset animation flag after transition
+                        // Set next slide to visible but transparent
+                        slides[currentSlide].style.opacity = '0';
+                        slides[currentSlide].style.visibility = 'visible';
+                        slides[currentSlide].style.display = 'block';
+                        
+                        if (transitionEffect === 'zoom') {
+                            slides[currentSlide].style.transform = direction === 'next' ? 'scale(1.05)' : 'scale(0.95)';
+                        }
+                        
+                        // Small delay to ensure the browser recognizes the change
                         setTimeout(() => {
-                            isAnimating = false;
-                        }, transitionDuration);
-                    }, 20);
+                            // Fade in next slide
+                            slides[currentSlide].style.opacity = '1';
+                            
+                            if (transitionEffect === 'zoom') {
+                                slides[currentSlide].style.transform = 'scale(1)';
+                            }
+                            
+                            // Reset animation flag after transition
+                            setTimeout(() => {
+                                isAnimating = false;
+                            }, transitionDuration);
+                        }, 20);
+                    }
                 }
                 
                 updateIndicators();
@@ -184,13 +272,27 @@ document.addEventListener('DOMContentLoaded', function() {
             // Next slide
             function nextSlide() {
                 if (isAnimating) return;
-                goToSlide((currentSlide + 1) % slides.length);
+                
+                if (transitionEffect === 'fade' || transitionEffect === 'zoom') {
+                    const nextIndex = (currentSlide + 1) % slides.length;
+                    goToSlide(nextIndex, 'next');
+                } else if (transitionEffect === 'slide') {
+                    // For slide effect, we use the direction parameter to manage transitions
+                    goToSlide(null, 'next');
+                }
             }
             
             // Previous slide
             function prevSlide() {
                 if (isAnimating) return;
-                goToSlide((currentSlide - 1 + slides.length) % slides.length);
+                
+                if (transitionEffect === 'fade' || transitionEffect === 'zoom') {
+                    const prevIndex = (currentSlide - 1 + slides.length) % slides.length;
+                    goToSlide(prevIndex, 'prev');
+                } else if (transitionEffect === 'slide') {
+                    // For slide effect, we use the direction parameter to manage transitions
+                    goToSlide(null, 'prev');
+                }
             }
             
             // Event listeners
