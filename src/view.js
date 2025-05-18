@@ -362,23 +362,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 startAutoplay();
             }
 
-            // Handle pause on hover
-            if (pauseOnHover) {
-                container.addEventListener('mouseenter', stopAutoplay);
-                container.addEventListener('mouseleave', startAutoplay);
+            // Handle pause on hover - FIX: Use slider element for mouse events
+            if (pauseOnHover && autoplay) {
+                // Add event listeners to the entire slider instead of just the container
+                slider.addEventListener('mouseenter', stopAutoplay);
+                slider.addEventListener('mouseleave', startAutoplay);
             }
-
-            // Clean up on unmount
-            return () => {
-                stopAutoplay();
-                if (pauseOnHover) {
-                    container.removeEventListener('mouseenter', stopAutoplay);
-                    container.removeEventListener('mouseleave', startAutoplay);
-                }
-            };
-            
-            // Log successful initialization
-            console.log(`SliderBerg slider initialized with ${slides.length} slides and ${transitionEffect} transition`);
         });
     }
 });
