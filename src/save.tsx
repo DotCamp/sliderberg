@@ -18,6 +18,9 @@ interface SaveProps {
         transitionEffect: 'slide' | 'fade' | 'zoom';
         transitionDuration: number;
         transitionEasing: 'ease' | 'ease-in' | 'ease-out' | 'ease-in-out' | 'linear';
+        autoplay: boolean;
+        autoplaySpeed: number;
+        pauseOnHover: boolean;
     };
 }
 
@@ -73,6 +76,9 @@ export const Save: React.FC<SaveProps> = ({ attributes }) => {
                         data-transition-effect={attributes.transitionEffect}
                         data-transition-duration={attributes.transitionDuration}
                         data-transition-easing={attributes.transitionEasing}
+                        data-autoplay={attributes.autoplay}
+                        data-autoplay-speed={attributes.autoplaySpeed}
+                        data-pause-on-hover={attributes.pauseOnHover}
                     >
                         <InnerBlocks.Content />
                     </div>

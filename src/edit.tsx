@@ -3,7 +3,7 @@ import { useBlockProps, InnerBlocks, BlockControls, BlockListBlock } from '@word
 import { __ } from '@wordpress/i18n';
 import { Icon } from '@wordpress/icons';
 import { grid, store, post, plus, chevronLeft, chevronRight } from '@wordpress/icons';
-import { Button, PanelBody, SelectControl, RangeControl, ColorPicker } from '@wordpress/components';
+import { Button, PanelBody, SelectControl, RangeControl, ColorPicker, ToggleControl } from '@wordpress/components';
 import { useDispatch, useSelect, select } from '@wordpress/data';
 import { createBlock, getBlockType } from '@wordpress/blocks';
 import { InspectorControls } from '@wordpress/block-editor';
@@ -68,6 +68,9 @@ interface EditProps {
         transitionEffect: 'slide' | 'fade' | 'zoom';
         transitionDuration: number;
         transitionEasing: 'ease' | 'ease-in' | 'ease-out' | 'ease-in-out' | 'linear';
+        autoplay: boolean;
+        autoplaySpeed: number;
+        pauseOnHover: boolean;
     };
     setAttributes: (attrs: Partial<EditProps['attributes']>) => void;
 }
@@ -341,145 +344,167 @@ export const Edit: React.FC<EditProps> = ({ attributes, setAttributes }) => {
         </div>
     );
 
-    const renderInspectorControls = () => {
-        return (
-            <InspectorControls>
-                <PanelBody title={__('Animation Settings', 'sliderberg')} initialOpen={true}>
-                    <SelectControl
-                        label={__('Transition Effect', 'sliderberg')}
-                        value={attributes.transitionEffect}
-                        options={[
-                            { label: __('Slide', 'sliderberg'), value: 'slide' },
-                            { label: __('Fade', 'sliderberg'), value: 'fade' },
-                            { label: __('Zoom', 'sliderberg'), value: 'zoom' }
-                        ]}
-                        onChange={(value) => setAttributes({ transitionEffect: value as 'slide' | 'fade' | 'zoom' })}
-                    />
-                    <RangeControl
-                        label={__('Transition Duration', 'sliderberg')}
-                        value={attributes.transitionDuration}
-                        onChange={(value) => setAttributes({ transitionDuration: value })}
-                        min={200}
-                        max={2000}
-                        step={100}
-                        help={__('Duration of the transition in milliseconds', 'sliderberg')}
-                    />
-                    <SelectControl
-                        label={__('Transition Easing', 'sliderberg')}
-                        value={attributes.transitionEasing}
-                        options={[
-                            { label: __('Ease', 'sliderberg'), value: 'ease' },
-                            { label: __('Ease In', 'sliderberg'), value: 'ease-in' },
-                            { label: __('Ease Out', 'sliderberg'), value: 'ease-out' },
-                            { label: __('Ease In Out', 'sliderberg'), value: 'ease-in-out' },
-                            { label: __('Linear', 'sliderberg'), value: 'linear' }
-                        ]}
-                        onChange={(value) => setAttributes({ transitionEasing: value as 'ease' | 'ease-in' | 'ease-out' | 'ease-in-out' | 'linear' })}
-                    />
-                </PanelBody>
-                <PanelBody title={__('Navigation Settings', 'sliderberg')} initialOpen={false}>
-                    <SelectControl
-                        label={__('Navigation Type', 'sliderberg')}
-                        value={attributes.navigationType}
-                        options={[
-                            { label: __('Split Arrows', 'sliderberg'), value: 'split' },
-                            { label: __('Top Arrows', 'sliderberg'), value: 'top' },
-                            { label: __('Bottom Arrows', 'sliderberg'), value: 'bottom' }
-                        ]}
-                        onChange={(value) => setAttributes({ navigationType: value as 'split' | 'top' | 'bottom' })}
-                    />
-                    <SelectControl
-                        label={__('Placement', 'sliderberg')}
-                        value={attributes.navigationPlacement}
-                        options={[
-                            { label: __('Overlay', 'sliderberg'), value: 'overlay' },
-                            { label: __('Outside Content', 'sliderberg'), value: 'outside' }
-                        ]}
-                        onChange={(value) => setAttributes({ navigationPlacement: value as 'overlay' | 'outside' })}
-                        disabled={attributes.navigationType === 'top' || attributes.navigationType === 'bottom'}
-                    />
-                    <SelectControl
-                        label={__('Shape', 'sliderberg')}
-                        value={attributes.navigationShape}
-                        options={[
-                            { label: __('Circle', 'sliderberg'), value: 'circle' },
-                            { label: __('Square', 'sliderberg'), value: 'square' }
-                        ]}
-                        onChange={(value) => setAttributes({ navigationShape: value as 'circle' | 'square' })}
-                    />
-                    <SelectControl
-                        label={__('Size', 'sliderberg')}
-                        value={attributes.navigationSize}
-                        options={[
-                            { label: __('Small', 'sliderberg'), value: 'small' },
-                            { label: __('Medium', 'sliderberg'), value: 'medium' },
-                            { label: __('Large', 'sliderberg'), value: 'large' }
-                        ]}
-                        onChange={(value) => setAttributes({ navigationSize: value as 'small' | 'medium' | 'large' })}
-                    />
-                    <div className="sliderberg-color-controls">
-                        <div className="sliderberg-color-control">
-                            <label>{__('Arrow Color', 'sliderberg')}</label>
-                            <ColorPicker
-                                color={attributes.navigationColor}
-                                onChangeComplete={(color) => setAttributes({ navigationColor: typeof color === 'string' ? color : color.hex })}
-                            />
-                        </div>
-                        <div className="sliderberg-color-control">
-                            <label>{__('Background Color', 'sliderberg')}</label>
-                            <ColorPicker
-                                color={attributes.navigationBgColor}
-                                onChangeComplete={(color) => setAttributes({ navigationBgColor: typeof color === 'string' ? color : color.hex })}
-                                enableAlpha
-                            />
-                        </div>
+    const renderInspectorControls = () => (
+        <InspectorControls>
+            <PanelBody title={__('Animation Settings', 'sliderberg')} initialOpen={true}>
+                <SelectControl
+                    label={__('Transition Effect', 'sliderberg')}
+                    value={attributes.transitionEffect}
+                    options={[
+                        { label: __('Slide', 'sliderberg'), value: 'slide' },
+                        { label: __('Fade', 'sliderberg'), value: 'fade' },
+                        { label: __('Zoom', 'sliderberg'), value: 'zoom' }
+                    ]}
+                    onChange={(value) => setAttributes({ transitionEffect: value as 'slide' | 'fade' | 'zoom' })}
+                />
+                <RangeControl
+                    label={__('Transition Duration', 'sliderberg')}
+                    value={attributes.transitionDuration}
+                    onChange={(value) => setAttributes({ transitionDuration: value })}
+                    min={200}
+                    max={2000}
+                    step={100}
+                    help={__('Duration of the transition in milliseconds', 'sliderberg')}
+                />
+                <SelectControl
+                    label={__('Transition Easing', 'sliderberg')}
+                    value={attributes.transitionEasing}
+                    options={[
+                        { label: __('Ease', 'sliderberg'), value: 'ease' },
+                        { label: __('Ease In', 'sliderberg'), value: 'ease-in' },
+                        { label: __('Ease Out', 'sliderberg'), value: 'ease-out' },
+                        { label: __('Ease In Out', 'sliderberg'), value: 'ease-in-out' },
+                        { label: __('Linear', 'sliderberg'), value: 'linear' }
+                    ]}
+                    onChange={(value) => setAttributes({ transitionEasing: value as 'ease' | 'ease-in' | 'ease-out' | 'ease-in-out' | 'linear' })}
+                />
+            </PanelBody>
+            <PanelBody title={__('Autoplay Settings', 'sliderberg')} initialOpen={false}>
+                <ToggleControl
+                    label={__('Enable Autoplay', 'sliderberg')}
+                    checked={attributes.autoplay}
+                    onChange={(value) => setAttributes({ autoplay: value })}
+                />
+                {attributes.autoplay && (
+                    <>
+                        <RangeControl
+                            label={__('Autoplay Speed (ms)', 'sliderberg')}
+                            value={attributes.autoplaySpeed}
+                            onChange={(value) => setAttributes({ autoplaySpeed: value })}
+                            min={1000}
+                            max={10000}
+                            step={500}
+                        />
+                        <ToggleControl
+                            label={__('Pause on Hover', 'sliderberg')}
+                            checked={attributes.pauseOnHover}
+                            onChange={(value) => setAttributes({ pauseOnHover: value })}
+                        />
+                    </>
+                )}
+            </PanelBody>
+            <PanelBody title={__('Navigation Settings', 'sliderberg')} initialOpen={false}>
+                <SelectControl
+                    label={__('Navigation Type', 'sliderberg')}
+                    value={attributes.navigationType}
+                    options={[
+                        { label: __('Split Arrows', 'sliderberg'), value: 'split' },
+                        { label: __('Top Arrows', 'sliderberg'), value: 'top' },
+                        { label: __('Bottom Arrows', 'sliderberg'), value: 'bottom' }
+                    ]}
+                    onChange={(value) => setAttributes({ navigationType: value as 'split' | 'top' | 'bottom' })}
+                />
+                <SelectControl
+                    label={__('Placement', 'sliderberg')}
+                    value={attributes.navigationPlacement}
+                    options={[
+                        { label: __('Overlay', 'sliderberg'), value: 'overlay' },
+                        { label: __('Outside Content', 'sliderberg'), value: 'outside' }
+                    ]}
+                    onChange={(value) => setAttributes({ navigationPlacement: value as 'overlay' | 'outside' })}
+                    disabled={attributes.navigationType === 'top' || attributes.navigationType === 'bottom'}
+                />
+                <SelectControl
+                    label={__('Shape', 'sliderberg')}
+                    value={attributes.navigationShape}
+                    options={[
+                        { label: __('Circle', 'sliderberg'), value: 'circle' },
+                        { label: __('Square', 'sliderberg'), value: 'square' }
+                    ]}
+                    onChange={(value) => setAttributes({ navigationShape: value as 'circle' | 'square' })}
+                />
+                <SelectControl
+                    label={__('Size', 'sliderberg')}
+                    value={attributes.navigationSize}
+                    options={[
+                        { label: __('Small', 'sliderberg'), value: 'small' },
+                        { label: __('Medium', 'sliderberg'), value: 'medium' },
+                        { label: __('Large', 'sliderberg'), value: 'large' }
+                    ]}
+                    onChange={(value) => setAttributes({ navigationSize: value as 'small' | 'medium' | 'large' })}
+                />
+                <div className="sliderberg-color-controls">
+                    <div className="sliderberg-color-control">
+                        <label>{__('Arrow Color', 'sliderberg')}</label>
+                        <ColorPicker
+                            color={attributes.navigationColor}
+                            onChangeComplete={(color) => setAttributes({ navigationColor: typeof color === 'string' ? color : color.hex })}
+                        />
                     </div>
-                    <RangeControl
-                        label={__('Opacity', 'sliderberg')}
-                        value={attributes.navigationOpacity}
-                        onChange={(value) => setAttributes({ navigationOpacity: value })}
-                        min={0}
-                        max={1}
-                        step={0.1}
-                    />
-                    <RangeControl
-                        label={__('Vertical Position', 'sliderberg')}
-                        value={attributes.navigationVerticalPosition}
-                        onChange={(value) => setAttributes({ navigationVerticalPosition: value })}
-                        min={0}
-                        max={100}
-                        step={1}
-                        help={__('Adjust the vertical position of the navigation arrows (in pixels)', 'sliderberg')}
-                    />
-                    <RangeControl
-                        label={__('Horizontal Position', 'sliderberg')}
-                        value={attributes.navigationHorizontalPosition}
-                        onChange={(value) => setAttributes({ navigationHorizontalPosition: value })}
-                        min={0}
-                        max={100}
-                        step={1}
-                        help={__('Adjust the horizontal position of the navigation arrows (in pixels)', 'sliderberg')}
-                    />
-                    <div className="sliderberg-dot-colors">
-                        <p className="components-base-control__label">{__('Dot Color', 'sliderberg')}</p>
+                    <div className="sliderberg-color-control">
+                        <label>{__('Background Color', 'sliderberg')}</label>
                         <ColorPicker
-                            color={attributes.dotColor}
-                            onChangeComplete={(color) => setAttributes({ dotColor: typeof color === 'string' ? color : color.hex })}
+                            color={attributes.navigationBgColor}
+                            onChangeComplete={(color) => setAttributes({ navigationBgColor: typeof color === 'string' ? color : color.hex })}
                             enableAlpha
                         />
-                        </div>
-                    <div className="sliderberg-dot-colors">
-                        <p className="components-base-control__label">{__('Active Dot Color', 'sliderberg')}</p>
-                        <ColorPicker
-                            color={attributes.dotActiveColor}
-                            onChangeComplete={(color) => setAttributes({ dotActiveColor: typeof color === 'string' ? color : color.hex })}
-                            enableAlpha
-                        />
-                        </div>
-                </PanelBody>
-            </InspectorControls>
-        );
-    };
+                    </div>
+                </div>
+                <RangeControl
+                    label={__('Opacity', 'sliderberg')}
+                    value={attributes.navigationOpacity}
+                    onChange={(value) => setAttributes({ navigationOpacity: value })}
+                    min={0}
+                    max={1}
+                    step={0.1}
+                />
+                <RangeControl
+                    label={__('Vertical Position', 'sliderberg')}
+                    value={attributes.navigationVerticalPosition}
+                    onChange={(value) => setAttributes({ navigationVerticalPosition: value })}
+                    min={0}
+                    max={100}
+                    step={1}
+                    help={__('Adjust the vertical position of the navigation arrows (in pixels)', 'sliderberg')}
+                />
+                <RangeControl
+                    label={__('Horizontal Position', 'sliderberg')}
+                    value={attributes.navigationHorizontalPosition}
+                    onChange={(value) => setAttributes({ navigationHorizontalPosition: value })}
+                    min={0}
+                    max={100}
+                    step={1}
+                    help={__('Adjust the horizontal position of the navigation arrows (in pixels)', 'sliderberg')}
+                />
+                <div className="sliderberg-dot-colors">
+                    <p className="components-base-control__label">{__('Dot Color', 'sliderberg')}</p>
+                    <ColorPicker
+                        color={attributes.dotColor}
+                        onChangeComplete={(color) => setAttributes({ dotColor: typeof color === 'string' ? color : color.hex })}
+                        enableAlpha
+                    />
+                </div>
+                <div className="sliderberg-dot-colors">
+                    <p className="components-base-control__label">{__('Active Dot Color', 'sliderberg')}</p>
+                    <ColorPicker
+                        color={attributes.dotActiveColor}
+                        onChangeComplete={(color) => setAttributes({ dotActiveColor: typeof color === 'string' ? color : color.hex })}
+                        enableAlpha
+                    />
+                </div>
+            </PanelBody>
+        </InspectorControls>
+    );
 
     React.useEffect(() => {
         if (attributes.navigationType === 'top' || attributes.navigationType === 'bottom') {

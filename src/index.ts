@@ -33,6 +33,18 @@ registerBlockType('sliderberg/sliderberg', {
             type: 'string',
             default: ''
         },
+        autoplay: {
+            type: 'boolean',
+            default: false
+        },
+        autoplaySpeed: {
+            type: 'number',
+            default: 5000
+        },
+        pauseOnHover: {
+            type: 'boolean',
+            default: true
+        },
         transitionEffect: {
             type: 'string',
             default: 'slide'

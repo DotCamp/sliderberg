@@ -43,8 +43,14 @@ document.addEventListener('DOMContentLoaded', function() {
             const transitionDuration = parseInt(container.getAttribute('data-transition-duration')) || 500;
             const transitionEasing = container.getAttribute('data-transition-easing') || 'ease';
             
+            // Get autoplay settings from data attributes
+            const autoplay = container.getAttribute('data-autoplay') === 'true';
+            const autoplaySpeed = parseInt(container.getAttribute('data-autoplay-speed')) || 5000;
+            const pauseOnHover = container.getAttribute('data-pause-on-hover') === 'true';
+            
             let currentSlide = 0;
             let isAnimating = false;
+            let autoplayInterval = null;
             
             // Make sure all slides are visible initially during setup
             slides.forEach((slide) => {
@@ -334,41 +340,42 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             }
             
-            // Optional: Auto-play
-            let autoplayInterval;
-            const autoplayEnabled = slider.getAttribute('data-autoplay') !== 'false';
-            const autoplayDelay = parseInt(slider.getAttribute('data-autoplay-delay') || 5000);
-            
+            // Autoplay functions
             function startAutoplay() {
-                if (autoplayEnabled) {
-                    autoplayInterval = setInterval(nextSlide, autoplayDelay);
+                if (!autoplay || autoplayInterval) return;
+                autoplayInterval = setInterval(() => {
+                    if (!isAnimating) {
+                        nextSlide();
+                    }
+                }, autoplaySpeed);
+            }
+
+            function stopAutoplay() {
+                if (autoplayInterval) {
+                    clearInterval(autoplayInterval);
+                    autoplayInterval = null;
                 }
             }
-            
-            function stopAutoplay() {
-                clearInterval(autoplayInterval);
-            }
-            
+
             // Start autoplay if enabled
-            if (autoplayEnabled) {
+            if (autoplay) {
                 startAutoplay();
             }
-            
-            // Pause on hover
-            slider.addEventListener('mouseenter', stopAutoplay);
-            slider.addEventListener('mouseleave', () => {
-                if (autoplayEnabled) {
-                    startAutoplay();
+
+            // Handle pause on hover
+            if (pauseOnHover) {
+                container.addEventListener('mouseenter', stopAutoplay);
+                container.addEventListener('mouseleave', startAutoplay);
+            }
+
+            // Clean up on unmount
+            return () => {
+                stopAutoplay();
+                if (pauseOnHover) {
+                    container.removeEventListener('mouseenter', stopAutoplay);
+                    container.removeEventListener('mouseleave', startAutoplay);
                 }
-            });
-            
-            // Pause on focus within (accessibility)
-            slider.addEventListener('focusin', stopAutoplay);
-            slider.addEventListener('focusout', () => {
-                if (autoplayEnabled) {
-                    startAutoplay();
-                }
-            });
+            };
             
             // Log successful initialization
             console.log(`SliderBerg slider initialized with ${slides.length} slides and ${transitionEffect} transition`);
