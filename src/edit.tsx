@@ -65,6 +65,9 @@ interface EditProps {
         navigationHorizontalPosition: number;
         dotColor: string;
         dotActiveColor: string;
+        transitionEffect: 'slide' | 'fade' | 'zoom';
+        transitionDuration: number;
+        transitionEasing: 'ease' | 'ease-in' | 'ease-out' | 'ease-in-out' | 'linear';
     };
     setAttributes: (attrs: Partial<EditProps['attributes']>) => void;
 }
@@ -341,7 +344,40 @@ export const Edit: React.FC<EditProps> = ({ attributes, setAttributes }) => {
     const renderInspectorControls = () => {
         return (
             <InspectorControls>
-                <PanelBody title={__('Navigation Settings', 'sliderberg')} initialOpen={true}>
+                <PanelBody title={__('Animation Settings', 'sliderberg')} initialOpen={true}>
+                    <SelectControl
+                        label={__('Transition Effect', 'sliderberg')}
+                        value={attributes.transitionEffect}
+                        options={[
+                            { label: __('Slide', 'sliderberg'), value: 'slide' },
+                            { label: __('Fade', 'sliderberg'), value: 'fade' },
+                            { label: __('Zoom', 'sliderberg'), value: 'zoom' }
+                        ]}
+                        onChange={(value) => setAttributes({ transitionEffect: value as 'slide' | 'fade' | 'zoom' })}
+                    />
+                    <RangeControl
+                        label={__('Transition Duration', 'sliderberg')}
+                        value={attributes.transitionDuration}
+                        onChange={(value) => setAttributes({ transitionDuration: value })}
+                        min={200}
+                        max={2000}
+                        step={100}
+                        help={__('Duration of the transition in milliseconds', 'sliderberg')}
+                    />
+                    <SelectControl
+                        label={__('Transition Easing', 'sliderberg')}
+                        value={attributes.transitionEasing}
+                        options={[
+                            { label: __('Ease', 'sliderberg'), value: 'ease' },
+                            { label: __('Ease In', 'sliderberg'), value: 'ease-in' },
+                            { label: __('Ease Out', 'sliderberg'), value: 'ease-out' },
+                            { label: __('Ease In Out', 'sliderberg'), value: 'ease-in-out' },
+                            { label: __('Linear', 'sliderberg'), value: 'linear' }
+                        ]}
+                        onChange={(value) => setAttributes({ transitionEasing: value as 'ease' | 'ease-in' | 'ease-out' | 'ease-in-out' | 'linear' })}
+                    />
+                </PanelBody>
+                <PanelBody title={__('Navigation Settings', 'sliderberg')} initialOpen={false}>
                     <SelectControl
                         label={__('Navigation Type', 'sliderberg')}
                         value={attributes.navigationType}

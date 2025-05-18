@@ -33,6 +33,18 @@ registerBlockType('sliderberg/sliderberg', {
             type: 'string',
             default: ''
         },
+        transitionEffect: {
+            type: 'string',
+            default: 'slide'
+        },
+        transitionDuration: {
+            type: 'number',
+            default: 500
+        },
+        transitionEasing: {
+            type: 'string',
+            default: 'ease'
+        },
         navigationType: {
             type: 'string',
             default: 'bottom'

@@ -15,6 +15,9 @@ interface SaveProps {
         navigationHorizontalPosition: number;
         dotColor: string;
         dotActiveColor: string;
+        transitionEffect: 'slide' | 'fade' | 'zoom';
+        transitionDuration: number;
+        transitionEasing: 'ease' | 'ease-in' | 'ease-out' | 'ease-in-out' | 'linear';
     };
 }
 
@@ -65,7 +68,12 @@ export const Save: React.FC<SaveProps> = ({ attributes }) => {
             )}
             <div className="sliderberg-container">
                 <div className="sliderberg-slides">
-                    <div className="sliderberg-slides-container">
+                    <div 
+                        className="sliderberg-slides-container"
+                        data-transition-effect={attributes.transitionEffect}
+                        data-transition-duration={attributes.transitionDuration}
+                        data-transition-easing={attributes.transitionEasing}
+                    >
                         <InnerBlocks.Content />
                     </div>
                     {attributes.navigationType === 'split' && (
