@@ -1,11 +1,37 @@
-node_modules
+# Dependencies
+node_modules/
+
+# Build files
 /build
 dist/
-.DS_Store
-.idea
-.vscode
+
+# Environment files
 .env
 .env.local
+.env.*.local
+
+# Editor directories and files
+.idea
+.vscode
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Plugin zip files
+*.zip
+
+# Local environment files
 .env.development.local
 .env.test.local
 .env.production.local
