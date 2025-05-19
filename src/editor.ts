@@ -1,7 +1,4 @@
-interface HTMLElementWithDataClientId extends HTMLElement {
-  getAttribute(name: string): string | null;
-  style: CSSStyleDeclaration;
-}
+import { HTMLElementWithDataClientId } from './types/common';
 
 declare global {
   interface Window {
