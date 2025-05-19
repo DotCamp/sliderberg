@@ -3,6 +3,15 @@
  * Handles the initialization and behavior of sliders on the frontend.
  */
 
+declare const jQuery: any;
+
+interface Window {
+    SliderBerg: {
+        init: () => void;
+        destroyAll: () => void;
+    };
+}
+
 interface SliderConfig {
     transitionEffect: 'slide' | 'fade' | 'zoom';
     transitionDuration: number;
@@ -703,7 +712,7 @@ class SliderBergController {
         const { wrapper } = this.elements;
         
         // Use event delegation for better performance
-        wrapper.addEventListener('keydown', (e: KeyboardEvent) => {
+        wrapper.addEventListener('keydown', ((e: Event) => {
             if (this.state.destroyed) return;
             
             // Only process keyboard events when the slider is in focus
@@ -712,7 +721,8 @@ class SliderBergController {
             
             if (!isSliderFocused) return;
             
-            switch (e.key) {
+            const keyboardEvent = e as KeyboardEvent;
+            switch (keyboardEvent.key) {
                 case 'ArrowLeft':
                     this.prevSlide();
                     e.preventDefault();
@@ -723,7 +733,7 @@ class SliderBergController {
                     e.preventDefault();
                     break;
             }
-        });
+        }) as EventListener);
     }
 
     /**
@@ -737,11 +747,11 @@ class SliderBergController {
             }
         });
         
-        this.elements.wrapper.addEventListener('focusout', (e) => {
-            if (this.config.pauseOnHover && !this.elements.wrapper.contains(e.relatedTarget as Node)) {
+        this.elements.wrapper.addEventListener('focusout', ((e: Event) => {
+            if (this.config.pauseOnHover && !this.elements.wrapper.contains((e as FocusEvent).relatedTarget as Node)) {
                 this.startAutoplay();
             }
-        });
+        }) as EventListener);
     }
 
     /**
