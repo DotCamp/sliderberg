@@ -61,7 +61,7 @@ function sliderberg_editor_assets() {
     // Enqueue the custom editor-only JS for slide visibility
     wp_enqueue_script(
         'sliderberg-editor-js',
-        SLIDERBERG_PLUGIN_URL . 'src/editor.js',
+        SLIDERBERG_PLUGIN_URL . 'build/editor.js',
         array(),
         SLIDERBERG_VERSION,
         true
