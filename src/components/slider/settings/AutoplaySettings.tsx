@@ -2,10 +2,11 @@ import React from 'react';
 import { __ } from '@wordpress/i18n';
 import { ToggleControl, RangeControl } from '@wordpress/components';
 import { validateNumericRange } from '../../../utils/security';
+import { SliderAttributes } from '../../../types/slider';
 
 interface AutoplaySettingsProps {
-    attributes: any;
-    setAttributes: (attrs: Partial<any>) => void;
+    attributes: SliderAttributes;
+    setAttributes: (attrs: Partial<SliderAttributes>) => void;
 }
 
 export const AutoplaySettings: React.FC<AutoplaySettingsProps> = ({ attributes, setAttributes }) => {

@@ -2,10 +2,11 @@ import React from 'react';
 import { __ } from '@wordpress/i18n';
 import { SelectControl, RangeControl } from '@wordpress/components';
 import { validateTransitionEffect, validateTransitionEasing, validateNumericRange } from '../../../utils/security';
+import { SliderAttributes } from '../../../types/slider';
 
 interface AnimationSettingsProps {
-    attributes: any;
-    setAttributes: (attrs: Partial<any>) => void;
+    attributes: SliderAttributes;
+    setAttributes: (attrs: Partial<SliderAttributes>) => void;
 }
 
 export const AnimationSettings: React.FC<AnimationSettingsProps> = ({ attributes, setAttributes }) => {

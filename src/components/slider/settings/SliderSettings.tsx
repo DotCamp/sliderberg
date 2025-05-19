@@ -5,10 +5,11 @@ import { PanelBody } from '@wordpress/components';
 import { AnimationSettings } from './AnimationSettings';
 import { AutoplaySettings } from './AutoplaySettings';
 import { NavigationSettings } from './NavigationSettings';
+import { SliderAttributes } from '../../../types/slider';
 
 interface SliderSettingsProps {
-    attributes: any;
-    setAttributes: (attrs: Partial<any>) => void;
+    attributes: SliderAttributes;
+    setAttributes: (attrs: Partial<SliderAttributes>) => void;
 }
 
 export const SliderSettings: React.FC<SliderSettingsProps> = ({ attributes, setAttributes }) => {
