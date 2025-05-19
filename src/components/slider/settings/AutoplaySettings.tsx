@@ -1,6 +1,7 @@
 import React from 'react';
 import { __ } from '@wordpress/i18n';
 import { ToggleControl, RangeControl } from '@wordpress/components';
+import { validateNumericRange } from '../../../utils/security';
 
 interface AutoplaySettingsProps {
     attributes: any;
@@ -20,7 +21,7 @@ export const AutoplaySettings: React.FC<AutoplaySettingsProps> = ({ attributes, 
                     <RangeControl
                         label={__('Autoplay Speed (ms)', 'sliderberg')}
                         value={attributes.autoplaySpeed}
-                        onChange={(value) => setAttributes({ autoplaySpeed: value })}
+                        onChange={(value) => setAttributes({ autoplaySpeed: validateNumericRange(value ?? 5000, 1000, 10000, 5000) })}
                         min={1000}
                         max={10000}
                         step={500}

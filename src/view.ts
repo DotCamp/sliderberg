@@ -5,11 +5,20 @@
 
 declare const jQuery: any;
 
-interface Window {
-    SliderBerg: {
-        init: () => void;
-        destroyAll: () => void;
-    };
+declare global {
+    interface Window {
+        SliderBerg: {
+            init: () => void;
+            destroyAll: () => void;
+        }
+    }
+}
+
+import { validateTransitionEffect, validateTransitionEasing, validateNumericRange, sanitizeAttributeValue } from './utils/security';
+
+interface SliderBergInterface {
+    init: () => void;
+    destroyAll: () => void;
 }
 
 interface SliderConfig {
@@ -142,11 +151,21 @@ class SliderBergController {
      */
     private parseConfig(container: HTMLElement): SliderConfig {
         return {
-            transitionEffect: this.parseAttribute(container, 'data-transition-effect', 'slide') as 'slide' | 'fade' | 'zoom',
-            transitionDuration: this.parseNumberAttribute(container, 'data-transition-duration', 500),
-            transitionEasing: this.parseAttribute(container, 'data-transition-easing', 'ease') as 'ease' | 'ease-in' | 'ease-out' | 'ease-in-out' | 'linear',
+            transitionEffect: validateTransitionEffect(this.parseAttribute(container, 'data-transition-effect', 'slide')),
+            transitionDuration: validateNumericRange(
+                this.parseNumberAttribute(container, 'data-transition-duration', 500),
+                200,
+                2000,
+                500
+            ),
+            transitionEasing: validateTransitionEasing(this.parseAttribute(container, 'data-transition-easing', 'ease')),
             autoplay: this.parseBooleanAttribute(container, 'data-autoplay', false),
-            autoplaySpeed: this.parseNumberAttribute(container, 'data-autoplay-speed', 5000),
+            autoplaySpeed: validateNumericRange(
+                this.parseNumberAttribute(container, 'data-autoplay-speed', 5000),
+                1000,
+                10000,
+                5000
+            ),
             pauseOnHover: this.parseBooleanAttribute(container, 'data-pause-on-hover', true)
         };
     }
@@ -156,7 +175,7 @@ class SliderBergController {
      */
     private parseAttribute(element: HTMLElement, name: string, defaultValue: string): string {
         const value = element.getAttribute(name);
-        return value !== null ? value : defaultValue;
+        return value !== null ? sanitizeAttributeValue(value) : defaultValue;
     }
 
     /**
@@ -164,7 +183,10 @@ class SliderBergController {
      */
     private parseNumberAttribute(element: HTMLElement, name: string, defaultValue: number): number {
         const value = element.getAttribute(name);
-        return value !== null ? parseInt(value, 10) : defaultValue;
+        if (value === null) return defaultValue;
+        
+        const parsed = parseInt(value, 10);
+        return isNaN(parsed) ? defaultValue : parsed;
     }
 
     /**

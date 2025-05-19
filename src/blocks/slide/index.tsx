@@ -23,6 +23,7 @@ import {
 import './style.css';
 import './editor.css';
 import classnames from 'classnames';
+import { validateColor, isValidMediaUrl, validateNumericRange, validateContentPosition } from '../../utils/security';
 
 interface MediaObject {
     id: number;
@@ -182,13 +183,16 @@ registerBlockType('sliderberg/slide', {
         const blockProps = useBlockProps({
             className: classnames(
                 'sliderberg-slide',
-                `sliderberg-content-position-${contentPosition}`,
+                `sliderberg-content-position-${validateContentPosition(contentPosition)}`,
             ),
             style: {
-                minHeight: `${minHeight}px`,
-                backgroundColor: backgroundType === 'color' ? backgroundColor : 'transparent',
-                backgroundImage: backgroundType === 'image' && backgroundImage ? `url(${backgroundImage.url})` : 'none',
-                backgroundPosition: backgroundType === 'image' ? `${focalPoint.x * 100}% ${focalPoint.y * 100}%` : 'center',
+                minHeight: `${validateNumericRange(minHeight, 100, 1000, 400)}px`,
+                backgroundColor: backgroundType === 'color' ? validateColor(backgroundColor) : 'transparent',
+                backgroundImage: backgroundType === 'image' && backgroundImage && isValidMediaUrl(backgroundImage) ? 
+                    `url(${backgroundImage.url})` : 'none',
+                backgroundPosition: backgroundType === 'image' ? 
+                    `${validateNumericRange(focalPoint.x * 100, 0, 100, 50)}% ${validateNumericRange(focalPoint.y * 100, 0, 100, 50)}%` : 
+                    'center',
                 backgroundSize: 'cover',
                 backgroundAttachment: isFixed ? 'fixed' : 'scroll'
             },
@@ -253,7 +257,7 @@ registerBlockType('sliderberg/slide', {
                         <RangeControl
                             label={__('Minimum Height', 'sliderberg')}
                             value={minHeight}
-                            onChange={(value) => setAttributes({ minHeight: value })}
+                            onChange={(value) => setAttributes({ minHeight: validateNumericRange(value ?? 400, 100, 1000, 400) })}
                             min={100}
                             max={1000}
                             step={10}
@@ -272,7 +276,7 @@ registerBlockType('sliderberg/slide', {
                         {backgroundType === 'color' ? (
                             <ColorPicker
                                 color={backgroundColor}
-                                onChangeComplete={(color) => setAttributes({ backgroundColor: typeof color === 'string' ? color : color.hex })}
+                                onChangeComplete={(color) => setAttributes({ backgroundColor: validateColor(color) })}
                             />
                         ) : (
                             <MediaUploadCheck>
@@ -321,13 +325,13 @@ registerBlockType('sliderberg/slide', {
                     <PanelBody title={__('Overlay Settings', 'sliderberg')} initialOpen={false}>
                         <ColorPicker
                             color={overlayColor}
-                            onChangeComplete={(color) => setAttributes({ overlayColor: typeof color === 'string' ? color : color.hex })}
+                            onChangeComplete={(color) => setAttributes({ overlayColor: validateColor(color) })}
                             enableAlpha
                         />
                         <RangeControl
                             label={__('Overlay Opacity', 'sliderberg')}
                             value={overlayOpacity}
-                            onChange={(value) => setAttributes({ overlayOpacity: value })}
+                            onChange={(value) => setAttributes({ overlayOpacity: validateNumericRange(value ?? 0.5, 0, 1, 0.5) })}
                             min={0}
                             max={1}
                             step={0.1}

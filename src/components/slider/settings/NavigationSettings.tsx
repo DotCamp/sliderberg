@@ -1,6 +1,7 @@
 import React from 'react';
 import { __ } from '@wordpress/i18n';
 import { SelectControl, RangeControl, ColorPicker } from '@wordpress/components';
+import { validateColor, validateNumericRange } from '../../../utils/security';
 
 interface NavigationSettingsProps {
     attributes: any;
@@ -54,14 +55,14 @@ export const NavigationSettings: React.FC<NavigationSettingsProps> = ({ attribut
                     <label>{__('Arrow Color', 'sliderberg')}</label>
                     <ColorPicker
                         color={attributes.navigationColor}
-                        onChangeComplete={(color) => setAttributes({ navigationColor: typeof color === 'string' ? color : color.hex })}
+                        onChangeComplete={(color) => setAttributes({ navigationColor: validateColor(color) })}
                     />
                 </div>
                 <div className="sliderberg-color-control">
                     <label>{__('Background Color', 'sliderberg')}</label>
                     <ColorPicker
                         color={attributes.navigationBgColor}
-                        onChangeComplete={(color) => setAttributes({ navigationBgColor: typeof color === 'string' ? color : color.hex })}
+                        onChangeComplete={(color) => setAttributes({ navigationBgColor: validateColor(color) })}
                         enableAlpha
                     />
                 </div>
@@ -69,7 +70,7 @@ export const NavigationSettings: React.FC<NavigationSettingsProps> = ({ attribut
             <RangeControl
                 label={__('Opacity', 'sliderberg')}
                 value={attributes.navigationOpacity}
-                onChange={(value) => setAttributes({ navigationOpacity: value })}
+                onChange={(value) => setAttributes({ navigationOpacity: validateNumericRange(value ?? 1, 0, 1, 1) })}
                 min={0}
                 max={1}
                 step={0.1}
@@ -77,7 +78,7 @@ export const NavigationSettings: React.FC<NavigationSettingsProps> = ({ attribut
             <RangeControl
                 label={__('Vertical Position', 'sliderberg')}
                 value={attributes.navigationVerticalPosition}
-                onChange={(value) => setAttributes({ navigationVerticalPosition: value })}
+                onChange={(value) => setAttributes({ navigationVerticalPosition: validateNumericRange(value ?? 20, 0, 100, 20) })}
                 min={0}
                 max={100}
                 step={1}
@@ -86,7 +87,7 @@ export const NavigationSettings: React.FC<NavigationSettingsProps> = ({ attribut
             <RangeControl
                 label={__('Horizontal Position', 'sliderberg')}
                 value={attributes.navigationHorizontalPosition}
-                onChange={(value) => setAttributes({ navigationHorizontalPosition: value })}
+                onChange={(value) => setAttributes({ navigationHorizontalPosition: validateNumericRange(value ?? 20, 0, 100, 20) })}
                 min={0}
                 max={100}
                 step={1}
@@ -96,7 +97,7 @@ export const NavigationSettings: React.FC<NavigationSettingsProps> = ({ attribut
                 <p className="components-base-control__label">{__('Dot Color', 'sliderberg')}</p>
                 <ColorPicker
                     color={attributes.dotColor}
-                    onChangeComplete={(color) => setAttributes({ dotColor: typeof color === 'string' ? color : color.hex })}
+                    onChangeComplete={(color) => setAttributes({ dotColor: validateColor(color) })}
                     enableAlpha
                 />
             </div>
@@ -104,7 +105,7 @@ export const NavigationSettings: React.FC<NavigationSettingsProps> = ({ attribut
                 <p className="components-base-control__label">{__('Active Dot Color', 'sliderberg')}</p>
                 <ColorPicker
                     color={attributes.dotActiveColor}
-                    onChangeComplete={(color) => setAttributes({ dotActiveColor: typeof color === 'string' ? color : color.hex })}
+                    onChangeComplete={(color) => setAttributes({ dotActiveColor: validateColor(color) })}
                     enableAlpha
                 />
             </div>
