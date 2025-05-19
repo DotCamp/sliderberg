@@ -1,0 +1,113 @@
+import React from 'react';
+import { __ } from '@wordpress/i18n';
+import { SelectControl, RangeControl, ColorPicker } from '@wordpress/components';
+
+interface NavigationSettingsProps {
+    attributes: any;
+    setAttributes: (attrs: Partial<any>) => void;
+}
+
+export const NavigationSettings: React.FC<NavigationSettingsProps> = ({ attributes, setAttributes }) => {
+    return (
+        <>
+            <SelectControl
+                label={__('Navigation Type', 'sliderberg')}
+                value={attributes.navigationType}
+                options={[
+                    { label: __('Split Arrows', 'sliderberg'), value: 'split' },
+                    { label: __('Top Arrows', 'sliderberg'), value: 'top' },
+                    { label: __('Bottom Arrows', 'sliderberg'), value: 'bottom' }
+                ]}
+                onChange={(value) => setAttributes({ navigationType: value })}
+            />
+            <SelectControl
+                label={__('Placement', 'sliderberg')}
+                value={attributes.navigationPlacement}
+                options={[
+                    { label: __('Overlay', 'sliderberg'), value: 'overlay' },
+                    { label: __('Outside Content', 'sliderberg'), value: 'outside' }
+                ]}
+                onChange={(value) => setAttributes({ navigationPlacement: value })}
+                disabled={attributes.navigationType === 'top' || attributes.navigationType === 'bottom'}
+            />
+            <SelectControl
+                label={__('Shape', 'sliderberg')}
+                value={attributes.navigationShape}
+                options={[
+                    { label: __('Circle', 'sliderberg'), value: 'circle' },
+                    { label: __('Square', 'sliderberg'), value: 'square' }
+                ]}
+                onChange={(value) => setAttributes({ navigationShape: value })}
+            />
+            <SelectControl
+                label={__('Size', 'sliderberg')}
+                value={attributes.navigationSize}
+                options={[
+                    { label: __('Small', 'sliderberg'), value: 'small' },
+                    { label: __('Medium', 'sliderberg'), value: 'medium' },
+                    { label: __('Large', 'sliderberg'), value: 'large' }
+                ]}
+                onChange={(value) => setAttributes({ navigationSize: value })}
+            />
+            <div className="sliderberg-color-controls">
+                <div className="sliderberg-color-control">
+                    <label>{__('Arrow Color', 'sliderberg')}</label>
+                    <ColorPicker
+                        color={attributes.navigationColor}
+                        onChangeComplete={(color) => setAttributes({ navigationColor: typeof color === 'string' ? color : color.hex })}
+                    />
+                </div>
+                <div className="sliderberg-color-control">
+                    <label>{__('Background Color', 'sliderberg')}</label>
+                    <ColorPicker
+                        color={attributes.navigationBgColor}
+                        onChangeComplete={(color) => setAttributes({ navigationBgColor: typeof color === 'string' ? color : color.hex })}
+                        enableAlpha
+                    />
+                </div>
+            </div>
+            <RangeControl
+                label={__('Opacity', 'sliderberg')}
+                value={attributes.navigationOpacity}
+                onChange={(value) => setAttributes({ navigationOpacity: value })}
+                min={0}
+                max={1}
+                step={0.1}
+            />
+            <RangeControl
+                label={__('Vertical Position', 'sliderberg')}
+                value={attributes.navigationVerticalPosition}
+                onChange={(value) => setAttributes({ navigationVerticalPosition: value })}
+                min={0}
+                max={100}
+                step={1}
+                help={__('Adjust the vertical position of the navigation arrows (in pixels)', 'sliderberg')}
+            />
+            <RangeControl
+                label={__('Horizontal Position', 'sliderberg')}
+                value={attributes.navigationHorizontalPosition}
+                onChange={(value) => setAttributes({ navigationHorizontalPosition: value })}
+                min={0}
+                max={100}
+                step={1}
+                help={__('Adjust the horizontal position of the navigation arrows (in pixels)', 'sliderberg')}
+            />
+            <div className="sliderberg-dot-colors">
+                <p className="components-base-control__label">{__('Dot Color', 'sliderberg')}</p>
+                <ColorPicker
+                    color={attributes.dotColor}
+                    onChangeComplete={(color) => setAttributes({ dotColor: typeof color === 'string' ? color : color.hex })}
+                    enableAlpha
+                />
+            </div>
+            <div className="sliderberg-dot-colors">
+                <p className="components-base-control__label">{__('Active Dot Color', 'sliderberg')}</p>
+                <ColorPicker
+                    color={attributes.dotActiveColor}
+                    onChangeComplete={(color) => setAttributes({ dotActiveColor: typeof color === 'string' ? color : color.hex })}
+                    enableAlpha
+                />
+            </div>
+        </>
+    );
+}; 

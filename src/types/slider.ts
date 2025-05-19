@@ -29,9 +29,21 @@ export interface FocalPoint {
 }
 
 export interface SliderAttributes {
-    transitionEffect: SliderConfig['transitionEffect'];
+    type: string;
+    navigationType: 'split' | 'top' | 'bottom';
+    navigationPlacement: 'overlay' | 'outside';
+    navigationShape: 'circle' | 'square';
+    navigationSize: 'small' | 'medium' | 'large';
+    navigationColor: string;
+    navigationBgColor: string;
+    navigationOpacity: number;
+    navigationVerticalPosition: number;
+    navigationHorizontalPosition: number;
+    dotColor: string;
+    dotActiveColor: string;
+    transitionEffect: 'slide' | 'fade' | 'zoom';
     transitionDuration: number;
-    transitionEasing: string;
+    transitionEasing: 'ease' | 'ease-in' | 'ease-out' | 'ease-in-out' | 'linear';
     autoplay: boolean;
     autoplaySpeed: number;
     pauseOnHover: boolean;
