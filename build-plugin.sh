@@ -20,6 +20,8 @@ rsync -av --progress ./ "$TEMP_DIR/$PLUGIN_NAME" \
     --exclude 'node_modules' \
     --exclude '.gitignore' \
     --exclude 'package-lock.json' \
+    --exclude 'package.json' \
+    --exclude 'webpack.config.js' \
     --exclude 'tsconfig.json' \
     --exclude 'README.md' \
     --exclude 'build-plugin.sh' \
