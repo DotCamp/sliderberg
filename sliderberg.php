@@ -23,6 +23,18 @@ define('SLIDERBERG_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('SLIDERBERG_PLUGIN_URL', plugin_dir_url(__FILE__));
 
 /**
+ * Load plugin text domain for translations
+ */
+function sliderberg_load_textdomain() {
+    load_plugin_textdomain(
+        'sliderberg',
+        false,
+        dirname(plugin_basename(__FILE__)) . '/languages'
+    );
+}
+add_action('plugins_loaded', 'sliderberg_load_textdomain');
+
+/**
  * Registers the block using the metadata loaded from the `block.json` file.
  * Behind the scenes, it registers also all assets so they can be enqueued
  * through the block editor in the corresponding context.

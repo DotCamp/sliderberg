@@ -22,7 +22,9 @@ rsync -av --progress ./ "$TEMP_DIR/$PLUGIN_NAME" \
     --exclude 'package-lock.json' \
     --exclude 'tsconfig.json' \
     --exclude 'README.md' \
-    --exclude 'build-plugin.sh'
+    --exclude 'build-plugin.sh' \
+    --exclude '.DS_Store' \
+    --exclude '*.zip'
 
 # Create zip file
 cd "$TEMP_DIR"
