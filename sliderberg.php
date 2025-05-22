@@ -69,7 +69,8 @@ function sliderberg_editor_assets() {
         'sliderberg-editor',
         SLIDERBERG_PLUGIN_URL . 'build/index.js',
         array('wp-blocks', 'wp-element', 'wp-editor'),
-        SLIDERBERG_VERSION
+        SLIDERBERG_VERSION,
+        true
     );
     // Enqueue the custom editor-only JS for slide visibility
     wp_enqueue_script(
