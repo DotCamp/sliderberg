@@ -1,6 +1,6 @@
 <?php
 /**
- * Plugin Name: SliderBerg
+ * Plugin Name: Sliderberg Slider Blocks
  * Plugin URI: https://sliderberg.com/
  * Description: A modern slider block for WordPress block editor
  * Version: 1.0.0

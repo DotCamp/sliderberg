@@ -1,4 +1,4 @@
-=== Sliderberg ===
+=== Sliderberg Slider Blocks ===
 Contributors: imtiazrayhan, dotcamp
 Tags: slider, carousel, slideshow, block, gutenberg
 Requires at least: 5.8
