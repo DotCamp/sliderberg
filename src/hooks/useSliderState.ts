@@ -20,6 +20,10 @@ export const useSliderState = (clientId: string, attributes: any) => {
             const currentSlideExists = currentSlideId && innerBlocks.some((b: any) => b.clientId === currentSlideId);
             if (!currentSlideExists) {
                 setCurrentSlideId(innerBlocks[0].clientId);
+                // Immediately update visibility when setting initial slide
+                if (typeof window !== 'undefined' && window.updateSliderbergSlidesVisibility) {
+                    window.updateSliderbergSlidesVisibility();
+                }
             }
         }
     }, [innerBlocks]); // Only depend on innerBlocks changes
@@ -32,6 +36,15 @@ export const useSliderState = (clientId: string, attributes: any) => {
         }
     }, [isUpdating]);
 
+    const handleSlideChange = (slideId: string) => {
+        setCurrentSlideId(slideId);
+        setIsUpdating(true);
+        // Immediately update visibility when changing slides
+        if (typeof window !== 'undefined' && window.updateSliderbergSlidesVisibility) {
+            window.updateSliderbergSlidesVisibility();
+        }
+    };
+
     const handleAddSlide = () => {
         const slideBlock = createBlock('sliderberg/slide');
         insertBlock(slideBlock, innerBlocks.length, clientId);
@@ -43,28 +56,26 @@ export const useSliderState = (clientId: string, attributes: any) => {
         if (newBlock) {
             setCurrentSlideId(newBlock.clientId);
             selectBlock(newBlock.clientId);
+            // Immediately update visibility when adding new slide
+            if (typeof window !== 'undefined' && window.updateSliderbergSlidesVisibility) {
+                window.updateSliderbergSlidesVisibility();
+            }
         }
     };
 
-    const handleSlideChange = (newSlideId: string) => {
-        setCurrentSlideId(newSlideId);
-        selectBlock(newSlideId);
-        setIsUpdating(true);
-    };
-
     const handleDeleteSlide = () => {
-        if (innerBlocks.length <= 1 || !currentSlideId) return;
+        if (innerBlocks.length <= 1) return;
         
-        const currentIndex = innerBlocks.findIndex((b: any) => b.clientId === currentSlideId);
+        const currentIndex = innerBlocks.findIndex((block: any) => block.clientId === currentSlideId);
+        const nextIndex = (currentIndex + 1) % innerBlocks.length;
+        const nextSlideId = innerBlocks[nextIndex].clientId;
+        
         removeBlock(currentSlideId);
+        setCurrentSlideId(nextSlideId);
         setIsUpdating(true);
-
-        // After deletion, select the previous or next slide
-        const updatedBlocks = select('core/block-editor').getBlocks(clientId);
-        if (updatedBlocks.length > 0) {
-            const newIndex = Math.min(currentIndex, updatedBlocks.length - 1);
-            setCurrentSlideId(updatedBlocks[newIndex].clientId);
-            selectBlock(updatedBlocks[newIndex].clientId);
+        // Immediately update visibility when deleting slide
+        if (typeof window !== 'undefined' && window.updateSliderbergSlidesVisibility) {
+            window.updateSliderbergSlidesVisibility();
         }
     };
 

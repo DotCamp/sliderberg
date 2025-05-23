@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useBlockProps } from '@wordpress/block-editor';
 import { __ } from '@wordpress/i18n';
 import { useSelect } from '@wordpress/data';
@@ -27,6 +27,23 @@ export const Edit: React.FC<EditProps> = ({ attributes, setAttributes, clientId 
         } as React.CSSProperties
     });
 
+    // Update visibility when type changes
+    useEffect(() => {
+        if (attributes.type && typeof window !== 'undefined' && window.updateSliderbergSlidesVisibility) {
+            window.updateSliderbergSlidesVisibility();
+        }
+    }, [attributes.type]);
+
+    const handleTypeSelect = (typeId: string) => {
+        setAttributes({ type: typeId });
+        // Force visibility update after type selection
+        setTimeout(() => {
+            if (typeof window !== 'undefined' && window.updateSliderbergSlidesVisibility) {
+                window.updateSliderbergSlidesVisibility();
+            }
+        }, 10);
+    };
+
     return (
         <div {...blockProps}>
             <SliderSettings 
@@ -36,7 +53,7 @@ export const Edit: React.FC<EditProps> = ({ attributes, setAttributes, clientId 
             
             {!attributes.type ? (
                 <TypeSelector 
-                    onTypeSelect={(typeId: string) => setAttributes({ type: typeId })} 
+                    onTypeSelect={handleTypeSelect} 
                 />
             ) : (
                 <SliderContent
