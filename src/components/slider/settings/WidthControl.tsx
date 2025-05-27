@@ -39,7 +39,7 @@ export const WidthControl: React.FC<WidthControlProps> = ({ attributes, setAttri
     const handleCustomWidthChange = (value?: number) => {
         const width = value ?? 600;
         let alignValue: 'wide' | 'full' | undefined = undefined;
-        if (width > 645 && width < 1300) {
+        if (width > 0 && width < 1300) {
             alignValue = 'wide';
         } else if (width >= 1300) {
             alignValue = 'full';

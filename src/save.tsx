@@ -22,7 +22,8 @@ interface SaveProps {
         autoplaySpeed: number;
         pauseOnHover: boolean;
         widthPreset: string;
-        customWidth: number;
+        customWidth: string;
+        widthUnit?: string;
     };
 }
 
@@ -42,10 +43,7 @@ export const Save: React.FC<SaveProps> = ({ attributes }) => {
     });
 
     return (
-        <div {...blockProps} style={{
-            '--sliderberg-dot-color': attributes.dotColor,
-            '--sliderberg-dot-active-color': attributes.dotActiveColor
-        } as React.CSSProperties}>
+        <div {...blockProps}>
             {attributes.navigationType === 'top' && (
                 <div className="sliderberg-navigation-bar sliderberg-navigation-bar-top">
                     <div className="sliderberg-nav-controls sliderberg-nav-controls-grouped">

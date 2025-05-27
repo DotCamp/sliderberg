@@ -100,6 +100,18 @@ registerBlockType('sliderberg/sliderberg', {
         dotActiveColor: {
             type: 'string',
             default: '#ffffff'  // white
+        },
+        widthPreset: {
+            type: 'string',
+            default: 'full'
+        },
+        customWidth: {
+            type: 'string',
+            default: ''
+        },
+        widthUnit: {
+            type: 'string',
+            default: 'px'
         }
     },
     edit: Edit,

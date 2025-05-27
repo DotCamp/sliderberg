@@ -20,6 +20,13 @@ export const Edit: React.FC<EditProps> = ({ attributes, setAttributes, clientId 
     const { currentSlideId, innerBlocks, handleSlideChange, handleAddSlide, handleDeleteSlide } = 
         useSliderState(clientId, attributes);
     
+    // Ensure align is always set for custom width to avoid validation errors
+    React.useEffect(() => {
+        if (attributes.widthPreset === 'custom' && !attributes.align) {
+            setAttributes({ align: 'full' });
+        }
+    }, [attributes.widthPreset, attributes.align, setAttributes]);
+
     const blockProps = useBlockProps({
         style: {
             '--sliderberg-dot-color': attributes.dotColor,
