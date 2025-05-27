@@ -35,6 +35,18 @@ export const WidthControl: React.FC<WidthControlProps> = ({ attributes, setAttri
         }
     };
 
+    // Dynamically set align based on custom width
+    const handleCustomWidthChange = (value?: number) => {
+        const width = value ?? 600;
+        let alignValue: 'wide' | 'full' | undefined = undefined;
+        if (width > 645 && width < 1300) {
+            alignValue = 'wide';
+        } else if (width >= 1300) {
+            alignValue = 'full';
+        }
+        setAttributes({ customWidth: String(width), widthUnit: 'px', align: alignValue });
+    };
+
     return (
         <PanelBody
             title={__('Width Settings', 'sliderberg')}
@@ -54,7 +66,7 @@ export const WidthControl: React.FC<WidthControlProps> = ({ attributes, setAttri
                 <RangeControl
                     label={__('Custom Width (px)', 'sliderberg')}
                     value={parseInt(customWidth) || 600}
-                    onChange={(value) => setAttributes({ customWidth: String(value), widthUnit: 'px' })}
+                    onChange={handleCustomWidthChange}
                     min={200}
                     max={2000}
                 />

@@ -21,11 +21,25 @@ interface SaveProps {
         autoplay: boolean;
         autoplaySpeed: number;
         pauseOnHover: boolean;
+        widthPreset: string;
+        customWidth: number;
     };
 }
 
 export const Save: React.FC<SaveProps> = ({ attributes }) => {
-    const blockProps = useBlockProps.save();
+    // Custom width logic for frontend
+    const customWidthStyle = attributes.widthPreset === 'custom' && attributes.customWidth
+        ? { '--sliderberg-custom-width': `${attributes.customWidth}px` } as React.CSSProperties
+        : {};
+
+    const blockProps = useBlockProps.save({
+        style: {
+            '--sliderberg-dot-color': attributes.dotColor,
+            '--sliderberg-dot-active-color': attributes.dotActiveColor,
+            ...customWidthStyle
+        },
+        'data-width-preset': attributes.widthPreset
+    });
 
     return (
         <div {...blockProps} style={{
