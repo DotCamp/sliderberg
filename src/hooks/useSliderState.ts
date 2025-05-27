@@ -1,6 +1,13 @@
 import { useState, useEffect } from 'react';
 import { useDispatch, useSelect, select } from '@wordpress/data';
-import { createBlock } from '@wordpress/blocks';
+import { createBlock, cloneBlock } from '@wordpress/blocks';
+import { store as blockEditorStore } from '@wordpress/block-editor';
+
+type BlockEditorSelect = {
+    getBlocks: (clientId: string) => any[];
+    getBlock: (clientId: string) => any;
+    getBlockIndex: (clientId: string, rootClientId: string) => number;
+};
 
 export const useSliderState = (clientId: string, attributes: any) => {
     const [currentSlideId, setCurrentSlideId] = useState<string | null>(null);
@@ -8,11 +15,22 @@ export const useSliderState = (clientId: string, attributes: any) => {
 
     // Get the current inner blocks for this slider
     const innerBlocks = useSelect(
-        (select: any) => clientId ? select('core/block-editor').getBlocks(clientId) : [],
+        (select: any) => clientId ? select(blockEditorStore).getBlocks(clientId) : [],
         [clientId]
     );
 
-    const { insertBlock, selectBlock, removeBlock } = useDispatch('core/block-editor');
+    const { insertBlock, selectBlock, removeBlock, insertBlocks } = useDispatch(blockEditorStore);
+
+    const { getBlock, getBlockIndex } = useSelect(
+        (select) => {
+            const editorSelect = select(blockEditorStore) as BlockEditorSelect;
+            return {
+                getBlock: editorSelect.getBlock,
+                getBlockIndex: editorSelect.getBlockIndex,
+            };
+        },
+        []
+    );
 
     // Set the first slide as current by default if not set or if current slide no longer exists
     useEffect(() => {
@@ -51,7 +69,7 @@ export const useSliderState = (clientId: string, attributes: any) => {
         setIsUpdating(true);
         
         // Use useSelect to get the latest blocks after insertion
-        const updatedBlocks = select('core/block-editor').getBlocks(clientId);
+        const updatedBlocks = (select(blockEditorStore) as BlockEditorSelect).getBlocks(clientId);
         const newBlock = updatedBlocks[updatedBlocks.length - 1];
         if (newBlock) {
             setCurrentSlideId(newBlock.clientId);
@@ -79,11 +97,46 @@ export const useSliderState = (clientId: string, attributes: any) => {
         }
     };
 
+    const handleDuplicateSlide = (slideIdToDuplicate: string) => {
+        if (!slideIdToDuplicate) {
+            console.warn('No slide ID provided to duplicate.');
+            return;
+        }
+
+        const originalBlock = getBlock(slideIdToDuplicate);
+        if (!originalBlock) {
+            console.error(`Could not find slide with ID: ${slideIdToDuplicate} to duplicate.`);
+            return;
+        }
+
+        const duplicatedBlock = cloneBlock(originalBlock);
+        if (!duplicatedBlock) {
+            console.error('Failed to clone the slide block.');
+            return;
+        }
+        
+        const originalSlideIndex = getBlockIndex(slideIdToDuplicate, clientId);
+        const insertionPoint = (originalSlideIndex !== -1) ? originalSlideIndex + 1 : innerBlocks.length;
+
+        insertBlocks(duplicatedBlock, insertionPoint, clientId);
+        setCurrentSlideId(duplicatedBlock.clientId);
+        selectBlock(duplicatedBlock.clientId);
+        setIsUpdating(true);
+        
+        // Ensure the visibility update happens after the state has likely propagated
+        setTimeout(() => {
+            if (typeof window !== 'undefined' && window.updateSliderbergSlidesVisibility) {
+                window.updateSliderbergSlidesVisibility();
+            }
+        }, 0);
+    };
+
     return {
         currentSlideId,
         innerBlocks,
         handleSlideChange,
         handleAddSlide,
-        handleDeleteSlide
+        handleDeleteSlide,
+        handleDuplicateSlide
     };
 }; 

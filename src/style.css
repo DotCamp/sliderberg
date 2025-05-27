@@ -137,11 +137,6 @@
     transform: translateX(-50%);
 }
 
-/* Navigation Styles */
-.sliderberg-nav-button[data-style="chevron"] svg {
-    /* Default chevron style is already in place */
-}
-
 .sliderberg-nav-button[data-style="arrow"] svg {
     /* Arrow style */
     transform: scale(1.2);

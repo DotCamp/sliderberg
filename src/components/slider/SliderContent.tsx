@@ -13,6 +13,7 @@ interface SliderContentProps {
     innerBlocks: any[];
     onAddSlide: () => void;
     onDeleteSlide: () => void;
+    onDuplicateSlide: (slideId: string) => void;
     onSlideChange: (slideId: string) => void;
     clientId: string;
 }
@@ -23,6 +24,7 @@ export const SliderContent: React.FC<SliderContentProps> = ({
     innerBlocks,
     onAddSlide,
     onDeleteSlide,
+    onDuplicateSlide,
     onSlideChange,
     clientId
 }) => {
@@ -31,7 +33,13 @@ export const SliderContent: React.FC<SliderContentProps> = ({
             <SliderControls
                 onAddSlide={onAddSlide}
                 onDeleteSlide={onDeleteSlide}
+                onDuplicateSlide={() => {
+                    if (currentSlideId) {
+                        onDuplicateSlide(currentSlideId);
+                    }
+                }}
                 canDelete={innerBlocks.length > 1}
+                currentSlideId={currentSlideId}
             />
             
             {attributes.navigationType === 'top' && (
