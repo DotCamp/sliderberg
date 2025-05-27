@@ -23,8 +23,11 @@ export const Edit: React.FC<EditProps> = ({ attributes, setAttributes, clientId 
     const blockProps = useBlockProps({
         style: {
             '--sliderberg-dot-color': attributes.dotColor,
-            '--sliderberg-dot-active-color': attributes.dotActiveColor
-        } as React.CSSProperties
+            '--sliderberg-dot-active-color': attributes.dotActiveColor,
+            '--sliderberg-custom-width': attributes.widthPreset === 'custom' && attributes.customWidth ? 
+                `${attributes.customWidth}px` : undefined
+        } as React.CSSProperties,
+        'data-width-preset': attributes.widthPreset
     });
 
     // Update visibility when type changes

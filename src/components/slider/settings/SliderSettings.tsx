@@ -6,6 +6,7 @@ import { AnimationSettings } from './AnimationSettings';
 import { AutoplaySettings } from './AutoplaySettings';
 import { NavigationSettings } from './NavigationSettings';
 import { SliderAttributes } from '../../../types/slider';
+import { WidthControl } from './WidthControl';
 
 interface SliderSettingsProps {
     attributes: SliderAttributes;
@@ -24,6 +25,10 @@ export const SliderSettings: React.FC<SliderSettingsProps> = ({ attributes, setA
 
     return (
         <InspectorControls>
+            <WidthControl 
+                attributes={attributes}
+                setAttributes={setAttributes}
+            />
             <PanelBody title={__('Animation Settings', 'sliderberg')} initialOpen={true}>
                 <AnimationSettings 
                     attributes={attributes} 

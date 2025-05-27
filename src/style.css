@@ -284,4 +284,19 @@
 
 .sliderberg-navigation-bar-bottom {
     margin-top: 8px;
+}
+
+/* Custom width */
+.wp-block-sliderberg-sliderberg[data-width-preset="custom"] {
+    width: var(--sliderberg-custom-width);
+    max-width: var(--sliderberg-custom-width);
+}
+
+/* Ensure inner containers do not override custom width */
+.wp-block-sliderberg-sliderberg[data-width-preset="custom"] .sliderberg-container,
+.wp-block-sliderberg-sliderberg[data-width-preset="custom"] .sliderberg-slides,
+.wp-block-sliderberg-sliderberg[data-width-preset="custom"] .sliderberg-slides-container {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
 } 

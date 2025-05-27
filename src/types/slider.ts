@@ -60,4 +60,8 @@ export interface SliderAttributes {
         linkTarget?: string;
         linkText?: string;
     }[];
+    align?: 'wide' | 'full' | undefined;
+    widthPreset: string;
+    customWidth: string;
+    widthUnit: string;
 } 

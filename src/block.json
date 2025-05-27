@@ -8,7 +8,26 @@
     "icon": "slides",
     "description": "Add a beautiful slider to your content.",
     "supports": {
-        "html": false
+        "html": false,
+        "align": ["wide", "full"],
+        "spacing": {
+            "margin": true,
+            "padding": true
+        }
+    },
+    "attributes": {
+        "customWidth": {
+            "type": "string",
+            "default": ""
+        },
+        "widthUnit": {
+            "type": "string",
+            "default": "px"
+        },
+        "widthPreset": {
+            "type": "string",
+            "default": "full"
+        }
     },
     "textdomain": "sliderberg",
     "editorScript": "file:./index.js",
