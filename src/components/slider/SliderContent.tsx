@@ -1,4 +1,5 @@
-import React from 'react';
+// src/components/slider/SliderContent.tsx
+import React, { useEffect, useState } from 'react';
 import { InnerBlocks } from '@wordpress/block-editor';
 import { __ } from '@wordpress/i18n';
 import { Button } from '@wordpress/components';
@@ -33,6 +34,9 @@ export const SliderContent: React.FC<SliderContentProps> = ({
     onSlideChange,
     clientId
 }) => {
+    const [proSlides, setProSlides] = useState<HTMLElement[]>([]);
+    const [currentProSlideIndex, setCurrentProSlideIndex] = useState(0);
+
     // Check if we have pro blocks
     const hasProBlocks = innerBlocks.some(block => 
         block.name === 'sliderberg-pro/posts-slider' || 
@@ -41,6 +45,60 @@ export const SliderContent: React.FC<SliderContentProps> = ({
 
     // Only show slide blocks
     const hasRegularSlides = innerBlocks.some(block => block.name === 'sliderberg/slide');
+
+    // For pro blocks, we need to find the actual slide elements and manage navigation
+    useEffect(() => {
+        if (hasProBlocks) {
+            const timer = setTimeout(() => {
+                const proSlideElements = document.querySelectorAll('.sliderberg-post-slide') as NodeListOf<HTMLElement>;
+                if (proSlideElements.length > 0) {
+                    setProSlides(Array.from(proSlideElements));
+                    
+                    // Check if any slide is already marked as active, otherwise show first
+                    const activeSlide = Array.from(proSlideElements).find(slide => 
+                        slide.getAttribute('data-is-active') === 'true'
+                    );
+                    
+                    if (activeSlide) {
+                        const activeIndex = Array.from(proSlideElements).indexOf(activeSlide);
+                        setCurrentProSlideIndex(activeIndex);
+                    } else {
+                        // Show only the first slide initially and mark it as active
+                        proSlideElements.forEach((slide, index) => {
+                            const isFirst = index === 0;
+                            slide.style.display = isFirst ? 'block' : 'none';
+                            slide.setAttribute('data-is-active', isFirst ? 'true' : 'false');
+                        });
+                        setCurrentProSlideIndex(0);
+                    }
+                }
+            }, 200); // Give time for posts to load
+
+            return () => clearTimeout(timer);
+        }
+    }, [hasProBlocks, innerBlocks]);
+
+    // Handle pro slide navigation
+    const handleProSlideChange = (index: number) => {
+        if (proSlides.length === 0) return;
+        
+        setCurrentProSlideIndex(index);
+        proSlides.forEach((slide, slideIndex) => {
+            slide.style.display = slideIndex === index ? 'block' : 'none';
+            // Add a data attribute to track the current state
+            slide.setAttribute('data-is-active', slideIndex === index ? 'true' : 'false');
+        });
+    };
+
+    // Create mock inner blocks for pro slides to work with navigation
+    const mockProBlocks = proSlides.map((_, index) => ({
+        clientId: `pro-slide-${index}`,
+        name: 'sliderberg-pro/post-slide'
+    }));
+
+    // Determine what navigation to show
+    const showRegularNavigation = !hasProBlocks && hasRegularSlides;
+    const showProNavigation = hasProBlocks && proSlides.length > 1;
 
     // For pro blocks, we don't show the slide controls since they have their own content
     const showSlideControls = !hasProBlocks && (hasRegularSlides || attributes.type === 'blocks');
@@ -73,12 +131,25 @@ export const SliderContent: React.FC<SliderContentProps> = ({
                 />
             )}
             
-            {attributes.navigationType === 'top' && !hasProBlocks && hasRegularSlides && (
+            {attributes.navigationType === 'top' && showRegularNavigation && (
                 <SliderNavigation
                     attributes={attributes}
                     currentSlideId={currentSlideId}
                     innerBlocks={innerBlocks.filter(block => block.name === 'sliderberg/slide')}
                     onSlideChange={onSlideChange}
+                    position="top"
+                />
+            )}
+
+            {attributes.navigationType === 'top' && showProNavigation && (
+                <SliderNavigation
+                    attributes={attributes}
+                    currentSlideId={`pro-slide-${currentProSlideIndex}`}
+                    innerBlocks={mockProBlocks}
+                    onSlideChange={(slideId) => {
+                        const index = parseInt(slideId.replace('pro-slide-', ''));
+                        handleProSlideChange(index);
+                    }}
                     position="top"
                 />
             )}
@@ -95,7 +166,7 @@ export const SliderContent: React.FC<SliderContentProps> = ({
                     </div>
                 </div>
                 
-                {attributes.navigationType === 'split' && !hasProBlocks && hasRegularSlides && (
+                {attributes.navigationType === 'split' && showRegularNavigation && (
                     <SliderNavigation
                         attributes={attributes}
                         currentSlideId={currentSlideId}
@@ -104,14 +175,40 @@ export const SliderContent: React.FC<SliderContentProps> = ({
                         position="split"
                     />
                 )}
+
+                {attributes.navigationType === 'split' && showProNavigation && (
+                    <SliderNavigation
+                        attributes={attributes}
+                        currentSlideId={`pro-slide-${currentProSlideIndex}`}
+                        innerBlocks={mockProBlocks}
+                        onSlideChange={(slideId) => {
+                            const index = parseInt(slideId.replace('pro-slide-', ''));
+                            handleProSlideChange(index);
+                        }}
+                        position="split"
+                    />
+                )}
             </div>
             
-            {attributes.navigationType === 'bottom' && !hasProBlocks && hasRegularSlides && (
+            {attributes.navigationType === 'bottom' && showRegularNavigation && (
                 <SliderNavigation
                     attributes={attributes}
                     currentSlideId={currentSlideId}
                     innerBlocks={innerBlocks.filter(block => block.name === 'sliderberg/slide')}
                     onSlideChange={onSlideChange}
+                    position="bottom"
+                />
+            )}
+
+            {attributes.navigationType === 'bottom' && showProNavigation && (
+                <SliderNavigation
+                    attributes={attributes}
+                    currentSlideId={`pro-slide-${currentProSlideIndex}`}
+                    innerBlocks={mockProBlocks}
+                    onSlideChange={(slideId) => {
+                        const index = parseInt(slideId.replace('pro-slide-', ''));
+                        handleProSlideChange(index);
+                    }}
                     position="bottom"
                 />
             )}
