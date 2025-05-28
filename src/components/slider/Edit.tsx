@@ -3,6 +3,7 @@ import { useBlockProps } from '@wordpress/block-editor';
 import { __ } from '@wordpress/i18n';
 import { useSelect } from '@wordpress/data';
 import { createBlock } from '@wordpress/blocks';
+import type { BlockInstance } from '@wordpress/blocks';
 
 // Import sub-components
 import { TypeSelector } from './TypeSelector';
@@ -10,6 +11,16 @@ import { SliderContent } from './SliderContent';
 import { SliderSettings } from './settings/SliderSettings';
 import { useSliderState } from '../../hooks/useSliderState';
 import { SliderAttributes } from '../../types/slider';
+
+// Declare wp namespace
+declare const wp: {
+    data: {
+        dispatch: (store: string) => {
+            removeBlocks: (clientIds: string[]) => void;
+            insertBlocks: (blocks: BlockInstance[], index: number, rootClientId: string) => void;
+        };
+    };
+};
 
 interface EditProps {
     attributes: SliderAttributes;
@@ -37,7 +48,7 @@ export const Edit: React.FC<EditProps> = ({ attributes, setAttributes, clientId 
     // Handle pro block insertion when type is set to a pro type
     useEffect(() => {
         const isProType = ['posts-slider', 'woo-products'].includes(attributes.type);
-        const hasProChild = innerBlocks.some(block => 
+        const hasProChild = innerBlocks.some((block: BlockInstance) => 
             block.name === 'sliderberg-pro/posts-slider' || 
             block.name === 'sliderberg-pro/woo-products'
         );
@@ -48,7 +59,7 @@ export const Edit: React.FC<EditProps> = ({ attributes, setAttributes, clientId 
             // Remove any existing child blocks first
             if (innerBlocks.length > 0) {
                 const { removeBlocks } = wp.data.dispatch('core/block-editor');
-                const childClientIds = innerBlocks.map(block => block.clientId);
+                const childClientIds = innerBlocks.map((block: BlockInstance) => block.clientId);
                 removeBlocks(childClientIds);
             }
 
@@ -65,7 +76,7 @@ export const Edit: React.FC<EditProps> = ({ attributes, setAttributes, clientId 
                         showTitle: true,
                         showExcerpt: true
                     });
-                    insertBlocks(postsSliderBlock, 0, clientId);
+                    insertBlocks([postsSliderBlock], 0, clientId);
                 } else if (attributes.type === 'woo-products') {
                     const wooSliderBlock = createBlock('sliderberg-pro/woo-products', {
                         productCategory: '',
@@ -74,7 +85,7 @@ export const Edit: React.FC<EditProps> = ({ attributes, setAttributes, clientId 
                         showPrice: true,
                         showAddToCart: true
                     });
-                    insertBlocks(wooSliderBlock, 0, clientId);
+                    insertBlocks([wooSliderBlock], 0, clientId);
                 }
             }, 10); // Small delay to ensure state is updated
         }
@@ -110,7 +121,7 @@ export const Edit: React.FC<EditProps> = ({ attributes, setAttributes, clientId 
     };
 
     // Check if we have pro blocks as children
-    const hasProChild = innerBlocks.some(block => 
+    const hasProChild = innerBlocks.some((block: BlockInstance) => 
         block.name === 'sliderberg-pro/posts-slider' || 
         block.name === 'sliderberg-pro/woo-products'
     );
@@ -124,7 +135,7 @@ export const Edit: React.FC<EditProps> = ({ attributes, setAttributes, clientId 
         
         // Remove ALL child blocks to start fresh
         const { removeBlocks } = wp.data.dispatch('core/block-editor');
-        const childClientIds = innerBlocks.map(block => block.clientId);
+        const childClientIds = innerBlocks.map((block: BlockInstance) => block.clientId);
         
         if (childClientIds.length > 0) {
             removeBlocks(childClientIds);
