@@ -129,21 +129,6 @@ export const Edit: React.FC<EditProps> = ({ attributes, setAttributes, clientId 
     // Check if it's a pro slider type or has pro children
     const isProSliderType = ['posts-slider', 'woo-products'].includes(attributes.type) || hasProChild;
 
-    const handleBackToTypes = () => {
-        // Clear the type first
-        setAttributes({ type: '' });
-        
-        // Remove ALL child blocks to start fresh
-        const { removeBlocks } = wp.data.dispatch('core/block-editor');
-        const childClientIds = innerBlocks.map((block: BlockInstance) => block.clientId);
-        
-        if (childClientIds.length > 0) {
-            removeBlocks(childClientIds);
-        }
-        
-        console.log('Cleared all child blocks and reset type');
-    };
-
     return (
         <div {...blockProps}>
             <SliderSettings 
@@ -158,22 +143,6 @@ export const Edit: React.FC<EditProps> = ({ attributes, setAttributes, clientId 
             ) : isProSliderType ? (
                 // Render pro slider content with settings intact
                 <>
-                    {/* Add a reset button for pro sliders */}
-                    <div style={{ marginBottom: '1rem', textAlign: 'center' }}>
-                        <button 
-                            onClick={handleBackToTypes}
-                            style={{ 
-                                background: '#f0f0f0', 
-                                border: '1px solid #ccc', 
-                                padding: '0.5rem 1rem', 
-                                borderRadius: '4px',
-                                cursor: 'pointer'
-                            }}
-                        >
-                            {__('← Back to Slider Types', 'sliderberg')}
-                        </button>
-                    </div>
-                    
                     {/* Render the pro slider content - it will be the child blocks */}
                     <SliderContent
                         attributes={attributes}
