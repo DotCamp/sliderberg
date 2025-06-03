@@ -41,6 +41,7 @@ export interface SliderAttributes {
     navigationHorizontalPosition: number;
     dotColor: string;
     dotActiveColor: string;
+    hideDots: boolean;
     transitionEffect: 'slide' | 'fade' | 'zoom';
     transitionDuration: number;
     transitionEasing: 'ease' | 'ease-in' | 'ease-out' | 'ease-in-out' | 'linear';

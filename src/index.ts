@@ -101,6 +101,10 @@ registerBlockType('sliderberg/sliderberg', {
             type: 'string',
             default: '#ffffff'  // white
         },
+        hideDots: {
+            type: 'boolean',
+            default: false
+        },
         widthPreset: {
             type: 'string',
             default: 'full'

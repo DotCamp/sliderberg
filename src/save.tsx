@@ -15,6 +15,7 @@ interface SaveProps {
         navigationHorizontalPosition: number;
         dotColor: string;
         dotActiveColor: string;
+        hideDots: boolean;
         transitionEffect: 'slide' | 'fade' | 'zoom';
         transitionDuration: number;
         transitionEasing: 'ease' | 'ease-in' | 'ease-out' | 'ease-in-out' | 'linear';
@@ -42,6 +43,17 @@ export const Save: React.FC<SaveProps> = ({ attributes }) => {
         'data-width-preset': attributes.widthPreset
     });
 
+    const renderSlideIndicators = () => {
+        if (attributes.hideDots) {
+            return null;
+        }
+        return (
+            <div className="sliderberg-slide-indicators">
+                {/* Slide indicators will be added dynamically via JavaScript or server-side rendering */}
+            </div>
+        );
+    };
+
     return (
         <div {...blockProps}>
             {attributes.navigationType === 'top' && (
@@ -61,9 +73,7 @@ export const Save: React.FC<SaveProps> = ({ attributes }) => {
                                 <path d="M14.6 7.4L13.2 6l-6 6 6 6 1.4-1.4L9.4 12z"/>
                             </svg>
                         </button>
-                        <div className="sliderberg-slide-indicators">
-                            {/* Slide indicators will be added dynamically via JavaScript or server-side rendering */}
-                        </div>
+                        {renderSlideIndicators()}
                         <button 
                             className="sliderberg-nav-button sliderberg-next" 
                             aria-label="Next Slide"
@@ -140,9 +150,7 @@ export const Save: React.FC<SaveProps> = ({ attributes }) => {
                                     </button>
                                 </div>
                             </div>
-                            <div className="sliderberg-slide-indicators">
-                                {/* Slide indicators will be added dynamically via JavaScript or server-side rendering */}
-                            </div>
+                            {renderSlideIndicators()}
                         </>
                     )}
                 </div>
@@ -164,9 +172,7 @@ export const Save: React.FC<SaveProps> = ({ attributes }) => {
                                 <path d="M14.6 7.4L13.2 6l-6 6 6 6 1.4-1.4L9.4 12z"/>
                             </svg>
                         </button>
-                        <div className="sliderberg-slide-indicators">
-                            {/* Slide indicators will be added dynamically via JavaScript or server-side rendering */}
-                        </div>
+                        {renderSlideIndicators()}
                         <button 
                             className="sliderberg-nav-button sliderberg-next" 
                             aria-label="Next Slide"

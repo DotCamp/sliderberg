@@ -1,6 +1,6 @@
 import React from 'react';
 import { __ } from '@wordpress/i18n';
-import { SelectControl, RangeControl, ColorPicker } from '@wordpress/components';
+import { SelectControl, RangeControl, ColorPicker, ToggleControl } from '@wordpress/components';
 import { validateColor, validateNumericRange } from '../../../utils/security';
 import { SliderAttributes } from '../../../types/slider';
 
@@ -94,22 +94,32 @@ export const NavigationSettings: React.FC<NavigationSettingsProps> = ({ attribut
                 step={1}
                 help={__('Adjust the horizontal position of the navigation arrows (in pixels)', 'sliderberg')}
             />
-            <div className="sliderberg-dot-colors">
-                <p className="components-base-control__label">{__('Dot Color', 'sliderberg')}</p>
-                <ColorPicker
-                    color={attributes.dotColor}
-                    onChangeComplete={(color) => setAttributes({ dotColor: validateColor(color) })}
-                    enableAlpha
-                />
-            </div>
-            <div className="sliderberg-dot-colors">
-                <p className="components-base-control__label">{__('Active Dot Color', 'sliderberg')}</p>
-                <ColorPicker
-                    color={attributes.dotActiveColor}
-                    onChangeComplete={(color) => setAttributes({ dotActiveColor: validateColor(color) })}
-                    enableAlpha
-                />
-            </div>
+            <ToggleControl
+                label={__('Hide Dots', 'sliderberg')}
+                checked={attributes.hideDots}
+                onChange={(value) => setAttributes({ hideDots: value })}
+                help={__('Hide the slide indicator dots', 'sliderberg')}
+            />
+            {!attributes.hideDots && (
+                <>
+                    <div className="sliderberg-dot-colors">
+                        <p className="components-base-control__label">{__('Dot Color', 'sliderberg')}</p>
+                        <ColorPicker
+                            color={attributes.dotColor}
+                            onChangeComplete={(color) => setAttributes({ dotColor: validateColor(color) })}
+                            enableAlpha
+                        />
+                    </div>
+                    <div className="sliderberg-dot-colors">
+                        <p className="components-base-control__label">{__('Active Dot Color', 'sliderberg')}</p>
+                        <ColorPicker
+                            color={attributes.dotActiveColor}
+                            onChangeComplete={(color) => setAttributes({ dotActiveColor: validateColor(color) })}
+                            enableAlpha
+                        />
+                    </div>
+                </>
+            )}
         </>
     );
 }; 

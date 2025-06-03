@@ -82,6 +82,7 @@ export const SliderNavigation: React.FC<SliderNavigationProps> = ({
                     onSlideChange={onSlideChange}
                     dotColor={attributes.dotColor}
                     dotActiveColor={attributes.dotActiveColor}
+                    hideDots={attributes.hideDots}
                 />
             </>
         );
@@ -109,6 +110,7 @@ export const SliderNavigation: React.FC<SliderNavigationProps> = ({
                     onSlideChange={onSlideChange}
                     dotColor={attributes.dotColor}
                     dotActiveColor={attributes.dotActiveColor}
+                    hideDots={attributes.hideDots}
                 />
                 <Button
                     className="sliderberg-nav-button sliderberg-next"

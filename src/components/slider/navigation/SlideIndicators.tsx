@@ -7,6 +7,7 @@ interface SlideIndicatorsProps {
     onSlideChange: (slideId: string) => void;
     dotColor: string;
     dotActiveColor: string;
+    hideDots: boolean;
 }
 
 export const SlideIndicators: React.FC<SlideIndicatorsProps> = ({
@@ -14,8 +15,13 @@ export const SlideIndicators: React.FC<SlideIndicatorsProps> = ({
     currentSlideId,
     onSlideChange,
     dotColor,
-    dotActiveColor
+    dotActiveColor,
+    hideDots
 }) => {
+    if (hideDots) {
+        return null;
+    }
+
     return (
         <div className="sliderberg-slide-indicators">
             {innerBlocks.map((block: any) => (
