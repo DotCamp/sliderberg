@@ -18,3 +18,10 @@ declare module '@wordpress/blocks' {
     export function getBlockTypes(): BlockSettings[];
     export function getBlockType(name: string): BlockSettings | undefined;
 } 
+
+declare module '@wordpress/block-editor' {
+    export function useSetting(name: string): any;
+    export function useMultipleOriginColorsAndGradients(): any;
+    export function __experimentalColorGradientSettingsDropdown(): any;
+    export function __experimentalUseMultipleOriginColorsAndGradients(): any;
+}
