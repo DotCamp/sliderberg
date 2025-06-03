@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Sliderberg Slider Blocks
  * Plugin URI: https://sliderberg.com/
- * Description: A modern slider block for WordPress block editor
+ * Description: Slider Block For the Block Editor (Gutenberg). Slide Anything With Ease.
  * Version: 1.0.0
  * Author: DotCamp
  * Author URI: https://dotcamp.com

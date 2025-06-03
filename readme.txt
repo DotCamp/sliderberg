@@ -1,13 +1,13 @@
-=== Sliderberg Slider Blocks ===
+=== Slider Block WordPress Plugin for Gutenberg - Sliderberg ===
 Contributors: imtiazrayhan, dotcamp
-Tags: slider, carousel, slideshow, block, gutenberg
+Tags: slider, carousel, text slider, block, gutenberg
 Requires at least: 5.8
 Tested up to: 6.8
 Stable tag: 1.0.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-A modern, flexible slider block for WordPress with beautiful transitions and customizable options.
+Slider Block For the Block Editor (Gutenberg). Slide Anything With Ease.
 
 == Description ==
 
@@ -17,6 +17,7 @@ Perfect for showcasing your content in an engaging and interactive way, Sliderbe
 
 = Use Cases =
 
+* **Text Slider**: Rotate quotes, taglines, or any text-based content in a minimal and elegant format.
 * **Portfolio Showcase**: Display your work or projects with smooth transitions and professional navigation
 * **Product Galleries**: Showcase product images with zoom effects and touch-friendly controls
 * **Feature Highlights**: Present key features or services with engaging transitions
