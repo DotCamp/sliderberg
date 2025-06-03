@@ -8,7 +8,10 @@ import {
     MediaUpload,
     MediaUploadCheck,
     BlockControls,
-    BlockAlignmentToolbar
+    BlockAlignmentToolbar,
+    __experimentalColorGradientSettingsDropdown as ColorGradientSettingsDropdown,
+    __experimentalUseMultipleOriginColorsAndGradients as useMultipleOriginColorsAndGradients,
+    useSetting
 } from '@wordpress/block-editor';
 import {
     PanelBody,
@@ -18,7 +21,8 @@ import {
     SelectControl,
     ToggleControl,
     ToolbarGroup,
-    ToolbarButton
+    ToolbarButton,
+    ColorPalette
 } from '@wordpress/components';
 import './style.css';
 import './editor.css';
@@ -93,7 +97,6 @@ const ALLOWED_BLOCKS = [
   'core/site-logo'
 ];
 
-
 const CONTENT_POSITIONS = [
     { label: __('Top Left', 'sliderberg'), value: 'top-left' },
     { label: __('Top Center', 'sliderberg'), value: 'top-center' },
@@ -106,10 +109,6 @@ const CONTENT_POSITIONS = [
     { label: __('Bottom Right', 'sliderberg'), value: 'bottom-right' },
 ];
 
-const COLOR_PALETTE = [
-    '#ffffff', '#000000', '#ffe066', '#e0aaff', '#5f4bb6', '#6c757d', '#f8f9fa', 'transparent'
-];
-
 registerBlockType('sliderberg/slide', {
     title: __('Slide', 'sliderberg'),
     description: __('A sophisticated slide with advanced background and content positioning options.', 'sliderberg'),
@@ -118,7 +117,12 @@ registerBlockType('sliderberg/slide', {
     supports: {
         html: false,
         anchor: true,
-        inserter: false
+        inserter: false,
+        color: {
+            __experimentalDefaultControls: {
+                background: true,
+            },
+        },
     },
     attributes: {
         backgroundType: {
@@ -177,6 +181,10 @@ registerBlockType('sliderberg/slide', {
             isFixed
         } = attributes;
 
+        // Get theme color palette
+        const colorSettings = useSetting('color.palette') || [];
+        const colorGradientSettings = useMultipleOriginColorsAndGradients();
+
         // Placeholder UI logic
         const hasBackground = (backgroundType === 'image' && backgroundImage) || (backgroundType === 'color' && backgroundColor);
 
@@ -207,7 +215,7 @@ registerBlockType('sliderberg/slide', {
                     data-client-id={clientId}
                     style={{ minHeight: `${minHeight}px` }}
                 >
-                    <strong>{__('Slide', 'sliderberg')}</strong>
+                    <strong>{__('Slide Background', 'sliderberg')}</strong>
                     <p>{__('Drag and drop an image, upload, or choose from your library.', 'sliderberg')}</p>
                     <div className="sliderberg-placeholder-actions">
                         <MediaUploadCheck>
@@ -230,15 +238,13 @@ registerBlockType('sliderberg/slide', {
                         </MediaUploadCheck>
                     </div>
                     <div className="sliderberg-placeholder-colors">
-                        {COLOR_PALETTE.map((color) => (
-                            <button
-                                key={color}
-                                className="sliderberg-placeholder-color"
-                                style={{ background: color, border: color === backgroundColor ? '2px solid #007cba' : '1px solid #ccc' }}
-                                onClick={() => setAttributes({ backgroundType: 'color', backgroundColor: color })}
-                                aria-label={color}
-                            />
-                        ))}
+                        <ColorPalette
+                            colors={colorSettings}
+                            value={backgroundColor}
+                            onChange={(color) => setAttributes({ backgroundType: 'color', backgroundColor: color || '' })}
+                            enableAlpha={true}
+                            clearable={true}
+                        />
                     </div>
                 </div>
             );
@@ -274,9 +280,12 @@ registerBlockType('sliderberg/slide', {
                             onChange={(value) => setAttributes({ backgroundType: value as 'color' | 'image' })}
                         />
                         {backgroundType === 'color' ? (
-                            <ColorPicker
-                                color={backgroundColor}
-                                onChangeComplete={(color) => setAttributes({ backgroundColor: validateColor(color) })}
+                            <ColorPalette
+                                colors={colorSettings}
+                                value={backgroundColor}
+                                onChange={(color) => setAttributes({ backgroundColor: validateColor(color || '') })}
+                                enableAlpha={true}
+                                clearable={true}
                             />
                         ) : (
                             <MediaUploadCheck>
@@ -323,10 +332,12 @@ registerBlockType('sliderberg/slide', {
                         )}
                     </PanelBody>
                     <PanelBody title={__('Overlay Settings', 'sliderberg')} initialOpen={false}>
-                        <ColorPicker
-                            color={overlayColor}
-                            onChangeComplete={(color) => setAttributes({ overlayColor: validateColor(color) })}
-                            enableAlpha
+                        <ColorPalette
+                            colors={colorSettings}
+                            value={overlayColor}
+                            onChange={(color) => setAttributes({ overlayColor: validateColor(color || '#000000') })}
+                            enableAlpha={true}
+                            clearable={false}
                         />
                         <RangeControl
                             label={__('Overlay Opacity', 'sliderberg')}
@@ -396,4 +407,4 @@ registerBlockType('sliderberg/slide', {
             </div>
         );
     }
-}); 
+});
