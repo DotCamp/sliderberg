@@ -19,7 +19,7 @@ export const useSliderState = (clientId: string, attributes: any) => {
         [clientId]
     );
 
-    const { insertBlock, selectBlock, removeBlock, insertBlocks } = useDispatch(blockEditorStore);
+    const { insertBlock, removeBlock, insertBlocks } = useDispatch(blockEditorStore);
 
     const { getBlock, getBlockIndex } = useSelect(
         (select) => {
@@ -38,13 +38,12 @@ export const useSliderState = (clientId: string, attributes: any) => {
             const currentSlideExists = currentSlideId && innerBlocks.some((b: any) => b.clientId === currentSlideId);
             if (!currentSlideExists) {
                 setCurrentSlideId(innerBlocks[0].clientId);
-                // Immediately update visibility when setting initial slide
                 if (typeof window !== 'undefined' && window.updateSliderbergSlidesVisibility) {
                     window.updateSliderbergSlidesVisibility();
                 }
             }
         }
-    }, [innerBlocks]); // Only depend on innerBlocks changes
+    }, [innerBlocks]);
 
     // Handle visibility updates after state changes
     useEffect(() => {
@@ -56,29 +55,34 @@ export const useSliderState = (clientId: string, attributes: any) => {
 
     const handleSlideChange = (slideId: string) => {
         setCurrentSlideId(slideId);
-        setIsUpdating(true);
-        // Immediately update visibility when changing slides
         if (typeof window !== 'undefined' && window.updateSliderbergSlidesVisibility) {
             window.updateSliderbergSlidesVisibility();
         }
     };
 
     const handleAddSlide = () => {
-        const slideBlock = createBlock('sliderberg/slide');
-        insertBlock(slideBlock, innerBlocks.length, clientId);
-        setIsUpdating(true);
+        // Store current scroll position
+        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+        const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
         
-        // Use useSelect to get the latest blocks after insertion
-        const updatedBlocks = (select(blockEditorStore) as BlockEditorSelect).getBlocks(clientId);
-        const newBlock = updatedBlocks[updatedBlocks.length - 1];
-        if (newBlock) {
-            setCurrentSlideId(newBlock.clientId);
-            selectBlock(newBlock.clientId);
-            // Immediately update visibility when adding new slide
-            if (typeof window !== 'undefined' && window.updateSliderbergSlidesVisibility) {
-                window.updateSliderbergSlidesVisibility();
+        const slideBlock = createBlock('sliderberg/slide');
+        
+        // insertBlock with updateSelection: false to prevent auto-scroll
+        insertBlock(slideBlock, innerBlocks.length, clientId, false);
+        
+        setTimeout(() => {
+            const updatedBlocks = (select(blockEditorStore) as BlockEditorSelect).getBlocks(clientId);
+            const newBlock = updatedBlocks[updatedBlocks.length - 1];
+            if (newBlock) {
+                setCurrentSlideId(newBlock.clientId);
+                setIsUpdating(true);
+                
+                // Restore scroll position if it changed
+                setTimeout(() => {
+                    window.scrollTo(scrollLeft, scrollTop);
+                }, 10);
             }
-        }
+        }, 20);
     };
 
     const handleDeleteSlide = () => {
@@ -91,44 +95,36 @@ export const useSliderState = (clientId: string, attributes: any) => {
         removeBlock(currentSlideId);
         setCurrentSlideId(nextSlideId);
         setIsUpdating(true);
-        // Immediately update visibility when deleting slide
-        if (typeof window !== 'undefined' && window.updateSliderbergSlidesVisibility) {
-            window.updateSliderbergSlidesVisibility();
-        }
     };
 
     const handleDuplicateSlide = (slideIdToDuplicate: string) => {
-        if (!slideIdToDuplicate) {
-            console.warn('No slide ID provided to duplicate.');
-            return;
-        }
+        if (!slideIdToDuplicate) return;
+
+        // Store current scroll position
+        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+        const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
 
         const originalBlock = getBlock(slideIdToDuplicate);
-        if (!originalBlock) {
-            console.error(`Could not find slide with ID: ${slideIdToDuplicate} to duplicate.`);
-            return;
-        }
+        if (!originalBlock) return;
 
         const duplicatedBlock = cloneBlock(originalBlock);
-        if (!duplicatedBlock) {
-            console.error('Failed to clone the slide block.');
-            return;
-        }
+        if (!duplicatedBlock) return;
         
         const originalSlideIndex = getBlockIndex(slideIdToDuplicate, clientId);
         const insertionPoint = (originalSlideIndex !== -1) ? originalSlideIndex + 1 : innerBlocks.length;
 
-        insertBlocks(duplicatedBlock, insertionPoint, clientId);
-        setCurrentSlideId(duplicatedBlock.clientId);
-        selectBlock(duplicatedBlock.clientId);
-        setIsUpdating(true);
+        // insertBlocks with updateSelection: false to prevent auto-scroll
+        insertBlocks(duplicatedBlock, insertionPoint, clientId, false);
         
-        // Ensure the visibility update happens after the state has likely propagated
         setTimeout(() => {
-            if (typeof window !== 'undefined' && window.updateSliderbergSlidesVisibility) {
-                window.updateSliderbergSlidesVisibility();
-            }
-        }, 0);
+            setCurrentSlideId(duplicatedBlock.clientId);
+            setIsUpdating(true);
+            
+            // Restore scroll position if it changed
+            setTimeout(() => {
+                window.scrollTo(scrollLeft, scrollTop);
+            }, 10);
+        }, 20);
     };
 
     return {
@@ -139,4 +135,4 @@ export const useSliderState = (clientId: string, attributes: any) => {
         handleDeleteSlide,
         handleDuplicateSlide
     };
-}; 
+};
