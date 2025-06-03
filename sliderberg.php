@@ -22,17 +22,37 @@ define('SLIDERBERG_VERSION', '1.0.0');
 define('SLIDERBERG_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('SLIDERBERG_PLUGIN_URL', plugin_dir_url(__FILE__));
 
-/**
- * Load plugin text domain for translations
- */
-function sliderberg_load_textdomain() {
-    load_plugin_textdomain(
-        'sliderberg',
-        false,
-        dirname(plugin_basename(__FILE__)) . '/languages'
-    );
+if ( ! function_exists( 'sli_fs' ) ) {
+    // Create a helper function for easy SDK access.
+    function sli_fs() {
+        global $sli_fs;
+
+        if ( ! isset( $sli_fs ) ) {
+            // Include Freemius SDK.
+            require_once dirname( __FILE__ ) . '/vendor/freemius/start.php';
+            $sli_fs = fs_dynamic_init( array(
+                'id'                  => '19340',
+                'slug'                => 'sliderberg',
+                'type'                => 'plugin',
+                'public_key'          => 'pk_f6a90542b187793a33ebb75752ce7',
+                'is_premium'          => false,
+                'has_addons'          => false,
+                'has_paid_plans'      => false,
+                'menu'                => array(
+                    'first-path'     => 'plugins.php',
+                    'contact'        => false,
+                ),
+            ) );
+        }
+
+        return $sli_fs;
+    }
+
+    // Init Freemius.
+    sli_fs();
+    // Signal that SDK was initiated.
+    do_action( 'sli_fs_loaded' );
 }
-add_action('plugins_loaded', 'sliderberg_load_textdomain');
 
 /**
  * Registers the block using the metadata loaded from the `block.json` file.
