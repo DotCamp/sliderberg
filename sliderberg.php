@@ -1,11 +1,11 @@
 <?php
 /**
- * Plugin Name: Sliderberg Slider Blocks
+ * Plugin Name: Sliderberg
  * Plugin URI: https://sliderberg.com/
  * Description: Slider Block For the Block Editor (Gutenberg). Slide Anything With Ease.
- * Version: 1.0.0
+ * Version: 1.0.1
  * Author: DotCamp
- * Author URI: https://dotcamp.com
+ * Author URI: https://dotcamp.com/
  * License: GPL v2 or later
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain: sliderberg

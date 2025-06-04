@@ -3,7 +3,7 @@ Contributors: imtiazrayhan, dotcamp
 Tags: slider, carousel, text slider, block, gutenberg
 Requires at least: 5.8
 Tested up to: 6.8
-Stable tag: 1.0.0
+Stable tag: 1.0.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -91,13 +91,15 @@ Yes, you can enable autoplay and set the speed in milliseconds through the block
 
 == Changelog ==
 
+= 1.0.1 =
+
+* ADD: Option to hide indicator dots.
+* ADD: Freemius SDK
+* FIX: Jumping of screen after new slide added.
+* IMPROVE: Use theme colors options for slide background.
+
 = 1.0.0 =
 * Initial release
-
-== Upgrade Notice ==
-
-= 1.0.0 =
-Initial release of Sliderberg
 
 == Privacy Policy ==
 
