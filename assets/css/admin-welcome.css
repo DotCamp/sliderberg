@@ -1,5 +1,5 @@
-/* SliderBerg Admin Welcome Page Styles */
-/* Save this as: assets/css/admin-welcome.css */
+/* SliderBerg Admin Welcome Page Styles - Enhanced Version */
+/* Replace the content in assets/css/admin-welcome.css */
 
 /* Reset WordPress admin defaults */
 #wpwrap {
@@ -126,6 +126,154 @@
     font-size: 1.1rem;
     color: #7f8c8d;
     margin: 0;
+}
+
+/* Quick Start Section */
+.sliderberg-quick-start-section {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-bottom: 3px solid #4a90e2;
+    position: relative;
+}
+
+.sliderberg-quick-start-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #4a90e2, #357abd, #74b9ff);
+}
+
+.sliderberg-quick-actions {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+    margin-top: 30px;
+}
+
+.sliderberg-quick-action {
+    background: white;
+    padding: 30px 25px;
+    border-radius: 12px;
+    text-align: center;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    border: 1px solid #e9ecef;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.sliderberg-quick-action:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 30px rgba(74, 144, 226, 0.15);
+    border-color: #4a90e2;
+}
+
+.sliderberg-quick-action::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #4a90e2, #74b9ff);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.sliderberg-quick-action:hover::before {
+    opacity: 1;
+}
+
+.sliderberg-quick-action-icon {
+    font-size: 3rem;
+    margin-bottom: 20px;
+    display: block;
+    line-height: 1;
+}
+
+.sliderberg-quick-action h3 {
+    font-size: 1.4rem;
+    margin: 0 0 15px 0;
+    color: #2c3e50;
+    font-weight: 600;
+}
+
+.sliderberg-quick-action p {
+    color: #7f8c8d;
+    margin: 0 0 25px 0;
+    line-height: 1.5;
+    font-size: 0.95rem;
+}
+
+/* Action Buttons */
+.sliderberg-action-button {
+    display: inline-block;
+    padding: 12px 24px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+    text-align: center;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    border: 2px solid transparent;
+    font-size: 0.95rem;
+    line-height: 1.4;
+    width: 100%;
+    box-sizing: border-box;
+    position: relative;
+    overflow: hidden;
+}
+
+.sliderberg-action-button:focus {
+    outline: 2px solid #4a90e2;
+    outline-offset: 2px;
+}
+
+.sliderberg-action-button-primary {
+    background: linear-gradient(135deg, #4a90e2, #357abd);
+    color: white;
+    border-color: #4a90e2;
+    box-shadow: 0 4px 15px rgba(74, 144, 226, 0.3);
+}
+
+.sliderberg-action-button-primary:hover {
+    background: linear-gradient(135deg, #357abd, #2e6da4);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(74, 144, 226, 0.4);
+    color: white;
+    text-decoration: none;
+}
+
+.sliderberg-action-button-secondary {
+    background: linear-gradient(135deg, #28a745, #218838);
+    color: white;
+    border-color: #28a745;
+    box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+}
+
+.sliderberg-action-button-secondary:hover {
+    background: linear-gradient(135deg, #218838, #1e7e34);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(40, 167, 69, 0.4);
+    color: white;
+    text-decoration: none;
+}
+
+.sliderberg-action-button-outline {
+    background: white;
+    color: #4a90e2;
+    border-color: #4a90e2;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.sliderberg-action-button-outline:hover {
+    background: #4a90e2;
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(74, 144, 226, 0.2);
+    text-decoration: none;
 }
 
 /* Steps Grid */
@@ -536,6 +684,11 @@
         padding: 25px 20px;
     }
 
+    .sliderberg-quick-actions {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
     .sliderberg-steps-grid {
         grid-template-columns: 1fr;
         gap: 25px;
@@ -587,6 +740,15 @@
     .sliderberg-welcome-section {
         padding: 20px 15px;
     }
+
+    .sliderberg-quick-action {
+        padding: 25px 20px;
+    }
+
+    .sliderberg-action-button {
+        padding: 14px 20px;
+        font-size: 0.9rem;
+    }
 }
 
 /* Admin bar adjustments */
@@ -606,7 +768,8 @@
 
     .sliderberg-pro-button,
     .sliderberg-support-button,
-    .sliderberg-newsletter-button {
+    .sliderberg-newsletter-button,
+    .sliderberg-action-button {
         border: 2px solid #4a90e2 !important;
         color: #4a90e2 !important;
         background: transparent !important;
