@@ -18,7 +18,7 @@ if (!defined('WPINC')) {
 }
 
 // Define plugin constants
-define('SLIDERBERG_VERSION', '1.0.0');
+define('SLIDERBERG_VERSION', '1.0.1');
 define('SLIDERBERG_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('SLIDERBERG_PLUGIN_URL', plugin_dir_url(__FILE__));
 
@@ -39,7 +39,7 @@ if ( ! function_exists( 'sli_fs' ) ) {
                 'has_addons'          => false,
                 'has_paid_plans'      => false,
                 'menu'                => array(
-                    'first-path'     => 'plugins.php',
+                    'slug'           => 'sliderberg-welcome',
                     'contact'        => false,
                 ),
             ) );
@@ -53,6 +53,9 @@ if ( ! function_exists( 'sli_fs' ) ) {
     // Signal that SDK was initiated.
     do_action( 'sli_fs_loaded' );
 }
+
+// Include admin welcome page
+require_once SLIDERBERG_PLUGIN_DIR . 'includes/admin-welcome.php';
 
 /**
  * Registers the block using the metadata loaded from the `block.json` file.
