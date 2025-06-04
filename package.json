@@ -8,6 +8,8 @@
   "files": [
     "build",
     "languages",
+    "assets",
+    "includes",
     "vendor",
     "readme.txt",
     "sliderberg.php"
