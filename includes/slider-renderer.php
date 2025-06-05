@@ -4,6 +4,38 @@
  * File: includes/slider-renderer.php
  */
 
+/**
+ * Sanitize CSS color values
+ */
+function sliderberg_sanitize_css_color($color) {
+    if (empty($color)) return '';
+    
+    // Validate hex colors
+    if (preg_match('/^#([0-9A-Fa-f]{3}){1,2}$/', $color)) {
+        return $color;
+    }
+    
+    // Validate rgba colors
+    if (preg_match('/^rgba?\(\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})\s*(?:,\s*(0(?:\.\d+)?|1(?:\.0+)?)\s*)?\)$/', $color, $matches)) {
+        $r = intval($matches[1]);
+        $g = intval($matches[2]); 
+        $b = intval($matches[3]);
+        
+        if ($r <= 255 && $g <= 255 && $b <= 255) {
+            if (isset($matches[4])) {
+                $alpha = floatval($matches[4]);
+                if ($alpha >= 0 && $alpha <= 1) {
+                    return sprintf('rgba(%d, %d, %d, %.3f)', $r, $g, $b, $alpha);
+                }
+            } else {
+                return sprintf('rgb(%d, %d, %d)', $r, $g, $b);
+            }
+        }
+    }
+    
+    return ''; // Invalid color
+}
+
 function render_sliderberg_slider_block($attributes, $content, $block) {
     // Set defaults and sanitize attributes
     $type = sanitize_text_field($attributes['type'] ?? '');
@@ -11,13 +43,13 @@ function render_sliderberg_slider_block($attributes, $content, $block) {
     $navigation_placement = sanitize_text_field($attributes['navigationPlacement'] ?? 'overlay');
     $navigation_shape = sanitize_text_field($attributes['navigationShape'] ?? 'circle');
     $navigation_size = sanitize_text_field($attributes['navigationSize'] ?? 'medium');
-    $navigation_color = sanitize_hex_color($attributes['navigationColor'] ?? '#ffffff');
-    $navigation_bg_color = sanitize_text_field($attributes['navigationBgColor'] ?? 'rgba(0, 0, 0, 0.5)');
+    $navigation_color = sliderberg_sanitize_css_color($attributes['navigationColor'] ?? '#ffffff');
+    $navigation_bg_color = sliderberg_sanitize_css_color($attributes['navigationBgColor'] ?? 'rgba(0, 0, 0, 0.5)');
     $navigation_opacity = floatval($attributes['navigationOpacity'] ?? 1);
     $navigation_vertical_pos = intval($attributes['navigationVerticalPosition'] ?? 20);
     $navigation_horizontal_pos = intval($attributes['navigationHorizontalPosition'] ?? 20);
-    $dot_color = sanitize_text_field($attributes['dotColor'] ?? '#6c757d');
-    $dot_active_color = sanitize_text_field($attributes['dotActiveColor'] ?? '#ffffff');
+    $dot_color = sliderberg_sanitize_css_color($attributes['dotColor'] ?? '#6c757d');
+    $dot_active_color = sliderberg_sanitize_css_color($attributes['dotActiveColor'] ?? '#ffffff');
     $hide_dots = (bool)($attributes['hideDots'] ?? false);
     $transition_effect = sanitize_text_field($attributes['transitionEffect'] ?? 'slide');
     $transition_duration = intval($attributes['transitionDuration'] ?? 500);
@@ -130,11 +162,14 @@ function render_nav_button($type, $styles, $shape, $size, $additional_styles = [
     $all_styles = array_merge($styles, $additional_styles);
     $style_string = build_inline_styles($all_styles);
     
-    $icon = $type === 'prev' 
-        ? '<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M14.6 7.4L13.2 6l-6 6 6 6 1.4-1.4L9.4 12z"/></svg>'
-        : '<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M9.4 7.4l1.4-1.4 6 6-6 6-1.4-1.4L14.6 12z"/></svg>';
+    // Hardcoded secure SVG icons
+    $icons = [
+        'prev' => '<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M14.6 7.4L13.2 6l-6 6 6 6 1.4-1.4L9.4 12z"/></svg>',
+        'next' => '<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M9.4 7.4l1.4-1.4 6 6-6 6-1.4-1.4L14.6 12z"/></svg>'
+    ];
     
-    $label = $type === 'prev' ? 'Previous Slide' : 'Next Slide';
+    $icon = isset($icons[$type]) ? $icons[$type] : $icons['next'];
+    $label = $type === 'prev' ? __('Previous Slide', 'sliderberg') : __('Next Slide', 'sliderberg');
     
     return sprintf(
         '<button class="sliderberg-nav-button sliderberg-%s" aria-label="%s" data-shape="%s" data-size="%s" style="%s">%s</button>',
@@ -143,7 +178,7 @@ function render_nav_button($type, $styles, $shape, $size, $additional_styles = [
         esc_attr($shape),
         esc_attr($size),
         esc_attr($style_string),
-        $icon
+        $icon // Safe because it's hardcoded
     );
 }
 

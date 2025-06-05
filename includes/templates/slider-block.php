@@ -38,7 +38,7 @@ if (!defined('ABSPATH')) {
     <div class="sliderberg-container">
         <div class="sliderberg-slides">
             <div class="sliderberg-slides-container"<?php echo $container_attr_string; ?>>
-                <?php echo $content; ?>
+                <?php echo wp_kses_post($content); ?>
             </div>
             
             <?php if ($navigation_type === 'split'): ?>
