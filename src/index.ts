@@ -1,4 +1,4 @@
 // src/index.ts
 
 // Register all blocks
-import './blocks/slider/index.ts';
+import './blocks/slider/index.tsx';

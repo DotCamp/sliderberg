@@ -1,13 +1,16 @@
+// src/blocks/slider/index.tsx - Updated registration
+
 import { registerBlockType } from '@wordpress/blocks';
+import { InnerBlocks } from '@wordpress/block-editor';
 import { __ } from '@wordpress/i18n';
+import * as React from 'react';
 
 // Import styles
 import './style.css';
 import './editor.css';
 
-// Import components
+// Import components - keep existing edit component
 import { Edit } from './edit';
-import { Save } from './save';
 
 // Import slide block
 import '../slide';
@@ -95,11 +98,11 @@ registerBlockType('sliderberg/sliderberg', {
         },
         dotColor: {
             type: 'string',
-            default: '#6c757d'  // grey
+            default: '#6c757d'
         },
         dotActiveColor: {
             type: 'string',
-            default: '#ffffff'  // white
+            default: '#ffffff'
         },
         hideDots: {
             type: 'boolean',
@@ -119,5 +122,7 @@ registerBlockType('sliderberg/sliderberg', {
         }
     },
     edit: Edit,
-    save: Save,
-}); 
+    save: () => {
+        return <InnerBlocks.Content />;
+    }
+});

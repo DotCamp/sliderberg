@@ -57,7 +57,8 @@ if ( ! function_exists( 'sli_fs' ) ) {
 // Include admin welcome page
 require_once SLIDERBERG_PLUGIN_DIR . 'includes/admin-welcome.php';
 
-// Include slide renderer
+// Include slider and slide renderer
+require_once SLIDERBERG_PLUGIN_DIR . 'includes/slider-renderer.php';
 require_once SLIDERBERG_PLUGIN_DIR . 'includes/slide-renderer.php';
 
 /**
@@ -68,9 +69,11 @@ require_once SLIDERBERG_PLUGIN_DIR . 'includes/slide-renderer.php';
  * @see https://developer.wordpress.org/reference/functions/register_block_type/
  */
 function sliderberg_init() {
-    // Register the block
-    register_block_type(__DIR__ . '/build/blocks/slider');
-
+    
+    // Register slider block with PHP rendering
+    sliderberg_register_slider_block();
+    
+    // Register slide block with PHP rendering
     sliderberg_register_slide_block();
 
     // Register block styles
