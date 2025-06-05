@@ -66,7 +66,7 @@ require_once SLIDERBERG_PLUGIN_DIR . 'includes/admin-welcome.php';
  */
 function sliderberg_init() {
     // Register the block
-    register_block_type(__DIR__ . '/build');
+    register_block_type(__DIR__ . '/build/blocks/slider');
 
     // Register block styles
     wp_register_style(
@@ -82,6 +82,15 @@ function sliderberg_init() {
         SLIDERBERG_PLUGIN_URL . 'build/index.css',
         array(),
         SLIDERBERG_VERSION
+    );
+
+    // Register view script
+    wp_register_script(
+        'sliderberg-view',
+        SLIDERBERG_PLUGIN_URL . 'build/view.js',
+        array(),
+        SLIDERBERG_VERSION,
+        true
     );
 }
 add_action('init', 'sliderberg_init');
@@ -104,4 +113,14 @@ function sliderberg_editor_assets() {
         true
     );
 }
-add_action('enqueue_block_editor_assets', 'sliderberg_editor_assets'); 
+add_action('enqueue_block_editor_assets', 'sliderberg_editor_assets');
+
+// Enqueue frontend assets
+function sliderberg_frontend_assets() {
+    // Only enqueue if we have sliderberg blocks on the page
+    if (has_block('sliderberg/sliderberg')) {
+        wp_enqueue_style('sliderberg-style');
+        wp_enqueue_script('sliderberg-view');
+    }
+}
+add_action('wp_enqueue_scripts', 'sliderberg_frontend_assets'); 

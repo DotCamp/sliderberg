@@ -4,7 +4,7 @@ module.exports = {
     ...defaultConfig,
     entry: {
         index: './src/index.ts',
-        editor: './src/editor.ts',
+        editor: './src/scripts/editor.ts',
         view: './src/view.ts'
     }
 }; 

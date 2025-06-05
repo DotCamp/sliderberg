@@ -30,9 +30,8 @@
         }
     },
     "textdomain": "sliderberg",
-    "editorScript": "file:./index.js",
-    "editorStyle": "file:./index.css",
-    "style": "file:./style-index.css",
-    "render": "file:./save.js",
-    "viewScript": "file:./view.js"
+    "editorScript": "sliderberg-editor",
+    "editorStyle": "sliderberg-editor",
+    "style": "sliderberg-style",
+    "viewScript": "sliderberg-view"
 } 
