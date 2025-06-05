@@ -370,41 +370,7 @@ registerBlockType('sliderberg/slide', {
             </>
         );
     },
-    save: ({ attributes }: { attributes: SlideAttributes }) => {
-        const {
-            backgroundType,
-            backgroundImage,
-            backgroundColor,
-            focalPoint,
-            overlayColor,
-            overlayOpacity,
-            minHeight,
-            contentPosition,
-            isFixed
-        } = attributes;
-
-        const blockProps = useBlockProps.save({
-            className: classnames(
-                'sliderberg-slide',
-                `sliderberg-content-position-${contentPosition}`,
-            ),
-            style: {
-                minHeight: `${minHeight}px`,
-                backgroundColor: backgroundType === 'color' ? backgroundColor : 'transparent',
-                backgroundImage: backgroundType === 'image' && backgroundImage ? `url(${backgroundImage.url})` : 'none',
-                backgroundPosition: backgroundType === 'image' ? `${focalPoint.x * 100}% ${focalPoint.y * 100}%` : 'center',
-                backgroundSize: 'cover',
-                backgroundAttachment: isFixed ? 'fixed' : 'scroll'
-            }
-        });
-
-        return (
-            <div {...blockProps}>
-                <div className="sliderberg-overlay" style={{ backgroundColor: overlayColor, opacity: overlayOpacity }} />
-                <div className="sliderberg-slide-content">
-                    <InnerBlocks.Content />
-                </div>
-            </div>
-        );
+    save: () => {
+        return <InnerBlocks.Content />;
     }
 });

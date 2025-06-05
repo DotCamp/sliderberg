@@ -57,6 +57,9 @@ if ( ! function_exists( 'sli_fs' ) ) {
 // Include admin welcome page
 require_once SLIDERBERG_PLUGIN_DIR . 'includes/admin-welcome.php';
 
+// Include slide renderer
+require_once SLIDERBERG_PLUGIN_DIR . 'includes/slide-renderer.php';
+
 /**
  * Registers the block using the metadata loaded from the `block.json` file.
  * Behind the scenes, it registers also all assets so they can be enqueued
@@ -67,6 +70,8 @@ require_once SLIDERBERG_PLUGIN_DIR . 'includes/admin-welcome.php';
 function sliderberg_init() {
     // Register the block
     register_block_type(__DIR__ . '/build/blocks/slider');
+
+    sliderberg_register_slide_block();
 
     // Register block styles
     wp_register_style(
