@@ -1,3 +1,5 @@
+/* Updated slide positioning CSS - src/blocks/slide/style.css */
+
 .sliderberg-slide {
     position: relative;
     width: 100%;
@@ -27,75 +29,124 @@
     margin: 0 auto;
     width: 100%;
     flex: 1 1 0%;
+    box-sizing: border-box;
 }
 
-/* Content Positioning */
+/* Content Positioning - Fixed Implementation */
 .sliderberg-content-position-top-left .sliderberg-slide-content {
     justify-content: flex-start;
     align-items: flex-start;
     text-align: left;
+    margin-left: 0;
+    margin-right: auto;
 }
 
 .sliderberg-content-position-top-center .sliderberg-slide-content {
     justify-content: flex-start;
     align-items: center;
     text-align: center;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .sliderberg-content-position-top-right .sliderberg-slide-content {
     justify-content: flex-start;
     align-items: flex-end;
     text-align: right;
+    margin-left: auto;
+    margin-right: 0;
 }
 
 .sliderberg-content-position-center-left .sliderberg-slide-content {
     justify-content: center;
     align-items: flex-start;
     text-align: left;
+    margin-left: 0;
+    margin-right: auto;
 }
 
 .sliderberg-content-position-center-center .sliderberg-slide-content {
     justify-content: center;
     align-items: center;
     text-align: center;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .sliderberg-content-position-center-right .sliderberg-slide-content {
     justify-content: center;
     align-items: flex-end;
     text-align: right;
+    margin-left: auto;
+    margin-right: 0;
 }
 
 .sliderberg-content-position-bottom-left .sliderberg-slide-content {
     justify-content: flex-end;
     align-items: flex-start;
     text-align: left;
+    margin-left: 0;
+    margin-right: auto;
 }
 
 .sliderberg-content-position-bottom-center .sliderberg-slide-content {
     justify-content: flex-end;
     align-items: center;
     text-align: center;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .sliderberg-content-position-bottom-right .sliderberg-slide-content {
     justify-content: flex-end;
     align-items: flex-end;
     text-align: right;
+    margin-left: auto;
+    margin-right: 0;
 }
 
-/* Edge Content Positioning: override max-width and margin for all except center-center */
+/* Edge Content Positioning: override max-width and margin for proper positioning */
 .sliderberg-content-position-top-left .sliderberg-slide-content,
-.sliderberg-content-position-top-center .sliderberg-slide-content,
-.sliderberg-content-position-top-right .sliderberg-slide-content,
 .sliderberg-content-position-center-left .sliderberg-slide-content,
+.sliderberg-content-position-bottom-left .sliderberg-slide-content {
+    max-width: 100%;
+    padding: 1.5rem;
+    padding-right: 4rem;
+    /* Add more space on the right for left-aligned content */
+}
+
+.sliderberg-content-position-top-right .sliderberg-slide-content,
 .sliderberg-content-position-center-right .sliderberg-slide-content,
-.sliderberg-content-position-bottom-left .sliderberg-slide-content,
-.sliderberg-content-position-bottom-center .sliderberg-slide-content,
 .sliderberg-content-position-bottom-right .sliderberg-slide-content {
     max-width: 100%;
-    margin: 0;
     padding: 1.5rem;
+    padding-left: 4rem;
+    /* Add more space on the left for right-aligned content */
+}
+
+.sliderberg-content-position-top-center .sliderberg-slide-content,
+.sliderberg-content-position-bottom-center .sliderberg-slide-content {
+    max-width: 100%;
+    padding: 1.5rem;
+}
+
+/* Ensure content blocks inherit the text alignment */
+.sliderberg-content-position-top-left .sliderberg-slide-content *,
+.sliderberg-content-position-center-left .sliderberg-slide-content *,
+.sliderberg-content-position-bottom-left .sliderberg-slide-content * {
+    text-align: left;
+}
+
+.sliderberg-content-position-top-right .sliderberg-slide-content *,
+.sliderberg-content-position-center-right .sliderberg-slide-content *,
+.sliderberg-content-position-bottom-right .sliderberg-slide-content * {
+    text-align: right;
+}
+
+.sliderberg-content-position-top-center .sliderberg-slide-content *,
+.sliderberg-content-position-center-center .sliderberg-slide-content *,
+.sliderberg-content-position-bottom-center .sliderberg-slide-content * {
+    text-align: center;
 }
 
 /* Fixed Background */
@@ -140,10 +191,23 @@
     .sliderberg-fixed-background {
         background-attachment: scroll !important;
     }
-    
+
     .sliderberg-slide-content {
         padding: 1rem;
         max-width: 100%;
+    }
+
+    /* Adjust padding for mobile */
+    .sliderberg-content-position-top-left .sliderberg-slide-content,
+    .sliderberg-content-position-center-left .sliderberg-slide-content,
+    .sliderberg-content-position-bottom-left .sliderberg-slide-content {
+        padding-right: 1rem;
+    }
+
+    .sliderberg-content-position-top-right .sliderberg-slide-content,
+    .sliderberg-content-position-center-right .sliderberg-slide-content,
+    .sliderberg-content-position-bottom-right .sliderberg-slide-content {
+        padding-left: 1rem;
     }
 }
 
@@ -156,18 +220,21 @@
     border-radius: 8px;
     margin-bottom: 1rem;
 }
+
 .sliderberg-placeholder-actions {
     display: flex;
     gap: 1rem;
     justify-content: center;
     margin: 1rem 0;
 }
+
 .sliderberg-placeholder-colors {
     display: flex;
     gap: 0.5rem;
     justify-content: center;
     margin-top: 1rem;
 }
+
 .sliderberg-placeholder-color {
     width: 32px;
     height: 32px;
@@ -177,9 +244,11 @@
     outline: none;
     transition: border 0.2s;
 }
+
 .sliderberg-placeholder-color:focus {
     border: 2px solid #007cba;
 }
+
 .sliderberg-placeholder-color[aria-label='transparent'] {
     background: repeating-conic-gradient(#eee 0% 25%, #fff 0% 50%) 50% / 20px 20px;
-} 
+}

@@ -1,7 +1,7 @@
 <?php
 /**
- * Slide block template
- * File: templates/slide-block.php
+ * Updated Slide block template with proper positioning
+ * File: includes/templates/slide-block.php
  * 
  * Available variables:
  * $class_string - Escaped CSS classes

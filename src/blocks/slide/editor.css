@@ -1,3 +1,5 @@
+/* Updated slide editor positioning CSS - src/blocks/slide/editor.css */
+
 .sliderberg-slide {
     position: relative;
     min-height: 300px;
@@ -6,13 +8,154 @@
     border-radius: 8px;
     padding: 2rem;
     margin: 1rem 0;
+    display: flex;
+    width: 90%;
+    flex-direction: column;
 }
 
 .sliderberg-slide-content {
     min-height: 200px;
-    max-width: 90%;
-    margin: 0 auto;
+    max-width: 100%;
+    margin: 0;
     width: 100%;
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    height: calc(100% - 4rem);
+    /* Account for container padding */
+    position: relative;
+}
+
+/* Content Positioning in Editor - Match frontend behavior */
+.sliderberg-content-position-top-left .sliderberg-slide-content {
+    justify-content: flex-start;
+    align-items: flex-start;
+    text-align: left;
+    margin-left: 0;
+    margin-right: auto;
+    max-width: 100%;
+    width: auto;
+    padding-right: 4rem;
+}
+
+.sliderberg-content-position-top-center .sliderberg-slide-content {
+    justify-content: flex-start;
+    align-items: center;
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 90%;
+}
+
+.sliderberg-content-position-top-right .sliderberg-slide-content {
+    justify-content: flex-start;
+    align-items: flex-end;
+    text-align: right;
+    margin-left: auto;
+    margin-right: 0;
+    max-width: 100%;
+    width: auto;
+    padding-left: 4rem;
+}
+
+.sliderberg-content-position-center-left .sliderberg-slide-content {
+    justify-content: center;
+    align-items: flex-start;
+    text-align: left;
+    margin-left: 0;
+    margin-right: auto;
+    max-width: 100%;
+    width: auto;
+    padding-right: 4rem;
+}
+
+.sliderberg-content-position-center-center .sliderberg-slide-content {
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 90%;
+}
+
+.sliderberg-content-position-center-right .sliderberg-slide-content {
+    justify-content: center;
+    align-items: flex-end;
+    text-align: right;
+    margin-left: auto;
+    margin-right: 0;
+    max-width: 100%;
+    width: auto;
+    padding-left: 4rem;
+}
+
+.sliderberg-content-position-bottom-left .sliderberg-slide-content {
+    justify-content: flex-end;
+    align-items: flex-start;
+    text-align: left;
+    margin-left: 0;
+    margin-right: auto;
+    max-width: 100%;
+    width: auto;
+    padding-right: 4rem;
+}
+
+.sliderberg-content-position-bottom-center .sliderberg-slide-content {
+    justify-content: flex-end;
+    align-items: center;
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 90%;
+}
+
+.sliderberg-content-position-bottom-right .sliderberg-slide-content {
+    justify-content: flex-end;
+    align-items: flex-end;
+    text-align: right;
+    margin-left: auto;
+    margin-right: 0;
+    max-width: 100%;
+    width: auto;
+    padding-left: 4rem;
+}
+
+/* Ensure text alignment is applied to child elements in editor */
+.sliderberg-content-position-top-left .sliderberg-slide-content .block-editor-inner-blocks,
+.sliderberg-content-position-center-left .sliderberg-slide-content .block-editor-inner-blocks,
+.sliderberg-content-position-bottom-left .sliderberg-slide-content .block-editor-inner-blocks {
+    text-align: left;
+}
+
+.sliderberg-content-position-top-right .sliderberg-slide-content .block-editor-inner-blocks,
+.sliderberg-content-position-center-right .sliderberg-slide-content .block-editor-inner-blocks,
+.sliderberg-content-position-bottom-right .sliderberg-slide-content .block-editor-inner-blocks {
+    text-align: right;
+}
+
+.sliderberg-content-position-top-center .sliderberg-slide-content .block-editor-inner-blocks,
+.sliderberg-content-position-center-center .sliderberg-slide-content .block-editor-inner-blocks,
+.sliderberg-content-position-bottom-center .sliderberg-slide-content .block-editor-inner-blocks {
+    text-align: center;
+}
+
+/* Apply alignment to all content within */
+.sliderberg-content-position-top-left .sliderberg-slide-content *,
+.sliderberg-content-position-center-left .sliderberg-slide-content *,
+.sliderberg-content-position-bottom-left .sliderberg-slide-content * {
+    text-align: left !important;
+}
+
+.sliderberg-content-position-top-right .sliderberg-slide-content *,
+.sliderberg-content-position-center-right .sliderberg-slide-content *,
+.sliderberg-content-position-bottom-right .sliderberg-slide-content * {
+    text-align: right !important;
+}
+
+.sliderberg-content-position-top-center .sliderberg-slide-content *,
+.sliderberg-content-position-center-center .sliderberg-slide-content *,
+.sliderberg-content-position-bottom-center .sliderberg-slide-content * {
+    text-align: center !important;
 }
 
 .sliderberg-slide-content .block-editor-inner-blocks {
@@ -36,6 +179,8 @@
 
 @media (max-width: 782px) {
     .sliderberg-slide-content {
-        max-width: 100%;
+        max-width: 100% !important;
+        width: 100% !important;
+        padding: 1rem !important;
     }
-} 
+}
