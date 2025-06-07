@@ -780,3 +780,87 @@
         box-shadow: none !important;
     }
 }
+
+/* Plugin Cards Section */
+.sliderberg-other-plugins {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.sliderberg-plugin-card {
+    background: #fff;
+    border: 1px solid #e2e4e7;
+    border-radius: 8px;
+    padding: 1.25rem;
+    transition: all 0.2s ease;
+}
+
+.sliderberg-plugin-card:hover {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transform: translateY(-1px);
+}
+
+.sliderberg-plugin-card h4 {
+    margin: 0 0 0.5rem 0;
+    color: #1e1e1e;
+    font-size: 1.1rem;
+}
+
+.sliderberg-plugin-card p {
+    margin: 0 0 1rem 0;
+    color: #50575e;
+    font-size: 0.9rem;
+    line-height: 1.4;
+}
+
+.sliderberg-plugin-button {
+    display: inline-block;
+    background: #2271b1;
+    color: #fff;
+    text-decoration: none;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
+    border: none;
+    cursor: pointer;
+    width: 100%;
+    text-align: center;
+}
+
+.sliderberg-plugin-button:hover:not(:disabled) {
+    background: #135e96;
+    color: #fff;
+}
+
+.sliderberg-plugin-button:disabled {
+    background: #f0f0f1;
+    color: #50575e;
+    cursor: not-allowed;
+}
+
+/* Active state */
+.sliderberg-plugin-button[data-status="active"],
+.sliderberg-plugin-button.active {
+    background: #2271b1;
+    cursor: default;
+    color: #ffffff;
+}
+
+.sliderberg-plugin-button[data-status="active"]:hover,
+.sliderberg-plugin-button.active:hover {
+    background: #2271b1;
+    color: #ffffff;
+}
+
+/* Inactive state */
+.sliderberg-plugin-button[data-status="inactive"] {
+    background: #2271b1;
+}
+
+/* Install state */
+.sliderberg-plugin-button[data-status="install"] {
+    background: #2271b1;
+}

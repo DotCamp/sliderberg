@@ -271,6 +271,14 @@ function sliderberg_admin_styles($hook) {
             array(),
             SLIDERBERG_VERSION
         );
+
+        wp_enqueue_script(
+            'sliderberg-admin-welcome',
+            SLIDERBERG_PLUGIN_URL . 'assets/js/admin-welcome.js',
+            array('jquery'),
+            SLIDERBERG_VERSION,
+            true
+        );
     }
 }
 add_action('admin_enqueue_scripts', 'sliderberg_admin_styles');
@@ -530,7 +538,6 @@ function sliderberg_welcome_page() {
                         <li><a href="<?php echo esc_url('https://wordpress.org/support/plugin/sliderberg/reviews/'); ?>" target="_blank" rel="noopener noreferrer" class="sliderberg-link"><?php echo esc_html__('Leave us a review', 'sliderberg'); ?></a></li>
                     </ul>
                 </div>
-
                 <!-- Support -->
                 <div class="sliderberg-sidebar-section">
                     <h3><?php echo esc_html__('Need Help?', 'sliderberg'); ?></h3>
@@ -539,6 +546,59 @@ function sliderberg_welcome_page() {
                         <?php echo esc_html__('Contact Support', 'sliderberg'); ?>
                     </a>
                 </div>
+                <!-- Other Plugins -->
+                <div class="sliderberg-sidebar-section">
+                    <h3><?php echo esc_html__('Our Other Plugins', 'sliderberg'); ?></h3>
+                    
+                    <div class="sliderberg-other-plugins">
+                        <?php
+                        $plugins = array(
+                            'ultimate-blocks' => array(
+                                'name' => 'Ultimate Blocks',
+                                'slug' => 'ultimate-blocks',
+                                'description' => __('Enhance your Gutenberg editor with 25+ powerful blocks.', 'sliderberg')
+                            ),
+                            'wp-table-builder' => array(
+                                'name' => 'WP Table Builder',
+                                'slug' => 'wp-table-builder',
+                                'description' => __('Create beautiful tables with an intuitive drag & drop interface.', 'sliderberg')
+                            ),
+                            'tableberg' => array(
+                                'name' => 'Tableberg',
+                                'slug' => 'tableberg',
+                                'description' => __('Create and manage tables directly in the Gutenberg editor.', 'sliderberg')
+                            )
+                        );
+
+                        foreach ($plugins as $plugin) {
+                            $status = 'install';
+                            $button_text = __('Install Now', 'sliderberg');
+                            
+                            if (is_plugin_active($plugin['slug'] . '/' . $plugin['slug'] . '.php')) {
+                                $status = 'active';
+                                $button_text = __('Active', 'sliderberg');
+                            } elseif (file_exists(WP_PLUGIN_DIR . '/' . $plugin['slug'] . '/' . $plugin['slug'] . '.php')) {
+                                $status = 'inactive';
+                                $button_text = __('Activate', 'sliderberg');
+                            }
+                            ?>
+                            <div class="sliderberg-plugin-card" data-plugin-slug="<?php echo esc_attr($plugin['slug']); ?>">
+                                <h4><?php echo esc_html($plugin['name']); ?></h4>
+                                <p><?php echo esc_html($plugin['description']); ?></p>
+                                <button class="sliderberg-plugin-button" 
+                                        data-plugin="<?php echo esc_attr($plugin['slug']); ?>"
+                                        data-status="<?php echo esc_attr($status); ?>"
+                                        data-nonce="<?php echo wp_create_nonce('sliderberg_plugin_action'); ?>">
+                                    <?php echo esc_html($button_text); ?>
+                                </button>
+                            </div>
+                            <?php
+                        }
+                        ?>
+                    </div>
+                </div>
+
+                
 
             </div>
         </div>

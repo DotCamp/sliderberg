@@ -131,4 +131,78 @@ function sliderberg_frontend_assets() {
         wp_enqueue_script('sliderberg-view');
     }
 }
-add_action('wp_enqueue_scripts', 'sliderberg_frontend_assets'); 
+add_action('wp_enqueue_scripts', 'sliderberg_frontend_assets');
+
+/**
+ * Handle plugin installation via AJAX
+ */
+function sliderberg_install_plugin() {
+    // Check nonce
+    if (!check_ajax_referer('sliderberg_plugin_action', '_ajax_nonce', false)) {
+        wp_send_json_error(array('message' => 'Security check failed'));
+    }
+
+    // Check user capabilities
+    if (!current_user_can('install_plugins')) {
+        wp_send_json_error(array('message' => 'You do not have permission to install plugins'));
+    }
+
+    // Get plugin slug
+    $plugin = isset($_POST['plugin']) ? sanitize_text_field($_POST['plugin']) : '';
+    if (empty($plugin)) {
+        wp_send_json_error(array('message' => 'Plugin slug is required'));
+    }
+
+    // Include required files
+    require_once ABSPATH . 'wp-admin/includes/plugin-install.php';
+    require_once ABSPATH . 'wp-admin/includes/class-wp-upgrader.php';
+    require_once ABSPATH . 'wp-admin/includes/plugin.php';
+
+    // Get plugin info
+    $api = plugins_api('plugin_information', array('slug' => $plugin));
+    if (is_wp_error($api)) {
+        wp_send_json_error(array('message' => $api->get_error_message()));
+    }
+
+    // Install plugin
+    $upgrader = new Plugin_Upgrader(new Automatic_Upgrader_Skin());
+    $result = $upgrader->install($api->download_link);
+
+    if (is_wp_error($result)) {
+        wp_send_json_error(array('message' => $result->get_error_message()));
+    }
+
+    wp_send_json_success();
+}
+add_action('wp_ajax_sliderberg_install_plugin', 'sliderberg_install_plugin');
+
+/**
+ * Handle plugin activation via AJAX
+ */
+function sliderberg_activate_plugin() {
+    // Check nonce
+    if (!check_ajax_referer('sliderberg_plugin_action', '_ajax_nonce', false)) {
+        wp_send_json_error(array('message' => 'Security check failed'));
+    }
+
+    // Check user capabilities
+    if (!current_user_can('activate_plugins')) {
+        wp_send_json_error(array('message' => 'You do not have permission to activate plugins'));
+    }
+
+    // Get plugin slug
+    $plugin = isset($_POST['plugin']) ? sanitize_text_field($_POST['plugin']) : '';
+    if (empty($plugin)) {
+        wp_send_json_error(array('message' => 'Plugin slug is required'));
+    }
+
+    // Activate plugin
+    $result = activate_plugin($plugin . '/' . $plugin . '.php');
+
+    if (is_wp_error($result)) {
+        wp_send_json_error(array('message' => $result->get_error_message()));
+    }
+
+    wp_send_json_success();
+}
+add_action('wp_ajax_sliderberg_activate_plugin', 'sliderberg_activate_plugin'); 
