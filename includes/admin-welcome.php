@@ -343,34 +343,7 @@ function sliderberg_welcome_page() {
         <div class="sliderberg-welcome-content">
             <div class="sliderberg-welcome-main">
                 
-                <!-- Quick Start Section -->
-                <div class="sliderberg-welcome-section sliderberg-quick-start-section">
-                    <div class="sliderberg-section-header">
-                        <h2><?php echo esc_html__('🚀 Quick Start', 'sliderberg'); ?></h2>
-                        <p><?php echo esc_html__('Get started immediately with pre-configured sliders', 'sliderberg'); ?></p>
-                    </div>
-                    
-                    <div class="sliderberg-quick-actions">
-                        <div class="sliderberg-quick-action">
-                            <div class="sliderberg-quick-action-icon">📝</div>
-                            <h3><?php echo esc_html__('Create Post with Slider', 'sliderberg'); ?></h3>
-                            <p><?php echo esc_html__('Start a new blog post with a pre-configured SliderBerg block ready to customize.', 'sliderberg'); ?></p>
-                            <a href="<?php echo $create_post_url; ?>" class="sliderberg-action-button sliderberg-action-button-primary">
-                                <?php echo esc_html__('Create Post with Slider', 'sliderberg'); ?>
-                            </a>
-                        </div>
-                        
-                        <div class="sliderberg-quick-action">
-                            <div class="sliderberg-quick-action-icon">🏠</div>
-                            <h3><?php echo esc_html__('Create Landing Page', 'sliderberg'); ?></h3>
-                            <p><?php echo esc_html__('Create a stunning landing page with a hero slider to showcase your content.', 'sliderberg'); ?></p>
-                            <a href="<?php echo $create_page_url; ?>" class="sliderberg-action-button sliderberg-action-button-secondary">
-                                <?php echo esc_html__('Create Landing Page', 'sliderberg'); ?>
-                            </a>
-                        </div>
-                        
-                    </div>
-                </div>
+                
 
                 <!-- Getting Started Section -->
                 <div class="sliderberg-welcome-section">
@@ -423,6 +396,35 @@ function sliderberg_welcome_page() {
                                 </div>
                             </div>
                         </div>
+                    </div>
+                </div>
+
+                <!-- Quick Start Section -->
+                <div class="sliderberg-welcome-section sliderberg-quick-start-section">
+                    <div class="sliderberg-section-header">
+                        <h2><?php echo esc_html__('🚀 Quick Start', 'sliderberg'); ?></h2>
+                        <p><?php echo esc_html__('Get started immediately with pre-configured sliders', 'sliderberg'); ?></p>
+                    </div>
+                    
+                    <div class="sliderberg-quick-actions">
+                        <div class="sliderberg-quick-action">
+                            <div class="sliderberg-quick-action-icon">📝</div>
+                            <h3><?php echo esc_html__('Create Post with Slider', 'sliderberg'); ?></h3>
+                            <p><?php echo esc_html__('Start a new blog post with a pre-configured SliderBerg block ready to customize.', 'sliderberg'); ?></p>
+                            <a href="<?php echo $create_post_url; ?>" class="sliderberg-action-button sliderberg-action-button-primary">
+                                <?php echo esc_html__('Create Post with Slider', 'sliderberg'); ?>
+                            </a>
+                        </div>
+                        
+                        <div class="sliderberg-quick-action">
+                            <div class="sliderberg-quick-action-icon">🏠</div>
+                            <h3><?php echo esc_html__('Create Landing Page', 'sliderberg'); ?></h3>
+                            <p><?php echo esc_html__('Create a stunning landing page with a hero slider to showcase your content.', 'sliderberg'); ?></p>
+                            <a href="<?php echo $create_page_url; ?>" class="sliderberg-action-button sliderberg-action-button-secondary">
+                                <?php echo esc_html__('Create Landing Page', 'sliderberg'); ?>
+                            </a>
+                        </div>
+                        
                     </div>
                 </div>
 
