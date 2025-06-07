@@ -228,13 +228,18 @@ class SliderBergController {
         }, 50);
     }
 
+    private getTransitionString(): string {
+        const { transitionDuration, transitionEasing } = this.config;
+        return `${transitionDuration}ms ${transitionEasing}`;
+    }
+
     private setupSliderLayout(): void {
         const { container, slides } = this.elements;
-        const { transitionEffect, transitionDuration, transitionEasing } = this.config;
+        const { transitionEffect } = this.config;
 
         if (transitionEffect === 'slide') {
             container.style.display = 'flex';
-            container.style.transition = `transform ${transitionDuration}ms ${transitionEasing}`;
+            container.style.transition = `transform ${this.getTransitionString()}`;
             container.style.transform = 'translateX(0)';
             slides.forEach((slide) => {
                 slide.style.flex = '0 0 100%';
@@ -272,7 +277,7 @@ class SliderBergController {
 
     private setupFadeOrZoomLayout(): void {
         const { container, slides } = this.elements;
-        const { transitionEffect, transitionDuration, transitionEasing } = this.config;
+        const { transitionEffect } = this.config;
 
         container.style.display = 'block';
         container.style.position = 'relative';
@@ -289,7 +294,7 @@ class SliderBergController {
             slide.style.width = '100%';
             slide.style.height = '100%';
             slide.style.opacity = index === 0 ? '1' : '0';
-            slide.style.transition = `opacity ${transitionDuration}ms ${transitionEasing}, transform ${transitionDuration}ms ${transitionEasing}`;
+            slide.style.transition = `opacity ${this.getTransitionString()}, transform ${this.getTransitionString()}`;
             slide.style.zIndex = index === 0 ? '1' : '0';
             if (transitionEffect === 'zoom') {
                 slide.style.transform = index === 0 ? 'scale(1)' : 'scale(0.95)';
@@ -347,10 +352,6 @@ class SliderBergController {
             const isVisible = index === visibleIndex;
             slide.setAttribute('aria-hidden', isVisible ? 'false' : 'true');
             slide.setAttribute('tabindex', isVisible ? '0' : '-1');
-            // For better accessibility, consider programmatically focusing the active slide
-            // if (isVisible && document.activeElement !== slide && this.elements.wrapper.contains(document.activeElement)) {
-            //    slide.focus(); // Be cautious with this as it can cause unexpected page jumps.
-            // }
         });
     }
 
@@ -396,12 +397,11 @@ class SliderBergController {
 
     private handleSlideTransition(index: number, direction: 'next' | 'prev' | null): void {
         const { container, slides } = this.elements;
-        const { transitionDuration, transitionEasing } = this.config;
 
         if (slides.length > 1) {
             if (direction === null) {
                 this.state.currentSlide = index + 1; // Adjust for clones
-                container.style.transition = `transform ${transitionDuration}ms ${transitionEasing}`;
+                container.style.transition = `transform ${this.getTransitionString()}`;
                 container.style.transform = `translateX(-${this.state.currentSlide * 100}%)`;
                 this.scheduleAnimationReset();
             } else if (direction === 'next') {
@@ -418,10 +418,10 @@ class SliderBergController {
 
     private handleNextSlideTransition(): void {
         const { container, slides } = this.elements;
-        const { transitionDuration, transitionEasing } = this.config;
+        const { transitionDuration } = this.config;
 
         this.state.currentSlide++;
-        container.style.transition = `transform ${transitionDuration}ms ${transitionEasing}`;
+        container.style.transition = `transform ${this.getTransitionString()}`;
         container.style.transform = `translateX(-${this.state.currentSlide * 100}%)`;
 
         if (this.state.currentSlide === slides.length + 1) { // Moved to the clone of the first slide
@@ -433,7 +433,7 @@ class SliderBergController {
                 container.offsetHeight; // Force reflow
                 setTimeout(() => {
                     if (this.state.destroyed) return;
-                    container.style.transition = `transform ${transitionDuration}ms ${transitionEasing}`;
+                    container.style.transition = `transform ${this.getTransitionString()}`;
                     this.state.isAnimating = false;
                 }, 10); // Small delay before restoring transition
             }, transitionDuration);
@@ -444,10 +444,10 @@ class SliderBergController {
 
     private handlePrevSlideTransition(): void {
         const { container, slides } = this.elements;
-        const { transitionDuration, transitionEasing } = this.config;
+        const { transitionDuration } = this.config;
 
         this.state.currentSlide--;
-        container.style.transition = `transform ${transitionDuration}ms ${transitionEasing}`;
+        container.style.transition = `transform ${this.getTransitionString()}`;
         container.style.transform = `translateX(-${this.state.currentSlide * 100}%)`;
 
         if (this.state.currentSlide === 0) { // Moved to the clone of the last slide
@@ -459,7 +459,7 @@ class SliderBergController {
                 container.offsetHeight; // Force reflow
                 setTimeout(() => {
                     if (this.state.destroyed) return;
-                    container.style.transition = `transform ${transitionDuration}ms ${transitionEasing}`;
+                    container.style.transition = `transform ${this.getTransitionString()}`;
                     this.state.isAnimating = false;
                 }, 10); // Small delay
             }, transitionDuration);
@@ -483,6 +483,10 @@ class SliderBergController {
 
         previousSlideElement.style.zIndex = '0';
         currentSlideElement.style.zIndex = '1';
+
+        // Apply proper transition timing to both slides
+        previousSlideElement.style.transition = `opacity ${this.getTransitionString()}, transform ${this.getTransitionString()}`;
+        currentSlideElement.style.transition = `opacity ${this.getTransitionString()}, transform ${this.getTransitionString()}`;
 
         previousSlideElement.style.opacity = '0';
         if (transitionEffect === 'zoom') {
