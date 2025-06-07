@@ -91,14 +91,46 @@ export const Edit: React.FC<EditProps> = ({ attributes, setAttributes, clientId 
         }
     }, [attributes.type, innerBlocks, clientId]);
 
-    const blockProps = useBlockProps({
-        style: {
+    // Build editor styles - this is the key fix!
+    const getEditorStyles = () => {
+        const styles: React.CSSProperties = {
             '--sliderberg-dot-color': attributes.dotColor,
             '--sliderberg-dot-active-color': attributes.dotActiveColor,
-            '--sliderberg-custom-width': attributes.widthPreset === 'custom' && attributes.customWidth ? 
-                `${attributes.customWidth}px` : undefined
-        } as React.CSSProperties,
-        'data-width-preset': attributes.widthPreset
+        };
+
+        // Handle custom width in editor
+        if (attributes.widthPreset === 'custom' && attributes.customWidth) {
+            styles['--sliderberg-custom-width'] = `${attributes.customWidth}px`;
+            // Apply the width directly in editor
+            styles.width = `${attributes.customWidth}px`;
+            styles.maxWidth = `${attributes.customWidth}px`;
+            styles.marginLeft = 'auto';
+            styles.marginRight = 'auto';
+        }
+
+        // Handle full width in editor - remove padding/margin
+        if (attributes.widthPreset === 'full' || attributes.align === 'full') {
+            styles.width = '100%';
+            styles.maxWidth = 'none';
+            styles.marginLeft = 'calc(50% - 50vw)';
+            styles.marginRight = 'calc(50% - 50vw)';
+        }
+
+        // Handle wide alignment
+        if (attributes.widthPreset === 'wide' || attributes.align === 'wide') {
+            styles.width = '100%';
+            styles.maxWidth = '1200px'; // Adjust based on your theme
+            styles.marginLeft = 'auto';
+            styles.marginRight = 'auto';
+        }
+
+        return styles;
+    };
+
+    const blockProps = useBlockProps({
+        style: getEditorStyles(),
+        'data-width-preset': attributes.widthPreset,
+        className: `sliderberg-editor-wrapper ${attributes.widthPreset === 'full' || attributes.align === 'full' ? 'is-full-width' : ''}`
     });
 
     // Update visibility when type changes
