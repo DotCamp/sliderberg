@@ -104,10 +104,10 @@ function sliderberg_handle_create_post_action() {
     }
 
     // IMPORTANT: Keep post content exactly as provided - DO NOT MODIFY
-    $post_content = '<!-- wp:sliderberg/sliderberg {"type":"blocks","navigationPlacement":"outside"} -->
-<div style="--sliderberg-dot-color:#6c757d;--sliderberg-dot-active-color:#ffffff" data-width-preset="full" class="wp-block-sliderberg-sliderberg alignfull"><div class="sliderberg-container"><div class="sliderberg-slides"><div class="sliderberg-slides-container" data-transition-effect="slide" data-transition-duration="500" data-transition-easing="ease" data-autoplay="false" data-autoplay-speed="5000" data-pause-on-hover="true"><!-- wp:sliderberg/slide {"backgroundType":"color","backgroundColor":"#007cba"} -->
-<div class="wp-block-sliderberg-slide sliderberg-slide sliderberg-content-position-center-center has-007-cba-background-color has-background" style="min-height:400px;background-color:#007cba;background-image:none;background-position:center;background-size:cover;background-attachment:scroll"><div class="sliderberg-overlay" style="background-color:#000000;opacity:0"></div><div class="sliderberg-slide-content"><!-- wp:heading {"textAlign":"center","textColor":"white"} -->
-<h2 class="wp-block-heading has-white-color has-text-color has-text-align-center">Welcome to Your First Slide</h2>
+    $post_content = '<!-- wp:sliderberg/sliderberg {"type":"blocks","navigationPlacement":"outside","className":"wp-block-sliderberg-sliderberg alignfull"} -->
+<!-- wp:sliderberg/slide {"backgroundType":"color","backgroundColor":"#007cba","className":"wp-block-sliderberg-slide sliderberg-slide sliderberg-content-position-center-center has-007-cba-background-color has-background"} -->
+<!-- wp:heading {"textAlign":"center","textColor":"white"} -->
+<h2 class="wp-block-heading has-text-align-center has-white-color has-text-color">Welcome to Your First Slide</h2>
 <!-- /wp:heading -->
 
 <!-- wp:paragraph {"align":"center","textColor":"white"} -->
@@ -118,8 +118,8 @@ function sliderberg_handle_create_post_action() {
 <div class="wp-block-buttons"><!-- wp:button {"backgroundColor":"white","textColor":"black","style":{"border":{"radius":"25px"}}} -->
 <div class="wp-block-button"><a class="wp-block-button__link has-black-color has-white-background-color has-text-color has-background wp-element-button" style="border-radius:25px">Get Started</a></div>
 <!-- /wp:button --></div>
-<!-- /wp:buttons --></div></div>
-<!-- /wp:sliderberg/slide --></div></div></div><div class="sliderberg-navigation-bar sliderberg-navigation-bar-bottom"><div class="sliderberg-nav-controls sliderberg-nav-controls-grouped"><button class="sliderberg-nav-button sliderberg-prev" aria-label="Previous Slide" data-shape="circle" data-size="medium" style="color:#ffffff;background-color:rgba(0, 0, 0, 0.5)"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M14.6 7.4L13.2 6l-6 6 6 6 1.4-1.4L9.4 12z"></path></svg></button><div class="sliderberg-slide-indicators"></div><button class="sliderberg-nav-button sliderberg-next" aria-label="Next Slide" data-shape="circle" data-size="medium" style="color:#ffffff;background-color:rgba(0, 0, 0, 0.5)"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M9.4 7.4l1.4-1.4 6 6-6 6-1.4-1.4L14.6 12z"></path></svg></button></div></div></div>
+<!-- /wp:buttons -->
+<!-- /wp:sliderberg/slide -->
 <!-- /wp:sliderberg/sliderberg -->';
 
     // Security: Sanitize post title and prepare data
@@ -193,10 +193,10 @@ function sliderberg_handle_create_page_action() {
     }
 
     // IMPORTANT: Keep page content exactly as provided - DO NOT MODIFY
-    $page_content = '<!-- wp:sliderberg/sliderberg {"type":"blocks","navigationPlacement":"outside"} -->
-<div style="--sliderberg-dot-color:#6c757d;--sliderberg-dot-active-color:#ffffff" data-width-preset="full" class="wp-block-sliderberg-sliderberg alignfull"><div class="sliderberg-container"><div class="sliderberg-slides"><div class="sliderberg-slides-container" data-transition-effect="slide" data-transition-duration="500" data-transition-easing="ease" data-autoplay="false" data-autoplay-speed="5000" data-pause-on-hover="true"><!-- wp:sliderberg/slide {"backgroundType":"color","backgroundColor":"#28a745","minHeight":500} -->
-<div class="wp-block-sliderberg-slide sliderberg-slide sliderberg-content-position-center-center has-28-a-745-background-color has-background" style="min-height:500px;background-color:#28a745;background-image:none;background-position:center;background-size:cover;background-attachment:scroll"><div class="sliderberg-overlay" style="background-color:#000000;opacity:0"></div><div class="sliderberg-slide-content"><!-- wp:heading {"textAlign":"center","level":1,"textColor":"white"} -->
-<h1 class="wp-block-heading has-white-color has-text-color has-text-align-center">Welcome to Your Landing Page</h1>
+    $page_content = '<!-- wp:sliderberg/sliderberg {"type":"blocks","navigationPlacement":"outside","className":"wp-block-sliderberg-sliderberg alignfull"} -->
+<!-- wp:sliderberg/slide {"backgroundType":"color","backgroundColor":"#28a745","minHeight":500,"className":"wp-block-sliderberg-slide sliderberg-slide sliderberg-content-position-center-center has-28-a-745-background-color has-background"} -->
+<!-- wp:heading {"textAlign":"center","level":1,"textColor":"white"} -->
+<h1 class="wp-block-heading has-text-align-center has-white-color has-text-color">Welcome to Your Landing Page</h1>
 <!-- /wp:heading -->
 
 <!-- wp:paragraph {"align":"center","textColor":"white","fontSize":"large"} -->
@@ -207,8 +207,8 @@ function sliderberg_handle_create_page_action() {
 <div class="wp-block-buttons"><!-- wp:button {"backgroundColor":"white","textColor":"black","style":{"border":{"radius":"30px"},"spacing":{"padding":{"left":"2rem","right":"2rem","top":"0.75rem","bottom":"0.75rem"}}}} -->
 <div class="wp-block-button"><a class="wp-block-button__link has-black-color has-white-background-color has-text-color has-background wp-element-button" style="border-radius:30px;padding-top:0.75rem;padding-right:2rem;padding-bottom:0.75rem;padding-left:2rem">Learn More</a></div>
 <!-- /wp:button --></div>
-<!-- /wp:buttons --></div></div>
-<!-- /wp:sliderberg/slide --></div></div></div><div class="sliderberg-navigation-bar sliderberg-navigation-bar-bottom"><div class="sliderberg-nav-controls sliderberg-nav-controls-grouped"><button class="sliderberg-nav-button sliderberg-prev" aria-label="Previous Slide" data-shape="circle" data-size="medium" style="color:#ffffff;background-color:rgba(0, 0, 0, 0.5)"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M14.6 7.4L13.2 6l-6 6 6 6 1.4-1.4L9.4 12z"></path></svg></button><div class="sliderberg-slide-indicators"></div><button class="sliderberg-nav-button sliderberg-next" aria-label="Next Slide" data-shape="circle" data-size="medium" style="color:#ffffff;background-color:rgba(0, 0, 0, 0.5)"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M9.4 7.4l1.4-1.4 6 6-6 6-1.4-1.4L14.6 12z"></path></svg></button></div></div></div>
+<!-- /wp:buttons -->
+<!-- /wp:sliderberg/slide -->
 <!-- /wp:sliderberg/sliderberg -->';
 
     // Security: Sanitize page title and prepare data
