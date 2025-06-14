@@ -40,3 +40,4 @@ Thumbs.db
 .env.production
 .env.local.example
 package-lock.json
+.claude

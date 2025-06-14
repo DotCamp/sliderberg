@@ -17,7 +17,9 @@
   "scripts": {
     "build": "wp-scripts build",
     "start": "wp-scripts start",
-    "export": "wp-scripts build && wp-scripts plugin-zip"
+    "export": "wp-scripts build && wp-scripts plugin-zip",
+    "lint": "wp-scripts lint-js",
+    "lint:fix": "wp-scripts lint-js --fix"
   },
   "devDependencies": {
     "@types/react": "^18.2.0",
@@ -35,6 +37,8 @@
   "dependencies": {
     "@types/classnames": "^2.3.0",
     "@wordpress/icons": "^10.23.0",
-    "classnames": "^2.5.1"
+    "classnames": "^2.5.1",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
   }
 }
