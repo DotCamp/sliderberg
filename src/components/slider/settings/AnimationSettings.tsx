@@ -22,11 +22,15 @@ export const AnimationSettings: React.FC< AnimationSettingsProps > = ( {
 			<SelectControl
 				label={ __( 'Transition Effect', 'sliderberg' ) }
 				value={ attributes.transitionEffect }
-				options={ [
-					{ label: __( 'Slide', 'sliderberg' ), value: 'slide' },
-					{ label: __( 'Fade', 'sliderberg' ), value: 'fade' },
-					{ label: __( 'Zoom', 'sliderberg' ), value: 'zoom' },
-				] }
+				options={
+					attributes.isCarouselMode
+						? [ { label: __( 'Slide', 'sliderberg' ), value: 'slide' } ]
+						: [
+							{ label: __( 'Slide', 'sliderberg' ), value: 'slide' },
+							{ label: __( 'Fade', 'sliderberg' ), value: 'fade' },
+							{ label: __( 'Zoom', 'sliderberg' ), value: 'zoom' },
+						]
+				}
 				onChange={ ( value ) =>
 					setAttributes( {
 						transitionEffect: validateTransitionEffect( value ),
