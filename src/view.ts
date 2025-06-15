@@ -328,7 +328,7 @@ class SliderBergController {
 		this.updateAriaAttributes();
 
 		setTimeout( () => {
-			if ( ! this.state.destroyed ) {
+			if ( ! this.state.destroyed && this.elements.slides.length > 1 ) {
 				this.goToSlide( 0, null );
 			}
 		}, 50 );
@@ -869,6 +869,9 @@ class SliderBergController {
 		} = this.config;
 		const totalSlides = this.elements.slides.length;
 
+		// Don't navigate if there's only one slide
+		if ( totalSlides <= 1 ) return;
+
 		if (
 			! isCarouselMode &&
 			( transitionEffect === 'fade' || transitionEffect === 'zoom' )
@@ -902,6 +905,9 @@ class SliderBergController {
 			transitionEffect,
 		} = this.config;
 		const totalSlides = this.elements.slides.length;
+
+		// Don't navigate if there's only one slide
+		if ( totalSlides <= 1 ) return;
 
 		if (
 			! isCarouselMode &&
@@ -986,6 +992,9 @@ class SliderBergController {
 		if ( this.state.isAnimating || this.state.destroyed ) return;
 		if ( e.changedTouches.length === 0 ) return;
 
+		// Don't handle swipe if there's only one slide
+		if ( this.elements.slides.length <= 1 ) return;
+
 		const touchEndX = e.changedTouches[ 0 ].clientX;
 		const touchEndY = e.changedTouches[ 0 ].clientY;
 		const diffX = this.state.touchStartX - touchEndX;
@@ -1010,6 +1019,9 @@ class SliderBergController {
 
 		// Only process if slider or its children have focus
 		if ( ! this.elements.wrapper.contains( activeElement ) ) return;
+
+		// Don't handle keyboard navigation if there's only one slide
+		if ( this.elements.slides.length <= 1 ) return;
 
 		switch ( keyboardEvent.key ) {
 			case 'ArrowLeft':
@@ -1059,7 +1071,7 @@ class SliderBergController {
 	}
 
 	private setupAutoplay(): void {
-		if ( ! this.config.autoplay ) return;
+		if ( ! this.config.autoplay || this.elements.slides.length <= 1 ) return;
 		this.startAutoplay(); // Start initial autoplay
 		if ( this.config.pauseOnHover ) {
 			const { container } = this.elements;
@@ -1079,7 +1091,8 @@ class SliderBergController {
 		if (
 			! this.config.autoplay ||
 			this.state.autoplayInterval ||
-			this.state.destroyed
+			this.state.destroyed ||
+			this.elements.slides.length <= 1
 		)
 			return;
 		this.state.autoplayInterval = window.setInterval( () => {
