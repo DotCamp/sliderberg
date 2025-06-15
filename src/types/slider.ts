@@ -75,6 +75,5 @@ export interface SliderAttributes {
 	slidesToShow: number;
 	slidesToScroll: number;
 	slideSpacing: number;
-	partialVisibility: boolean;
 	infiniteLoop: boolean;
 }

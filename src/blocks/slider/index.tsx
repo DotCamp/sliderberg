@@ -137,10 +137,6 @@ registerBlockType( 'sliderberg/sliderberg', {
 			type: 'number',
 			default: 20,
 		},
-		partialVisibility: {
-			type: 'boolean',
-			default: true,
-		},
 		infiniteLoop: {
 			type: 'boolean',
 			default: true,

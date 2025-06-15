@@ -43,7 +43,6 @@ interface SliderConfig {
 	slidesToShow: number;
 	slidesToScroll: number;
 	slideSpacing: number;
-	partialVisibility: boolean;
 	infiniteLoop: boolean;
 }
 
@@ -256,7 +255,6 @@ class SliderBergController {
 			slidesToShow: this.parseNumberAttribute(container, 'data-slides-to-show', 1),
 			slidesToScroll: this.parseNumberAttribute(container, 'data-slides-to-scroll', 1),
 			slideSpacing: this.parseNumberAttribute(container, 'data-slide-spacing', 0),
-			partialVisibility: this.parseBooleanAttribute(container, 'data-partial-visibility', false),
 			infiniteLoop: this.parseBooleanAttribute(container, 'data-infinite-loop', false),
 		};
 	}

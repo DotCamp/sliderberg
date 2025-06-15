@@ -66,7 +66,6 @@ function render_sliderberg_slider_block($attributes, $content, $block) {
     $slides_to_show = max(1, min(10, intval($attributes['slidesToShow'] ?? 3)));
     $slides_to_scroll = max(1, min($slides_to_show, intval($attributes['slidesToScroll'] ?? 1)));
     $slide_spacing = max(0, min(100, intval($attributes['slideSpacing'] ?? 20)));
-    $partial_visibility = (bool)($attributes['partialVisibility'] ?? true);
     $infinite_loop = (bool)($attributes['infiniteLoop'] ?? true);
     
     // Validate transition effect
@@ -101,9 +100,6 @@ function render_sliderberg_slider_block($attributes, $content, $block) {
     }
     if ($is_carousel_mode) {
         $wrapper_classes[] = 'sliderberg-carousel-mode';
-        if ($partial_visibility) {
-            $wrapper_classes[] = 'sliderberg-partial-visibility';
-        }
     }
     
     $wrapper_attrs = [
@@ -124,7 +120,6 @@ function render_sliderberg_slider_block($attributes, $content, $block) {
         'data-slides-to-show' => $slides_to_show,
         'data-slides-to-scroll' => $slides_to_scroll,
         'data-slide-spacing' => $slide_spacing,
-        'data-partial-visibility' => $partial_visibility ? 'true' : 'false',
         'data-infinite-loop' => $infinite_loop ? 'true' : 'false'
     ];
     
@@ -371,10 +366,6 @@ function sliderberg_register_slider_block() {
             'slideSpacing' => [
                 'type' => 'number',
                 'default' => 20
-            ],
-            'partialVisibility' => [
-                'type' => 'boolean',
-                'default' => true
             ],
             'infiniteLoop' => [
                 'type' => 'boolean',

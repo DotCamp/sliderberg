@@ -8,7 +8,6 @@ interface CarouselSettingsProps {
         slidesToShow: number;
         slidesToScroll: number;
         slideSpacing: number;
-        partialVisibility: boolean;
         infiniteLoop: boolean;
     };
     setAttributes: (attrs: Partial<CarouselSettingsProps['attributes']>) => void;
@@ -23,7 +22,6 @@ export const CarouselSettings: React.FC<CarouselSettingsProps> = ({
         slidesToShow,
         slidesToScroll,
         slideSpacing,
-        partialVisibility,
         infiniteLoop,
     } = attributes;
 
@@ -63,16 +61,6 @@ export const CarouselSettings: React.FC<CarouselSettingsProps> = ({
                         min={0}
                         max={100}
                         step={5}
-                    />
-
-                    <ToggleControl
-                        label={__('Show Partial Slides', 'sliderberg')}
-                        checked={partialVisibility}
-                        onChange={(value) => setAttributes({ partialVisibility: value })}
-                        help={__(
-                            'Show parts of adjacent slides on the sides',
-                            'sliderberg'
-                        )}
                     />
 
                     <ToggleControl

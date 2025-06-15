@@ -327,16 +327,6 @@
     transition: transform 0.3s ease, opacity 0.3s ease;
 }
 
-.sliderberg-carousel-mode.sliderberg-partial-visibility .sliderberg-slide {
-    opacity: 0.5;
-    transform: scale(0.9);
-}
-
-.sliderberg-carousel-mode.sliderberg-partial-visibility .sliderberg-slide.active {
-    opacity: 1;
-    transform: scale(1);
-}
-
 /* Responsive Carousel */
 @media (max-width: 1200px) {
     .sliderberg-carousel-mode .sliderberg-slides-container > * {

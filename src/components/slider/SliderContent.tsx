@@ -20,7 +20,6 @@ interface SliderContentProps {
 		slidesToShow: number;
 		slidesToScroll: number;
 		slideSpacing: number;
-		partialVisibility: boolean;
 		infiniteLoop: boolean;
 		type: string;
 		navigationType: string;
@@ -50,7 +49,6 @@ export const SliderContent: React.FC<SliderContentProps> = ({
 		slidesToShow,
 		slidesToScroll,
 		slideSpacing,
-		partialVisibility,
 		infiniteLoop,
 	} = attributes;
 
@@ -253,57 +251,52 @@ export const SliderContent: React.FC<SliderContentProps> = ({
 				/>
 			) }
 
-			<div className="sliderberg-content">
+			<div className={classnames('sliderberg-slides', {
+				'sliderberg-carousel-mode': isCarouselMode,
+			})}>
 				<div
-					className={classnames('sliderberg-slides', {
-						'sliderberg-carousel-mode': isCarouselMode,
-						'sliderberg-partial-visibility': isCarouselMode && partialVisibility,
-					})}
+					className="sliderberg-slides-container"
+					data-current-slide-id={currentSlideId || ''}
+					style={{
+						'--sliderberg-slides-to-show': slidesToShow,
+						'--sliderberg-slide-spacing': `${slideSpacing}px`,
+					} as React.CSSProperties}
 				>
-					<div
-						className="sliderberg-slides-container"
-						data-current-slide-id={currentSlideId || ''}
-						style={{
-							'--sliderberg-slides-to-show': slidesToShow,
-							'--sliderberg-slide-spacing': `${slideSpacing}px`,
-						} as React.CSSProperties}
-					>
-						<InnerBlocks
-							allowedBlocks={ALLOWED_BLOCKS}
-							template={template}
-							templateLock={templateLock}
-							orientation={isCarouselMode ? "horizontal" : "vertical"}
-						/>
-					</div>
+					<InnerBlocks
+						allowedBlocks={ALLOWED_BLOCKS}
+						template={template}
+						templateLock={templateLock}
+						orientation={isCarouselMode ? "horizontal" : "vertical"}
+					/>
 				</div>
-
-				{ attributes.navigationType === 'split' && showRegularNavigation && (
-					<SliderNavigation
-						attributes={attributes}
-						currentSlideId={currentSlideId}
-						innerBlocks={innerBlocks.filter(
-							(block) => block.name === 'sliderberg/slide'
-						)}
-						onSlideChange={onSlideChange}
-						position="split"
-					/>
-				)}
-
-				{ attributes.navigationType === 'split' && showProNavigation && (
-					<SliderNavigation
-						attributes={attributes}
-						currentSlideId={`pro-slide-${currentProSlideIndex}`}
-						innerBlocks={mockProBlocks}
-						onSlideChange={(slideId) => {
-							const index = parseInt(
-								slideId.replace('pro-slide-', '')
-							);
-							handleProSlideChange(index);
-						}}
-						position="split"
-					/>
-				)}
 			</div>
+
+			{ attributes.navigationType === 'split' && showRegularNavigation && (
+				<SliderNavigation
+					attributes={attributes}
+					currentSlideId={currentSlideId}
+					innerBlocks={innerBlocks.filter(
+						(block) => block.name === 'sliderberg/slide'
+					)}
+					onSlideChange={onSlideChange}
+					position="split"
+				/>
+			)}
+
+			{ attributes.navigationType === 'split' && showProNavigation && (
+				<SliderNavigation
+					attributes={attributes}
+					currentSlideId={`pro-slide-${currentProSlideIndex}`}
+					innerBlocks={mockProBlocks}
+					onSlideChange={(slideId) => {
+						const index = parseInt(
+							slideId.replace('pro-slide-', '')
+						);
+						handleProSlideChange(index);
+					}}
+					position="split"
+				/>
+			)}
 
 			{ attributes.navigationType === 'bottom' && showRegularNavigation && (
 				<SliderNavigation
