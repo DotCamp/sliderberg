@@ -166,6 +166,8 @@ export const Edit: React.FC< EditProps > = ( {
 			attributes.widthPreset === 'full' || attributes.align === 'full'
 				? 'is-full-width'
 				: ''
+		} ${
+			attributes.isCarouselMode ? 'is-carousel-mode' : ''
 		}`,
 	} );
 

@@ -22,6 +22,15 @@
     padding: 0;
 }
 
+/* Override full width for carousel mode to prevent editor overflow */
+.sliderberg-editor-wrapper.is-full-width.is-carousel-mode,
+.wp-block-sliderberg-sliderberg.alignfull.is-carousel-mode,
+.wp-block-sliderberg-sliderberg[data-width-preset="full"].is-carousel-mode {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    width: 100% !important;
+}
+
 /* Ensure all children in full width have proper styling */
 .sliderberg-editor-wrapper.is-full-width .sliderberg-container,
 .sliderberg-editor-wrapper.is-full-width .sliderberg-slides,
@@ -321,6 +330,9 @@
 .sliderberg-carousel-mode .sliderberg-slides-container {
     position: relative;
     width: 100%;
+    /* Ensure CSS custom properties are inherited */
+    --sliderberg-slides-to-show: var(--sliderberg-slides-to-show, 3);
+    --sliderberg-slide-spacing: var(--sliderberg-slide-spacing, 20px);
 }
 
 /* Target the WordPress block editor layout directly */
