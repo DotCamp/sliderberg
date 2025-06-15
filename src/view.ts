@@ -569,12 +569,15 @@ class SliderBergController {
 		const dotCount = totalSlides;
 		indicators.innerHTML = '';
 
-		// Determine active index based on mode - carousel always uses startIndex
-		const activeIndex =
-			! isCarouselMode &&
-			( transitionEffect === 'fade' || transitionEffect === 'zoom' )
-				? this.state.currentSlide
-				: this.state.startIndex % totalSlides;
+		// Determine active index based on mode
+		let activeIndex: number;
+		if ( isCarouselMode ) {
+			// For carousel mode, always use startIndex
+			activeIndex = this.state.startIndex % totalSlides;
+		} else {
+			// For single slide mode, use the visible slide index
+			activeIndex = this.getVisibleSlideIndex();
+		}
 
 		for ( let i = 0; i < dotCount; i++ ) {
 			const dot = document.createElement( 'button' );
