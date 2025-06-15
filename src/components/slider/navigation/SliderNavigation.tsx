@@ -24,8 +24,28 @@ export const SliderNavigation: React.FC< SliderNavigationProps > = ( {
 		const idx = innerBlocks.findIndex(
 			( b: any ) => b.clientId === currentSlideId
 		);
-		const prevIdx = idx > 0 ? idx - 1 : innerBlocks.length - 1;
-		onSlideChange( innerBlocks[ prevIdx ].clientId );
+		
+		// For carousel mode, use slidesToScroll
+		if ( attributes.isCarouselMode ) {
+			const totalSlides = innerBlocks.length;
+			const slidesToScroll = attributes.slidesToScroll || 1;
+			let prevIdx = idx - slidesToScroll;
+			
+			if ( attributes.infiniteLoop ) {
+				// Allow negative for infinite loop
+				if ( prevIdx < 0 ) {
+					prevIdx = totalSlides + prevIdx;
+				}
+			} else {
+				// Don't go below 0 for non-infinite
+				prevIdx = Math.max( 0, prevIdx );
+			}
+			onSlideChange( innerBlocks[ prevIdx ].clientId );
+		} else {
+			// Regular single slide navigation
+			const prevIdx = idx > 0 ? idx - 1 : innerBlocks.length - 1;
+			onSlideChange( innerBlocks[ prevIdx ].clientId );
+		}
 	};
 
 	const handleNextSlide = () => {
@@ -33,8 +53,30 @@ export const SliderNavigation: React.FC< SliderNavigationProps > = ( {
 		const idx = innerBlocks.findIndex(
 			( b: any ) => b.clientId === currentSlideId
 		);
-		const nextIdx = idx < innerBlocks.length - 1 ? idx + 1 : 0;
-		onSlideChange( innerBlocks[ nextIdx ].clientId );
+		
+		// For carousel mode, use slidesToScroll
+		if ( attributes.isCarouselMode ) {
+			const totalSlides = innerBlocks.length;
+			const slidesToScroll = attributes.slidesToScroll || 1;
+			const slidesToShow = attributes.slidesToShow || 1;
+			let nextIdx = idx + slidesToScroll;
+			
+			if ( attributes.infiniteLoop ) {
+				// Allow overflow for infinite loop
+				if ( nextIdx >= totalSlides ) {
+					nextIdx = nextIdx - totalSlides;
+				}
+			} else {
+				// Don't go beyond what can be shown
+				const maxStartIndex = Math.max( 0, totalSlides - slidesToShow );
+				nextIdx = Math.min( nextIdx, maxStartIndex );
+			}
+			onSlideChange( innerBlocks[ nextIdx ].clientId );
+		} else {
+			// Regular single slide navigation
+			const nextIdx = idx < innerBlocks.length - 1 ? idx + 1 : 0;
+			onSlideChange( innerBlocks[ nextIdx ].clientId );
+		}
 	};
 
 	if ( position === 'split' ) {

@@ -177,6 +177,17 @@ export const SliderContent: React.FC<SliderContentProps> = ({
 		return visibleSlides;
 	};
 
+	// Calculate start index for carousel mode (like frontend)
+	const getStartIndex = () => {
+		if (!isCarouselMode) return 0;
+		
+		const currentIndex = innerBlocks.findIndex(
+			(block) => block.clientId === currentSlideId
+		);
+		
+		return currentIndex >= 0 ? currentIndex : 0;
+	};
+
 	const visibleSlideIds = getVisibleSlides();
 
 	// Update slide visibility
@@ -194,19 +205,22 @@ export const SliderContent: React.FC<SliderContentProps> = ({
 		(block) => block.clientId === currentSlideId
 	);
 
+	// Get start index for carousel mode
+	const startIndex = getStartIndex();
+
 	// Carousel scroll effect in editor
 	useEffect(() => {
 		if (!isCarouselMode) return;
-		// Find the .block-editor-block-list__layout inside the slides container
+		// Find the .block-editor-block-list__layout inside the slides container with the correct path
 		const container = document.querySelector('.sliderberg-slides-container');
 		if (!container) return;
-		const layout = container.querySelector('.block-editor-block-list__layout') as HTMLElement | null;
+		const layout = container.querySelector('.block-editor-inner-blocks .block-editor-block-list__layout') as HTMLElement | null;
 		if (!layout) return;
-		// Calculate offset percentage
-		const offset = currentIndex > -1 ? -(currentIndex * (100 / slidesToShow)) : 0;
+		// Calculate offset percentage based on start index like frontend
+		const offset = startIndex > -1 ? -(startIndex * (100 / slidesToShow)) : 0;
 		layout.style.transition = 'transform 0.4s cubic-bezier(0.4,0,0.2,1)';
 		layout.style.transform = `translateX(${offset}%)`;
-	}, [currentIndex, slidesToShow, isCarouselMode]);
+	}, [startIndex, slidesToShow, isCarouselMode]);
 
 	return (
 		<>
