@@ -40,10 +40,6 @@ export const SliderSettings: React.FC< SliderSettingsProps > = ( {
 				attributes={ attributes }
 				setAttributes={ setAttributes }
 			/>
-			<CarouselSettings
-				attributes={ attributes }
-				setAttributes={ setAttributes }
-			/>
 			<PanelBody
 				title={ __( 'Animation Settings', 'sliderberg' ) }
 				initialOpen={ true }
@@ -73,6 +69,10 @@ export const SliderSettings: React.FC< SliderSettingsProps > = ( {
 					setAttributes={ setAttributes }
 				/>
 			</PanelBody>
+			<CarouselSettings
+				attributes={ attributes }
+				setAttributes={ setAttributes }
+			/>
 		</InspectorControls>
 	);
 };
