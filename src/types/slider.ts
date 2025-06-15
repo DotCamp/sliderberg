@@ -70,4 +70,11 @@ export interface SliderAttributes {
 	widthPreset: string;
 	customWidth: string;
 	widthUnit: string;
+	// Carousel properties
+	isCarouselMode: boolean;
+	slidesToShow: number;
+	slidesToScroll: number;
+	slideSpacing: number;
+	partialVisibility: boolean;
+	infiniteLoop: boolean;
 }

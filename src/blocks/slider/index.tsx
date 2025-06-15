@@ -120,6 +120,31 @@ registerBlockType( 'sliderberg/sliderberg', {
 			type: 'string',
 			default: 'px',
 		},
+		// Carousel attributes
+		isCarouselMode: {
+			type: 'boolean',
+			default: false,
+		},
+		slidesToShow: {
+			type: 'number',
+			default: 3,
+		},
+		slidesToScroll: {
+			type: 'number',
+			default: 1,
+		},
+		slideSpacing: {
+			type: 'number',
+			default: 20,
+		},
+		partialVisibility: {
+			type: 'boolean',
+			default: true,
+		},
+		infiniteLoop: {
+			type: 'boolean',
+			default: true,
+		},
 	},
 	edit: Edit,
 	save: () => {

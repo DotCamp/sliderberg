@@ -1,10 +1,11 @@
 // src/components/slider/SliderContent.tsx
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { InnerBlocks } from '@wordpress/block-editor';
 import { __ } from '@wordpress/i18n';
 import { Button } from '@wordpress/components';
 import { SliderNavigation } from './navigation/SliderNavigation';
 import { SliderControls } from './SliderControls';
+import classnames from 'classnames';
 
 // Allow both regular slides and pro slider blocks
 const ALLOWED_BLOCKS = [
@@ -14,17 +15,27 @@ const ALLOWED_BLOCKS = [
 ];
 
 interface SliderContentProps {
-	attributes: any;
+	attributes: {
+		isCarouselMode: boolean;
+		slidesToShow: number;
+		slidesToScroll: number;
+		slideSpacing: number;
+		partialVisibility: boolean;
+		infiniteLoop: boolean;
+		type: string;
+		navigationType: string;
+		// ... other existing attributes
+	};
 	currentSlideId: string | null;
 	innerBlocks: any[];
 	onAddSlide: () => void;
 	onDeleteSlide: () => void;
-	onDuplicateSlide: ( slideId: string ) => void;
-	onSlideChange: ( slideId: string ) => void;
+	onDuplicateSlide: (slideId: string) => void;
+	onSlideChange: (slideId: string) => void;
 	clientId: string;
 }
 
-export const SliderContent: React.FC< SliderContentProps > = ( {
+export const SliderContent: React.FC<SliderContentProps> = ({
 	attributes,
 	currentSlideId,
 	innerBlocks,
@@ -33,7 +44,16 @@ export const SliderContent: React.FC< SliderContentProps > = ( {
 	onDuplicateSlide,
 	onSlideChange,
 	clientId,
-} ) => {
+}) => {
+	const {
+		isCarouselMode,
+		slidesToShow,
+		slidesToScroll,
+		slideSpacing,
+		partialVisibility,
+		infiniteLoop,
+	} = attributes;
+
 	const [ proSlides, setProSlides ] = useState< HTMLElement[] >( [] );
 	const [ currentProSlideIndex, setCurrentProSlideIndex ] = useState( 0 );
 
@@ -131,6 +151,65 @@ export const SliderContent: React.FC< SliderContentProps > = ( {
 		template = undefined;
 	}
 
+	// Calculate visible slides for carousel mode
+	const getVisibleSlides = () => {
+		if (!isCarouselMode) return [currentSlideId];
+
+		const currentIndex = innerBlocks.findIndex(
+			(block) => block.clientId === currentSlideId
+		);
+
+		if (currentIndex === -1) return [];
+
+		const visibleSlides = [];
+		const totalSlides = innerBlocks.length;
+
+		for (let i = 0; i < slidesToShow; i++) {
+			let slideIndex = currentIndex + i;
+			
+			if (infiniteLoop) {
+				slideIndex = (slideIndex + totalSlides) % totalSlides;
+			} else if (slideIndex >= totalSlides) {
+				break;
+			}
+
+			visibleSlides.push(innerBlocks[slideIndex].clientId);
+		}
+
+		return visibleSlides;
+	};
+
+	const visibleSlideIds = getVisibleSlides();
+
+	// Update slide visibility
+	useEffect(() => {
+		if (typeof window !== 'undefined' && window.updateSliderbergSlidesVisibility) {
+			window.updateSliderbergSlidesVisibility();
+		}
+	}, [currentSlideId, isCarouselMode, slidesToShow, slidesToScroll]);
+
+	// Ref for the block list layout (slides row)
+	const blockListLayoutRef = useRef<HTMLDivElement | null>(null);
+
+	// Find the index of the current slide
+	const currentIndex = innerBlocks.findIndex(
+		(block) => block.clientId === currentSlideId
+	);
+
+	// Carousel scroll effect in editor
+	useEffect(() => {
+		if (!isCarouselMode) return;
+		// Find the .block-editor-block-list__layout inside the slides container
+		const container = document.querySelector('.sliderberg-slides-container');
+		if (!container) return;
+		const layout = container.querySelector('.block-editor-block-list__layout') as HTMLElement | null;
+		if (!layout) return;
+		// Calculate offset percentage
+		const offset = currentIndex > -1 ? -(currentIndex * (100 / slidesToShow)) : 0;
+		layout.style.transition = 'transform 0.4s cubic-bezier(0.4,0,0.2,1)';
+		layout.style.transform = `translateX(${offset}%)`;
+	}, [currentIndex, slidesToShow, isCarouselMode]);
+
 	return (
 		<>
 			{ showSlideControls && (
@@ -176,80 +255,82 @@ export const SliderContent: React.FC< SliderContentProps > = ( {
 
 			<div className="sliderberg-content">
 				<div
-					className="sliderberg-slides"
-					style={ { position: 'relative' } }
+					className={classnames('sliderberg-slides', {
+						'sliderberg-carousel-mode': isCarouselMode,
+						'sliderberg-partial-visibility': isCarouselMode && partialVisibility,
+					})}
 				>
 					<div
 						className="sliderberg-slides-container"
-						style={ { width: '100%' } }
-						data-current-slide-id={ currentSlideId || '' }
+						data-current-slide-id={currentSlideId || ''}
+						style={{
+							'--sliderberg-slides-to-show': slidesToShow,
+							'--sliderberg-slide-spacing': `${slideSpacing}px`,
+						} as React.CSSProperties}
 					>
 						<InnerBlocks
-							allowedBlocks={ ALLOWED_BLOCKS }
-							template={ template }
-							templateLock={ templateLock }
-							orientation="horizontal"
+							allowedBlocks={ALLOWED_BLOCKS}
+							template={template}
+							templateLock={templateLock}
+							orientation={isCarouselMode ? "horizontal" : "vertical"}
 						/>
 					</div>
 				</div>
 
-				{ attributes.navigationType === 'split' &&
-					showRegularNavigation && (
-						<SliderNavigation
-							attributes={ attributes }
-							currentSlideId={ currentSlideId }
-							innerBlocks={ innerBlocks.filter(
-								( block ) => block.name === 'sliderberg/slide'
-							) }
-							onSlideChange={ onSlideChange }
-							position="split"
-						/>
-					) }
+				{ attributes.navigationType === 'split' && showRegularNavigation && (
+					<SliderNavigation
+						attributes={attributes}
+						currentSlideId={currentSlideId}
+						innerBlocks={innerBlocks.filter(
+							(block) => block.name === 'sliderberg/slide'
+						)}
+						onSlideChange={onSlideChange}
+						position="split"
+					/>
+				)}
 
-				{ attributes.navigationType === 'split' &&
-					showProNavigation && (
-						<SliderNavigation
-							attributes={ attributes }
-							currentSlideId={ `pro-slide-${ currentProSlideIndex }` }
-							innerBlocks={ mockProBlocks }
-							onSlideChange={ ( slideId ) => {
-								const index = parseInt(
-									slideId.replace( 'pro-slide-', '' )
-								);
-								handleProSlideChange( index );
-							} }
-							position="split"
-						/>
-					) }
+				{ attributes.navigationType === 'split' && showProNavigation && (
+					<SliderNavigation
+						attributes={attributes}
+						currentSlideId={`pro-slide-${currentProSlideIndex}`}
+						innerBlocks={mockProBlocks}
+						onSlideChange={(slideId) => {
+							const index = parseInt(
+								slideId.replace('pro-slide-', '')
+							);
+							handleProSlideChange(index);
+						}}
+						position="split"
+					/>
+				)}
 			</div>
 
-			{ attributes.navigationType === 'bottom' &&
-				showRegularNavigation && (
-					<SliderNavigation
-						attributes={ attributes }
-						currentSlideId={ currentSlideId }
-						innerBlocks={ innerBlocks.filter(
-							( block ) => block.name === 'sliderberg/slide'
-						) }
-						onSlideChange={ onSlideChange }
-						position="bottom"
-					/>
-				) }
+			{ attributes.navigationType === 'bottom' && showRegularNavigation && (
+				<SliderNavigation
+					attributes={attributes}
+					currentSlideId={currentSlideId}
+					innerBlocks={innerBlocks.filter(
+						(block) => block.name === 'sliderberg/slide'
+					)}
+					onSlideChange={onSlideChange}
+					position="bottom"
+				/>
+			)}
 
 			{ attributes.navigationType === 'bottom' && showProNavigation && (
 				<SliderNavigation
-					attributes={ attributes }
-					currentSlideId={ `pro-slide-${ currentProSlideIndex }` }
-					innerBlocks={ mockProBlocks }
-					onSlideChange={ ( slideId ) => {
+					attributes={attributes}
+					currentSlideId={`pro-slide-${currentProSlideIndex}`}
+					innerBlocks={mockProBlocks}
+					onSlideChange={(slideId) => {
 						const index = parseInt(
-							slideId.replace( 'pro-slide-', '' )
+							slideId.replace('pro-slide-', '')
 						);
-						handleProSlideChange( index );
-					} }
+						handleProSlideChange(index);
+					}}
 					position="bottom"
 				/>
-			) }
+			)}
 		</>
 	);
 };

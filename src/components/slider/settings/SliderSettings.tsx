@@ -7,6 +7,7 @@ import { AutoplaySettings } from './AutoplaySettings';
 import { NavigationSettings } from './NavigationSettings';
 import { SliderAttributes } from '../../../types/slider';
 import { WidthControl } from './WidthControl';
+import { CarouselSettings } from '../CarouselSettings';
 
 interface SliderSettingsProps {
 	attributes: SliderAttributes;
@@ -36,6 +37,10 @@ export const SliderSettings: React.FC< SliderSettingsProps > = ( {
 	return (
 		<InspectorControls>
 			<WidthControl
+				attributes={ attributes }
+				setAttributes={ setAttributes }
+			/>
+			<CarouselSettings
 				attributes={ attributes }
 				setAttributes={ setAttributes }
 			/>

@@ -61,6 +61,14 @@ function render_sliderberg_slider_block($attributes, $content, $block) {
     $custom_width = sanitize_text_field($attributes['customWidth'] ?? '');
     $align = sanitize_text_field($attributes['align'] ?? '');
     
+    // Carousel attributes
+    $is_carousel_mode = (bool)($attributes['isCarouselMode'] ?? false);
+    $slides_to_show = max(1, min(10, intval($attributes['slidesToShow'] ?? 3)));
+    $slides_to_scroll = max(1, min($slides_to_show, intval($attributes['slidesToScroll'] ?? 1)));
+    $slide_spacing = max(0, min(100, intval($attributes['slideSpacing'] ?? 20)));
+    $partial_visibility = (bool)($attributes['partialVisibility'] ?? true);
+    $infinite_loop = (bool)($attributes['infiniteLoop'] ?? true);
+    
     // Validate transition effect
     $valid_effects = ['slide', 'fade', 'zoom'];
     if (!in_array($transition_effect, $valid_effects)) {
@@ -77,6 +85,8 @@ function render_sliderberg_slider_block($attributes, $content, $block) {
     $css_vars = [
         '--sliderberg-dot-color' => $dot_color,
         '--sliderberg-dot-active-color' => $dot_active_color,
+        '--sliderberg-slides-to-show' => $slides_to_show,
+        '--sliderberg-slide-spacing' => $slide_spacing . 'px',
     ];
     
     // Add custom width if specified
@@ -88,6 +98,12 @@ function render_sliderberg_slider_block($attributes, $content, $block) {
     $wrapper_classes = ['wp-block-sliderberg-sliderberg'];
     if ($align) {
         $wrapper_classes[] = 'align' . $align;
+    }
+    if ($is_carousel_mode) {
+        $wrapper_classes[] = 'sliderberg-carousel-mode';
+        if ($partial_visibility) {
+            $wrapper_classes[] = 'sliderberg-partial-visibility';
+        }
     }
     
     $wrapper_attrs = [
@@ -103,7 +119,13 @@ function render_sliderberg_slider_block($attributes, $content, $block) {
         'data-transition-easing' => $transition_easing,
         'data-autoplay' => $autoplay ? 'true' : 'false',
         'data-autoplay-speed' => $autoplay_speed,
-        'data-pause-on-hover' => $pause_on_hover ? 'true' : 'false'
+        'data-pause-on-hover' => $pause_on_hover ? 'true' : 'false',
+        'data-is-carousel' => $is_carousel_mode ? 'true' : 'false',
+        'data-slides-to-show' => $slides_to_show,
+        'data-slides-to-scroll' => $slides_to_scroll,
+        'data-slide-spacing' => $slide_spacing,
+        'data-partial-visibility' => $partial_visibility ? 'true' : 'false',
+        'data-infinite-loop' => $infinite_loop ? 'true' : 'false'
     ];
     
     // Navigation button styles
@@ -333,6 +355,30 @@ function sliderberg_register_slider_block() {
             'widthUnit' => [
                 'type' => 'string',
                 'default' => 'px'
+            ],
+            'isCarouselMode' => [
+                'type' => 'boolean',
+                'default' => false
+            ],
+            'slidesToShow' => [
+                'type' => 'number',
+                'default' => 3
+            ],
+            'slidesToScroll' => [
+                'type' => 'number',
+                'default' => 1
+            ],
+            'slideSpacing' => [
+                'type' => 'number',
+                'default' => 20
+            ],
+            'partialVisibility' => [
+                'type' => 'boolean',
+                'default' => true
+            ],
+            'infiniteLoop' => [
+                'type' => 'boolean',
+                'default' => true
             ]
         ]
     ]);

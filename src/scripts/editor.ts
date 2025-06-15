@@ -10,8 +10,7 @@ declare global {
 function updateSliderbergSlidesVisibility(): void {
 	// Handle regular slide blocks
 	document
-
-  .querySelectorAll< HTMLElementWithDataClientId >(
+		.querySelectorAll< HTMLElementWithDataClientId >(
 			'.sliderberg-slides-container[data-current-slide-id]'
 		)
 		.forEach( ( container ) => {
@@ -24,12 +23,25 @@ function updateSliderbergSlidesVisibility(): void {
 				)
 			);
 
-			slides.forEach( ( slide ) => {
-				slide.style.display =
-					slide.getAttribute( 'data-client-id' ) === currentId
-						? ''
-						: 'none';
-			} );
+			// Check if carousel mode is enabled
+			const isCarouselMode = container.closest('.sliderberg-carousel-mode') !== null;
+
+			if (isCarouselMode) {
+				// In carousel mode, show all slides but mark the current one as active
+				slides.forEach( ( slide ) => {
+					const slideId = slide.getAttribute( 'data-client-id' );
+					slide.style.display = '';
+					slide.classList.toggle( 'active', slideId === currentId );
+				} );
+			} else {
+				// In regular mode, only show the current slide
+				slides.forEach( ( slide ) => {
+					slide.style.display =
+						slide.getAttribute( 'data-client-id' ) === currentId
+							? ''
+							: 'none';
+				} );
+			}
 		} );
 
 	// Handle pro slides (posts slider, etc.)
@@ -89,8 +101,10 @@ function updateSliderbergSlidesVisibility(): void {
 		} );
 }
 
-// Expose globally for React to call
-window.updateSliderbergSlidesVisibility = updateSliderbergSlidesVisibility;
+// Initialize the visibility update function
+if (typeof window !== 'undefined') {
+	window.updateSliderbergSlidesVisibility = updateSliderbergSlidesVisibility;
+}
 
 // Run on DOM changes (Gutenberg editor is dynamic)
 const observer: MutationObserver = new MutationObserver( () => {
