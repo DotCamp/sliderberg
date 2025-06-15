@@ -205,14 +205,19 @@ class SliderBergController {
 	}
 
 	private parseConfig( container: HTMLElement ): SliderConfig {
+		// Check if carousel mode is enabled first
+		const isCarouselMode = this.parseBooleanAttribute(container, 'data-is-carousel', false);
+		
+		// Force slide transition for carousel mode, regardless of saved transition effect
+		const rawTransitionEffect = this.parseAttribute(
+			container,
+			'data-transition-effect',
+			'slide'
+		);
+		const transitionEffect = isCarouselMode ? 'slide' : validateTransitionEffect(rawTransitionEffect);
+		
 		return {
-			transitionEffect: validateTransitionEffect(
-				this.parseAttribute(
-					container,
-					'data-transition-effect',
-					'slide'
-				)
-			),
+			transitionEffect,
 			transitionDuration: validateNumericRange(
 				this.parseNumberAttribute(
 					container,
@@ -250,8 +255,8 @@ class SliderBergController {
 				'data-pause-on-hover',
 				true
 			),
-			// Carousel attributes
-			isCarouselMode: this.parseBooleanAttribute(container, 'data-is-carousel', false),
+			// Carousel attributes  
+			isCarouselMode,
 			slidesToShow: this.parseNumberAttribute(container, 'data-slides-to-show', 1),
 			slidesToScroll: this.parseNumberAttribute(container, 'data-slides-to-scroll', 1),
 			slideSpacing: this.parseNumberAttribute(container, 'data-slide-spacing', 0),
@@ -496,14 +501,20 @@ class SliderBergController {
 
 	private updateIndicators(): void {
 		const { indicators } = this.elements;
-		const { isCarouselMode, slidesToShow, infiniteLoop } = this.config;
+		const { isCarouselMode, slidesToShow, infiniteLoop, transitionEffect } = this.config;
 		if (!indicators) return;
 		const totalSlides = this.elements.slides.length;
 		let dotCount = totalSlides;
 		indicators.innerHTML = '';
+		
+		// Determine active index based on mode - carousel always uses startIndex
+		const activeIndex = (!isCarouselMode && (transitionEffect === 'fade' || transitionEffect === 'zoom'))
+			? this.state.currentSlide 
+			: this.state.startIndex % totalSlides;
+		
 		for (let i = 0; i < dotCount; i++) {
 			const dot = document.createElement('button');
-			dot.className = 'sliderberg-slide-indicator' + (i === this.state.startIndex % totalSlides ? ' active' : '');
+			dot.className = 'sliderberg-slide-indicator' + (i === activeIndex ? ' active' : '');
 			dot.setAttribute('aria-label', `Go to slide ${i + 1}`);
 			dot.setAttribute('data-slide-index', i.toString());
 			dot.addEventListener('click', () => {
@@ -585,9 +596,18 @@ class SliderBergController {
 
 		this.updateIndicators();
 		this.updateAriaAttributes();
+		
+		// Use appropriate index for event dispatch - carousel always uses startIndex
+		const currentIndex = (!isCarouselMode && (transitionEffect === 'fade' || transitionEffect === 'zoom'))
+			? this.state.currentSlide 
+			: this.state.startIndex;
+		const previousIndex = (!isCarouselMode && (transitionEffect === 'fade' || transitionEffect === 'zoom'))
+			? this.getVisibleSlideIndex() 
+			: previousStartIndex;
+		
 		this.dispatchSlideChangeEvent(
-			previousStartIndex,
-			this.state.startIndex
+			previousIndex,
+			currentIndex
 		);
 	}
 
@@ -738,28 +758,50 @@ class SliderBergController {
 
 	private prevSlide(): void {
 		if (this.state.isAnimating || this.state.destroyed) return;
-		const { isCarouselMode, slidesToShow, slidesToScroll, infiniteLoop } = this.config;
+		const { isCarouselMode, slidesToShow, slidesToScroll, infiniteLoop, transitionEffect } = this.config;
 		const totalSlides = this.elements.slides.length;
-		let prevIndex = this.state.startIndex - (isCarouselMode ? slidesToScroll : 1);
-		if (isCarouselMode && infiniteLoop) {
-			// Allow negative for jump logic
-		} else if (isCarouselMode) {
-			prevIndex = Math.max(prevIndex, 0);
+		
+		if (!isCarouselMode && (transitionEffect === 'fade' || transitionEffect === 'zoom')) {
+			// For fade/zoom NON-carousel mode, use currentSlide instead of startIndex
+			let prevIndex = this.state.currentSlide - 1;
+			if (prevIndex < 0) {
+				prevIndex = totalSlides - 1; // Loop to last slide
+			}
+			this.goToSlide(prevIndex, 'prev');
+		} else {
+			// For carousel mode OR slide mode, use startIndex
+			let prevIndex = this.state.startIndex - (isCarouselMode ? slidesToScroll : 1);
+			if (isCarouselMode && infiniteLoop) {
+				// Allow negative for jump logic
+			} else if (isCarouselMode) {
+				prevIndex = Math.max(prevIndex, 0);
+			}
+			this.goToSlide(prevIndex, 'prev');
 		}
-		this.goToSlide(prevIndex, 'prev');
 	}
 
 	private nextSlide(): void {
 		if (this.state.isAnimating || this.state.destroyed) return;
-		const { isCarouselMode, slidesToShow, slidesToScroll, infiniteLoop } = this.config;
+		const { isCarouselMode, slidesToShow, slidesToScroll, infiniteLoop, transitionEffect } = this.config;
 		const totalSlides = this.elements.slides.length;
-		let nextIndex = this.state.startIndex + (isCarouselMode ? slidesToScroll : 1);
-		if (isCarouselMode && infiniteLoop) {
-			// Allow overflow for jump logic
-		} else if (isCarouselMode) {
-			nextIndex = Math.min(nextIndex, totalSlides - slidesToShow);
+		
+		if (!isCarouselMode && (transitionEffect === 'fade' || transitionEffect === 'zoom')) {
+			// For fade/zoom NON-carousel mode, use currentSlide instead of startIndex
+			let nextIndex = this.state.currentSlide + 1;
+			if (nextIndex >= totalSlides) {
+				nextIndex = 0; // Loop to first slide
+			}
+			this.goToSlide(nextIndex, 'next');
+		} else {
+			// For carousel mode OR slide mode, use startIndex
+			let nextIndex = this.state.startIndex + (isCarouselMode ? slidesToScroll : 1);
+			if (isCarouselMode && infiniteLoop) {
+				// Allow overflow for jump logic
+			} else if (isCarouselMode) {
+				nextIndex = Math.min(nextIndex, totalSlides - slidesToShow);
+			}
+			this.goToSlide(nextIndex, 'next');
 		}
-		this.goToSlide(nextIndex, 'next');
 	}
 
 	private dispatchSlideChangeEvent(
