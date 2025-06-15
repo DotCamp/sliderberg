@@ -340,10 +340,7 @@
 
 /* Each slide block in carousel mode */
 .sliderberg-carousel-mode .block-editor-inner-blocks .block-editor-block-list__layout > .block-editor-block-list__block {
-    flex: 0 0 calc((100% - (var(--sliderberg-slides-to-show, 3) - 1) * var(--sliderberg-slide-spacing, 20px)) / var(--sliderberg-slides-to-show, 3)) !important;
     min-width: calc((100% - (var(--sliderberg-slides-to-show, 3) - 1) * var(--sliderberg-slide-spacing, 20px)) / var(--sliderberg-slides-to-show, 3)) !important;
-    width: calc((100% - (var(--sliderberg-slides-to-show, 3) - 1) * var(--sliderberg-slide-spacing, 20px)) / var(--sliderberg-slides-to-show, 3)) !important;
-    max-width: calc((100% - (var(--sliderberg-slides-to-show, 3) - 1) * var(--sliderberg-slide-spacing, 20px)) / var(--sliderberg-slides-to-show, 3)) !important;
     margin: 0 !important;
 }
 
