@@ -12,6 +12,9 @@ import './editor.css';
 // Import components - keep existing edit component
 import { Edit } from './edit';
 
+// Import deprecations
+import deprecated from './deprecated';
+
 // Import slide block
 import '../slide';
 
@@ -146,4 +149,5 @@ registerBlockType( 'sliderberg/sliderberg', {
 	save: () => {
 		return <InnerBlocks.Content />;
 	},
+	deprecated,
 } );
