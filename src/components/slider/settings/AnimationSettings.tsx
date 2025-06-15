@@ -24,12 +24,26 @@ export const AnimationSettings: React.FC< AnimationSettingsProps > = ( {
 				value={ attributes.transitionEffect }
 				options={
 					attributes.isCarouselMode
-						? [ { label: __( 'Slide', 'sliderberg' ), value: 'slide' } ]
+						? [
+								{
+									label: __( 'Slide', 'sliderberg' ),
+									value: 'slide',
+								},
+						  ]
 						: [
-							{ label: __( 'Slide', 'sliderberg' ), value: 'slide' },
-							{ label: __( 'Fade', 'sliderberg' ), value: 'fade' },
-							{ label: __( 'Zoom', 'sliderberg' ), value: 'zoom' },
-						]
+								{
+									label: __( 'Slide', 'sliderberg' ),
+									value: 'slide',
+								},
+								{
+									label: __( 'Fade', 'sliderberg' ),
+									value: 'fade',
+								},
+								{
+									label: __( 'Zoom', 'sliderberg' ),
+									value: 'zoom',
+								},
+						  ]
 				}
 				onChange={ ( value ) =>
 					setAttributes( {

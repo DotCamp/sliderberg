@@ -26,13 +26,13 @@ export const SliderNavigation: React.FC< SliderNavigationProps > = ( {
 		const idx = innerBlocks.findIndex(
 			( b: any ) => b.clientId === currentSlideId
 		);
-		
+
 		// For carousel mode, use slidesToScroll
 		if ( attributes.isCarouselMode ) {
 			const totalSlides = innerBlocks.length;
 			const slidesToScroll = attributes.slidesToScroll || 1;
 			let prevIdx = idx - slidesToScroll;
-			
+
 			if ( attributes.infiniteLoop ) {
 				// Allow negative for infinite loop
 				if ( prevIdx < 0 ) {
@@ -55,14 +55,14 @@ export const SliderNavigation: React.FC< SliderNavigationProps > = ( {
 		const idx = innerBlocks.findIndex(
 			( b: any ) => b.clientId === currentSlideId
 		);
-		
+
 		// For carousel mode, use slidesToScroll
 		if ( attributes.isCarouselMode ) {
 			const totalSlides = innerBlocks.length;
 			const slidesToScroll = attributes.slidesToScroll || 1;
 			const slidesToShow = attributes.slidesToShow || 1;
 			let nextIdx = idx + slidesToScroll;
-			
+
 			if ( attributes.infiniteLoop ) {
 				// Allow overflow for infinite loop
 				if ( nextIdx >= totalSlides ) {
@@ -88,7 +88,7 @@ export const SliderNavigation: React.FC< SliderNavigationProps > = ( {
 					className="sliderberg-navigation"
 					data-type={ attributes.navigationType }
 					data-placement={ attributes.navigationPlacement }
-					data-slider-id={sliderId}
+					data-slider-id={ sliderId }
 					style={ { opacity: attributes.navigationOpacity } }
 				>
 					<div className="sliderberg-nav-controls">
@@ -142,7 +142,7 @@ export const SliderNavigation: React.FC< SliderNavigationProps > = ( {
 	return (
 		<div
 			className={ `sliderberg-navigation-bar sliderberg-navigation-bar-${ position }` }
-			data-slider-id={sliderId}
+			data-slider-id={ sliderId }
 		>
 			<div className="sliderberg-nav-controls sliderberg-nav-controls-grouped">
 				<Button

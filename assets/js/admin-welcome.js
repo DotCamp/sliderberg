@@ -19,7 +19,6 @@ jQuery( document ).ready( function ( $ ) {
 		const status = button.data( 'status' );
 		const nonce = button.data( 'nonce' );
 
-
 		// Disable button and show loading state
 		button.prop( 'disabled', true );
 		const originalText = button.text();

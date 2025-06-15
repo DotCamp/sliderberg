@@ -117,7 +117,7 @@ export const Edit: React.FC< EditProps > = ( {
 
 	// Build editor styles - this is the key fix!
 	const getEditorStyles = () => {
-		const styles: React.CSSProperties & Record<string, string> = {
+		const styles: React.CSSProperties & Record< string, string > = {
 			'--sliderberg-dot-color': attributes.dotColor,
 			'--sliderberg-dot-active-color': attributes.dotActiveColor,
 		};
@@ -166,9 +166,7 @@ export const Edit: React.FC< EditProps > = ( {
 			attributes.widthPreset === 'full' || attributes.align === 'full'
 				? 'is-full-width'
 				: ''
-		} ${
-			attributes.isCarouselMode ? 'is-carousel-mode' : ''
-		}`,
+		} ${ attributes.isCarouselMode ? 'is-carousel-mode' : '' }`,
 	} );
 
 	// Update visibility when type changes

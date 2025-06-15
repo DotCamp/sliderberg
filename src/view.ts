@@ -206,16 +206,22 @@ class SliderBergController {
 
 	private parseConfig( container: HTMLElement ): SliderConfig {
 		// Check if carousel mode is enabled first
-		const isCarouselMode = this.parseBooleanAttribute(container, 'data-is-carousel', false);
-		
+		const isCarouselMode = this.parseBooleanAttribute(
+			container,
+			'data-is-carousel',
+			false
+		);
+
 		// Force slide transition for carousel mode, regardless of saved transition effect
 		const rawTransitionEffect = this.parseAttribute(
 			container,
 			'data-transition-effect',
 			'slide'
 		);
-		const transitionEffect = isCarouselMode ? 'slide' : validateTransitionEffect(rawTransitionEffect);
-		
+		const transitionEffect = isCarouselMode
+			? 'slide'
+			: validateTransitionEffect( rawTransitionEffect );
+
 		return {
 			transitionEffect,
 			transitionDuration: validateNumericRange(
@@ -255,12 +261,28 @@ class SliderBergController {
 				'data-pause-on-hover',
 				true
 			),
-			// Carousel attributes  
+			// Carousel attributes
 			isCarouselMode,
-			slidesToShow: this.parseNumberAttribute(container, 'data-slides-to-show', 1),
-			slidesToScroll: this.parseNumberAttribute(container, 'data-slides-to-scroll', 1),
-			slideSpacing: this.parseNumberAttribute(container, 'data-slide-spacing', 0),
-			infiniteLoop: this.parseBooleanAttribute(container, 'data-infinite-loop', false),
+			slidesToShow: this.parseNumberAttribute(
+				container,
+				'data-slides-to-show',
+				1
+			),
+			slidesToScroll: this.parseNumberAttribute(
+				container,
+				'data-slides-to-scroll',
+				1
+			),
+			slideSpacing: this.parseNumberAttribute(
+				container,
+				'data-slide-spacing',
+				0
+			),
+			infiniteLoop: this.parseBooleanAttribute(
+				container,
+				'data-infinite-loop',
+				false
+			),
 		};
 	}
 
@@ -319,55 +341,90 @@ class SliderBergController {
 
 	private setupSliderLayout(): void {
 		const { container, slides } = this.elements;
-		const { transitionEffect, isCarouselMode, slidesToShow, slideSpacing, infiniteLoop } = this.config;
+		const {
+			transitionEffect,
+			isCarouselMode,
+			slidesToShow,
+			slideSpacing,
+			infiniteLoop,
+		} = this.config;
 
-		if (transitionEffect === 'slide' && isCarouselMode && slidesToShow > 1 && infiniteLoop) {
+		if (
+			transitionEffect === 'slide' &&
+			isCarouselMode &&
+			slidesToShow > 1 &&
+			infiniteLoop
+		) {
 			// Remove any previous clones
-			Array.from(container.querySelectorAll('.sliderberg-clone')).forEach(clone => clone.remove());
+			Array.from(
+				container.querySelectorAll( '.sliderberg-clone' )
+			).forEach( ( clone ) => clone.remove() );
 			// Clone last N slides and prepend
-			for (let i = slides.length - slidesToShow; i < slides.length; i++) {
-				const clone = slides[i].cloneNode(true) as HTMLElement;
-				clone.classList.add('sliderberg-clone');
-				container.insertBefore(clone, container.firstChild);
+			for (
+				let i = slides.length - slidesToShow;
+				i < slides.length;
+				i++
+			) {
+				const clone = slides[ i ].cloneNode( true ) as HTMLElement;
+				clone.classList.add( 'sliderberg-clone' );
+				container.insertBefore( clone, container.firstChild );
 			}
 			// Clone first N slides and append
-			for (let i = 0; i < slidesToShow; i++) {
-				const clone = slides[i].cloneNode(true) as HTMLElement;
-				clone.classList.add('sliderberg-clone');
-				container.appendChild(clone);
+			for ( let i = 0; i < slidesToShow; i++ ) {
+				const clone = slides[ i ].cloneNode( true ) as HTMLElement;
+				clone.classList.add( 'sliderberg-clone' );
+				container.appendChild( clone );
 			}
 			container.style.display = 'flex';
-			container.style.transition = `transform ${this.getTransitionString()}`;
-			container.style.gap = `${slideSpacing}px`;
-			const allSlides = Array.from(container.children) as HTMLElement[];
-			allSlides.forEach((slide) => {
-				slide.style.flex = `0 0 calc((100% - ${(slidesToShow - 1) * slideSpacing}px) / ${slidesToShow})`;
-				slide.style.width = `calc((100% - ${(slidesToShow - 1) * slideSpacing}px) / ${slidesToShow})`;
-				slide.style.minWidth = `calc((100% - ${(slidesToShow - 1) * slideSpacing}px) / ${slidesToShow})`;
-			});
+			container.style.transition = `transform ${ this.getTransitionString() }`;
+			container.style.gap = `${ slideSpacing }px`;
+			const allSlides = Array.from( container.children ) as HTMLElement[];
+			allSlides.forEach( ( slide ) => {
+				slide.style.flex = `0 0 calc((100% - ${
+					( slidesToShow - 1 ) * slideSpacing
+				}px) / ${ slidesToShow })`;
+				slide.style.width = `calc((100% - ${
+					( slidesToShow - 1 ) * slideSpacing
+				}px) / ${ slidesToShow })`;
+				slide.style.minWidth = `calc((100% - ${
+					( slidesToShow - 1 ) * slideSpacing
+				}px) / ${ slidesToShow })`;
+			} );
 			// Set initial transform to show the first real slide
-			container.style.transform = `translateX(-${slidesToShow * (100 / slidesToShow)}%)`;
+			container.style.transform = `translateX(-${
+				slidesToShow * ( 100 / slidesToShow )
+			}%)`;
 			this.state.startIndex = 0;
-		} else if (transitionEffect === 'slide' && isCarouselMode && slidesToShow > 1) {
+		} else if (
+			transitionEffect === 'slide' &&
+			isCarouselMode &&
+			slidesToShow > 1
+		) {
 			container.style.display = 'flex';
-			container.style.transition = `transform ${this.getTransitionString()}`;
+			container.style.transition = `transform ${ this.getTransitionString() }`;
 			container.style.transform = 'translateX(0)';
-			container.style.gap = `${slideSpacing}px`;
-			slides.forEach((slide) => {
-				slide.style.flex = `0 0 calc((100% - ${(slidesToShow - 1) * slideSpacing}px) / ${slidesToShow})`;
-				slide.style.width = `calc((100% - ${(slidesToShow - 1) * slideSpacing}px) / ${slidesToShow})`;
-				slide.style.minWidth = `calc((100% - ${(slidesToShow - 1) * slideSpacing}px) / ${slidesToShow})`;
-			});
-		} else if (transitionEffect === 'slide') {
+			container.style.gap = `${ slideSpacing }px`;
+			slides.forEach( ( slide ) => {
+				slide.style.flex = `0 0 calc((100% - ${
+					( slidesToShow - 1 ) * slideSpacing
+				}px) / ${ slidesToShow })`;
+				slide.style.width = `calc((100% - ${
+					( slidesToShow - 1 ) * slideSpacing
+				}px) / ${ slidesToShow })`;
+				slide.style.minWidth = `calc((100% - ${
+					( slidesToShow - 1 ) * slideSpacing
+				}px) / ${ slidesToShow })`;
+			} );
+		} else if ( transitionEffect === 'slide' ) {
 			container.style.display = 'flex';
-			container.style.transition = `transform ${this.getTransitionString()}`;
+			container.style.transition = `transform ${ this.getTransitionString() }`;
 			container.style.transform = 'translateX(0)';
-			slides.forEach((slide) => {
+			slides.forEach( ( slide ) => {
 				slide.style.flex = '0 0 100%';
 				slide.style.width = '100%';
 				slide.style.minWidth = '100%';
-			});
-			if (slides.length > 1) {
+			} );
+			if ( slides.length > 1 ) {
 				this.setupCloneSlides();
 			}
 		} else if (
@@ -461,19 +518,23 @@ class SliderBergController {
 	private createIndicators(): void {
 		const { indicators } = this.elements;
 		const { isCarouselMode, slidesToShow, infiniteLoop } = this.config;
-		if (!indicators) return;
+		if ( ! indicators ) return;
 		const totalSlides = this.elements.slides.length;
-		let dotCount = infiniteLoop ? totalSlides : Math.max(1, totalSlides - slidesToShow + 1);
+		const dotCount = infiniteLoop
+			? totalSlides
+			: Math.max( 1, totalSlides - slidesToShow + 1 );
 		indicators.innerHTML = '';
-		for (let i = 0; i < dotCount; i++) {
-			const dot = document.createElement('button');
-			dot.className = 'sliderberg-slide-indicator' + (i === this.state.startIndex ? ' active' : '');
-			dot.setAttribute('aria-label', `Go to slide ${i + 1}`);
-			dot.setAttribute('data-slide-index', i.toString());
-			dot.addEventListener('click', () => {
-				this.goToSlide(i, null);
-			});
-			indicators.appendChild(dot);
+		for ( let i = 0; i < dotCount; i++ ) {
+			const dot = document.createElement( 'button' );
+			dot.className =
+				'sliderberg-slide-indicator' +
+				( i === this.state.startIndex ? ' active' : '' );
+			dot.setAttribute( 'aria-label', `Go to slide ${ i + 1 }` );
+			dot.setAttribute( 'data-slide-index', i.toString() );
+			dot.addEventListener( 'click', () => {
+				this.goToSlide( i, null );
+			} );
+			indicators.appendChild( dot );
 		}
 	}
 
@@ -501,26 +562,31 @@ class SliderBergController {
 
 	private updateIndicators(): void {
 		const { indicators } = this.elements;
-		const { isCarouselMode, slidesToShow, infiniteLoop, transitionEffect } = this.config;
-		if (!indicators) return;
+		const { isCarouselMode, slidesToShow, infiniteLoop, transitionEffect } =
+			this.config;
+		if ( ! indicators ) return;
 		const totalSlides = this.elements.slides.length;
-		let dotCount = totalSlides;
+		const dotCount = totalSlides;
 		indicators.innerHTML = '';
-		
+
 		// Determine active index based on mode - carousel always uses startIndex
-		const activeIndex = (!isCarouselMode && (transitionEffect === 'fade' || transitionEffect === 'zoom'))
-			? this.state.currentSlide 
-			: this.state.startIndex % totalSlides;
-		
-		for (let i = 0; i < dotCount; i++) {
-			const dot = document.createElement('button');
-			dot.className = 'sliderberg-slide-indicator' + (i === activeIndex ? ' active' : '');
-			dot.setAttribute('aria-label', `Go to slide ${i + 1}`);
-			dot.setAttribute('data-slide-index', i.toString());
-			dot.addEventListener('click', () => {
-				this.goToSlide(i, null);
-			});
-			indicators.appendChild(dot);
+		const activeIndex =
+			! isCarouselMode &&
+			( transitionEffect === 'fade' || transitionEffect === 'zoom' )
+				? this.state.currentSlide
+				: this.state.startIndex % totalSlides;
+
+		for ( let i = 0; i < dotCount; i++ ) {
+			const dot = document.createElement( 'button' );
+			dot.className =
+				'sliderberg-slide-indicator' +
+				( i === activeIndex ? ' active' : '' );
+			dot.setAttribute( 'aria-label', `Go to slide ${ i + 1 }` );
+			dot.setAttribute( 'data-slide-index', i.toString() );
+			dot.addEventListener( 'click', () => {
+				this.goToSlide( i, null );
+			} );
+			indicators.appendChild( dot );
 		}
 	}
 
@@ -528,59 +594,91 @@ class SliderBergController {
 		index: number,
 		direction: 'next' | 'prev' | null
 	): void {
-		if (this.state.isAnimating || this.state.destroyed) return;
+		if ( this.state.isAnimating || this.state.destroyed ) return;
 		this.state.isAnimating = true;
 		const previousStartIndex = this.state.startIndex;
-		const { transitionEffect, isCarouselMode, slidesToShow, slidesToScroll, infiniteLoop } = this.config;
+		const {
+			transitionEffect,
+			isCarouselMode,
+			slidesToShow,
+			slidesToScroll,
+			infiniteLoop,
+		} = this.config;
 		const { container } = this.elements;
 		const realSlides = this.elements.slides.length;
 		let targetIndex = index;
 
-		if (transitionEffect === 'slide' && isCarouselMode && slidesToShow > 1 && infiniteLoop) {
+		if (
+			transitionEffect === 'slide' &&
+			isCarouselMode &&
+			slidesToShow > 1 &&
+			infiniteLoop
+		) {
 			const totalSlides = realSlides;
-			const allSlides = Array.from(container.children) as HTMLElement[];
+			const allSlides = Array.from( container.children ) as HTMLElement[];
 			const cloneCount = slidesToShow;
 			// Move to the correct window (account for clones at start)
-			let visualIndex = targetIndex + cloneCount;
-			container.style.transition = `transform ${this.getTransitionString()}`;
-			container.style.transform = `translateX(-${visualIndex * (100 / slidesToShow)}%)`;
+			const visualIndex = targetIndex + cloneCount;
+			container.style.transition = `transform ${ this.getTransitionString() }`;
+			container.style.transform = `translateX(-${
+				visualIndex * ( 100 / slidesToShow )
+			}%)`;
 			this.state.startIndex = targetIndex;
 			// After transition, if at a clone, jump to the real slide
 			const onTransitionEnd = () => {
-				container.removeEventListener('transitionend', onTransitionEnd);
-				if (targetIndex < 0) {
+				container.removeEventListener(
+					'transitionend',
+					onTransitionEnd
+				);
+				if ( targetIndex < 0 ) {
 					this.state.startIndex = totalSlides - slidesToShow;
 					container.style.transition = 'none';
-					container.style.transform = `translateX(-${(this.state.startIndex + cloneCount) * (100 / slidesToShow)}%)`;
+					container.style.transform = `translateX(-${
+						( this.state.startIndex + cloneCount ) *
+						( 100 / slidesToShow )
+					}%)`;
 					// Force reflow
 					container.offsetHeight;
-					container.style.transition = `transform ${this.getTransitionString()}`;
-				} else if (targetIndex >= totalSlides) {
+					container.style.transition = `transform ${ this.getTransitionString() }`;
+				} else if ( targetIndex >= totalSlides ) {
 					this.state.startIndex = 0;
 					container.style.transition = 'none';
-					container.style.transform = `translateX(-${cloneCount * (100 / slidesToShow)}%)`;
+					container.style.transform = `translateX(-${
+						cloneCount * ( 100 / slidesToShow )
+					}%)`;
 					container.offsetHeight;
-					container.style.transition = `transform ${this.getTransitionString()}`;
+					container.style.transition = `transform ${ this.getTransitionString() }`;
 				}
 				this.state.isAnimating = false;
 			};
-			container.addEventListener('transitionend', onTransitionEnd);
-		} else if (transitionEffect === 'slide' && isCarouselMode && slidesToShow > 1) {
+			container.addEventListener( 'transitionend', onTransitionEnd );
+		} else if (
+			transitionEffect === 'slide' &&
+			isCarouselMode &&
+			slidesToShow > 1
+		) {
 			const totalSlides = realSlides;
-			targetIndex = Math.max(0, Math.min(index, totalSlides - slidesToShow));
+			targetIndex = Math.max(
+				0,
+				Math.min( index, totalSlides - slidesToShow )
+			);
 			this.state.startIndex = targetIndex;
-			container.style.transition = `transform ${this.getTransitionString()}`;
-			container.style.transform = `translateX(-${targetIndex * (100 / slidesToShow)}%)`;
+			container.style.transition = `transform ${ this.getTransitionString() }`;
+			container.style.transform = `translateX(-${
+				targetIndex * ( 100 / slidesToShow )
+			}%)`;
 			this.state.isAnimating = false;
-		} else if (transitionEffect === 'slide') {
-			if (direction === null) {
+		} else if ( transitionEffect === 'slide' ) {
+			if ( direction === null ) {
 				this.state.currentSlide = index + 1; // Adjust for clones
-				container.style.transition = `transform ${this.getTransitionString()}`;
-				container.style.transform = `translateX(-${this.state.currentSlide * 100}%)`;
+				container.style.transition = `transform ${ this.getTransitionString() }`;
+				container.style.transform = `translateX(-${
+					this.state.currentSlide * 100
+				}%)`;
 				this.scheduleAnimationReset();
-			} else if (direction === 'next') {
+			} else if ( direction === 'next' ) {
 				this.handleNextSlideTransition();
-			} else if (direction === 'prev') {
+			} else if ( direction === 'prev' ) {
 				this.handlePrevSlideTransition();
 			}
 		} else if (
@@ -596,19 +694,20 @@ class SliderBergController {
 
 		this.updateIndicators();
 		this.updateAriaAttributes();
-		
+
 		// Use appropriate index for event dispatch - carousel always uses startIndex
-		const currentIndex = (!isCarouselMode && (transitionEffect === 'fade' || transitionEffect === 'zoom'))
-			? this.state.currentSlide 
-			: this.state.startIndex;
-		const previousIndex = (!isCarouselMode && (transitionEffect === 'fade' || transitionEffect === 'zoom'))
-			? this.getVisibleSlideIndex() 
-			: previousStartIndex;
-		
-		this.dispatchSlideChangeEvent(
-			previousIndex,
-			currentIndex
-		);
+		const currentIndex =
+			! isCarouselMode &&
+			( transitionEffect === 'fade' || transitionEffect === 'zoom' )
+				? this.state.currentSlide
+				: this.state.startIndex;
+		const previousIndex =
+			! isCarouselMode &&
+			( transitionEffect === 'fade' || transitionEffect === 'zoom' )
+				? this.getVisibleSlideIndex()
+				: previousStartIndex;
+
+		this.dispatchSlideChangeEvent( previousIndex, currentIndex );
 	}
 
 	private handleSlideTransition(
@@ -757,50 +856,70 @@ class SliderBergController {
 	}
 
 	private prevSlide(): void {
-		if (this.state.isAnimating || this.state.destroyed) return;
-		const { isCarouselMode, slidesToShow, slidesToScroll, infiniteLoop, transitionEffect } = this.config;
+		if ( this.state.isAnimating || this.state.destroyed ) return;
+		const {
+			isCarouselMode,
+			slidesToShow,
+			slidesToScroll,
+			infiniteLoop,
+			transitionEffect,
+		} = this.config;
 		const totalSlides = this.elements.slides.length;
-		
-		if (!isCarouselMode && (transitionEffect === 'fade' || transitionEffect === 'zoom')) {
+
+		if (
+			! isCarouselMode &&
+			( transitionEffect === 'fade' || transitionEffect === 'zoom' )
+		) {
 			// For fade/zoom NON-carousel mode, use currentSlide instead of startIndex
 			let prevIndex = this.state.currentSlide - 1;
-			if (prevIndex < 0) {
+			if ( prevIndex < 0 ) {
 				prevIndex = totalSlides - 1; // Loop to last slide
 			}
-			this.goToSlide(prevIndex, 'prev');
+			this.goToSlide( prevIndex, 'prev' );
 		} else {
 			// For carousel mode OR slide mode, use startIndex
-			let prevIndex = this.state.startIndex - (isCarouselMode ? slidesToScroll : 1);
-			if (isCarouselMode && infiniteLoop) {
+			let prevIndex =
+				this.state.startIndex - ( isCarouselMode ? slidesToScroll : 1 );
+			if ( isCarouselMode && infiniteLoop ) {
 				// Allow negative for jump logic
-			} else if (isCarouselMode) {
-				prevIndex = Math.max(prevIndex, 0);
+			} else if ( isCarouselMode ) {
+				prevIndex = Math.max( prevIndex, 0 );
 			}
-			this.goToSlide(prevIndex, 'prev');
+			this.goToSlide( prevIndex, 'prev' );
 		}
 	}
 
 	private nextSlide(): void {
-		if (this.state.isAnimating || this.state.destroyed) return;
-		const { isCarouselMode, slidesToShow, slidesToScroll, infiniteLoop, transitionEffect } = this.config;
+		if ( this.state.isAnimating || this.state.destroyed ) return;
+		const {
+			isCarouselMode,
+			slidesToShow,
+			slidesToScroll,
+			infiniteLoop,
+			transitionEffect,
+		} = this.config;
 		const totalSlides = this.elements.slides.length;
-		
-		if (!isCarouselMode && (transitionEffect === 'fade' || transitionEffect === 'zoom')) {
+
+		if (
+			! isCarouselMode &&
+			( transitionEffect === 'fade' || transitionEffect === 'zoom' )
+		) {
 			// For fade/zoom NON-carousel mode, use currentSlide instead of startIndex
 			let nextIndex = this.state.currentSlide + 1;
-			if (nextIndex >= totalSlides) {
+			if ( nextIndex >= totalSlides ) {
 				nextIndex = 0; // Loop to first slide
 			}
-			this.goToSlide(nextIndex, 'next');
+			this.goToSlide( nextIndex, 'next' );
 		} else {
 			// For carousel mode OR slide mode, use startIndex
-			let nextIndex = this.state.startIndex + (isCarouselMode ? slidesToScroll : 1);
-			if (isCarouselMode && infiniteLoop) {
+			let nextIndex =
+				this.state.startIndex + ( isCarouselMode ? slidesToScroll : 1 );
+			if ( isCarouselMode && infiniteLoop ) {
 				// Allow overflow for jump logic
-			} else if (isCarouselMode) {
-				nextIndex = Math.min(nextIndex, totalSlides - slidesToShow);
+			} else if ( isCarouselMode ) {
+				nextIndex = Math.min( nextIndex, totalSlides - slidesToShow );
 			}
-			this.goToSlide(nextIndex, 'next');
+			this.goToSlide( nextIndex, 'next' );
 		}
 	}
 

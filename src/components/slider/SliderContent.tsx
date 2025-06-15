@@ -29,12 +29,12 @@ interface SliderContentProps {
 	innerBlocks: any[];
 	onAddSlide: () => void;
 	onDeleteSlide: () => void;
-	onDuplicateSlide: (slideId: string) => void;
-	onSlideChange: (slideId: string) => void;
+	onDuplicateSlide: ( slideId: string ) => void;
+	onSlideChange: ( slideId: string ) => void;
 	clientId: string;
 }
 
-export const SliderContent: React.FC<SliderContentProps> = ({
+export const SliderContent: React.FC< SliderContentProps > = ( {
 	attributes,
 	currentSlideId,
 	innerBlocks,
@@ -43,7 +43,7 @@ export const SliderContent: React.FC<SliderContentProps> = ({
 	onDuplicateSlide,
 	onSlideChange,
 	clientId,
-}) => {
+} ) => {
 	const {
 		isCarouselMode,
 		slidesToShow,
@@ -151,27 +151,27 @@ export const SliderContent: React.FC<SliderContentProps> = ({
 
 	// Calculate visible slides for carousel mode
 	const getVisibleSlides = () => {
-		if (!isCarouselMode) return [currentSlideId];
+		if ( ! isCarouselMode ) return [ currentSlideId ];
 
 		const currentIndex = innerBlocks.findIndex(
-			(block) => block.clientId === currentSlideId
+			( block ) => block.clientId === currentSlideId
 		);
 
-		if (currentIndex === -1) return [];
+		if ( currentIndex === -1 ) return [];
 
 		const visibleSlides = [];
 		const totalSlides = innerBlocks.length;
 
-		for (let i = 0; i < slidesToShow; i++) {
+		for ( let i = 0; i < slidesToShow; i++ ) {
 			let slideIndex = currentIndex + i;
-			
-			if (infiniteLoop) {
-				slideIndex = (slideIndex + totalSlides) % totalSlides;
-			} else if (slideIndex >= totalSlides) {
+
+			if ( infiniteLoop ) {
+				slideIndex = ( slideIndex + totalSlides ) % totalSlides;
+			} else if ( slideIndex >= totalSlides ) {
 				break;
 			}
 
-			visibleSlides.push(innerBlocks[slideIndex].clientId);
+			visibleSlides.push( innerBlocks[ slideIndex ].clientId );
 		}
 
 		return visibleSlides;
@@ -179,48 +179,56 @@ export const SliderContent: React.FC<SliderContentProps> = ({
 
 	// Calculate start index for carousel mode (like frontend)
 	const getStartIndex = () => {
-		if (!isCarouselMode) return 0;
-		
+		if ( ! isCarouselMode ) return 0;
+
 		const currentIndex = innerBlocks.findIndex(
-			(block) => block.clientId === currentSlideId
+			( block ) => block.clientId === currentSlideId
 		);
-		
+
 		return currentIndex >= 0 ? currentIndex : 0;
 	};
 
 	const visibleSlideIds = getVisibleSlides();
 
 	// Update slide visibility
-	useEffect(() => {
-		if (typeof window !== 'undefined' && window.updateSliderbergSlidesVisibility) {
+	useEffect( () => {
+		if (
+			typeof window !== 'undefined' &&
+			window.updateSliderbergSlidesVisibility
+		) {
 			window.updateSliderbergSlidesVisibility();
 		}
-	}, [currentSlideId, isCarouselMode, slidesToShow, slidesToScroll]);
+	}, [ currentSlideId, isCarouselMode, slidesToShow, slidesToScroll ] );
 
 	// Ref for the block list layout (slides row)
-	const blockListLayoutRef = useRef<HTMLDivElement | null>(null);
+	const blockListLayoutRef = useRef< HTMLDivElement | null >( null );
 
 	// Find the index of the current slide
 	const currentIndex = innerBlocks.findIndex(
-		(block) => block.clientId === currentSlideId
+		( block ) => block.clientId === currentSlideId
 	);
 
 	// Get start index for carousel mode
 	const startIndex = getStartIndex();
 
 	// Carousel scroll effect in editor
-	useEffect(() => {
-		if (!isCarouselMode) return;
+	useEffect( () => {
+		if ( ! isCarouselMode ) return;
 		// Find the .block-editor-block-list__layout inside the slides container with the correct path
-		const container = document.querySelector(`.sliderberg-slides-container[data-slider-id="${clientId}"]`);
-		if (!container) return;
-		const layout = container.querySelector('.block-editor-inner-blocks .block-editor-block-list__layout') as HTMLElement | null;
-		if (!layout) return;
+		const container = document.querySelector(
+			`.sliderberg-slides-container[data-slider-id="${ clientId }"]`
+		);
+		if ( ! container ) return;
+		const layout = container.querySelector(
+			'.block-editor-inner-blocks .block-editor-block-list__layout'
+		) as HTMLElement | null;
+		if ( ! layout ) return;
 		// Calculate offset percentage based on start index like frontend
-		const offset = startIndex > -1 ? -(startIndex * (100 / slidesToShow)) : 0;
+		const offset =
+			startIndex > -1 ? -( startIndex * ( 100 / slidesToShow ) ) : 0;
 		layout.style.transition = 'transform 0.4s cubic-bezier(0.4,0,0.2,1)';
-		layout.style.transform = `translateX(${offset}%)`;
-	}, [startIndex, slidesToShow, isCarouselMode, clientId]);
+		layout.style.transform = `translateX(${ offset }%)`;
+	}, [ startIndex, slidesToShow, isCarouselMode, clientId ] );
 
 	return (
 		<>
@@ -247,7 +255,7 @@ export const SliderContent: React.FC<SliderContentProps> = ({
 					) }
 					onSlideChange={ onSlideChange }
 					position="top"
-					sliderId={clientId}
+					sliderId={ clientId }
 				/>
 			) }
 
@@ -263,88 +271,96 @@ export const SliderContent: React.FC<SliderContentProps> = ({
 						handleProSlideChange( index );
 					} }
 					position="top"
-					sliderId={clientId}
+					sliderId={ clientId }
 				/>
 			) }
 
-			<div className={classnames('sliderberg-slides', {
-				'sliderberg-carousel-mode': isCarouselMode,
-			})}>
+			<div
+				className={ classnames( 'sliderberg-slides', {
+					'sliderberg-carousel-mode': isCarouselMode,
+				} ) }
+			>
 				<div
 					className="sliderberg-slides-container"
-					data-current-slide-id={currentSlideId || ''}
-					data-slider-id={clientId}
-					style={{
-						'--sliderberg-slides-to-show': slidesToShow,
-						'--sliderberg-slide-spacing': `${slideSpacing}px`,
-					} as React.CSSProperties}
+					data-current-slide-id={ currentSlideId || '' }
+					data-slider-id={ clientId }
+					style={
+						{
+							'--sliderberg-slides-to-show': slidesToShow,
+							'--sliderberg-slide-spacing': `${ slideSpacing }px`,
+						} as React.CSSProperties
+					}
 				>
 					<InnerBlocks
-						allowedBlocks={ALLOWED_BLOCKS}
-						template={template}
-						templateLock={templateLock}
-						orientation={isCarouselMode ? "horizontal" : "vertical"}
+						allowedBlocks={ ALLOWED_BLOCKS }
+						template={ template }
+						templateLock={ templateLock }
+						orientation={
+							isCarouselMode ? 'horizontal' : 'vertical'
+						}
 					/>
 				</div>
 			</div>
 
-			{ attributes.navigationType === 'split' && showRegularNavigation && (
-				<SliderNavigation
-					attributes={attributes}
-					currentSlideId={currentSlideId}
-					innerBlocks={innerBlocks.filter(
-						(block) => block.name === 'sliderberg/slide'
-					)}
-					onSlideChange={onSlideChange}
-					position="split"
-					sliderId={clientId}
-				/>
-			)}
+			{ attributes.navigationType === 'split' &&
+				showRegularNavigation && (
+					<SliderNavigation
+						attributes={ attributes }
+						currentSlideId={ currentSlideId }
+						innerBlocks={ innerBlocks.filter(
+							( block ) => block.name === 'sliderberg/slide'
+						) }
+						onSlideChange={ onSlideChange }
+						position="split"
+						sliderId={ clientId }
+					/>
+				) }
 
 			{ attributes.navigationType === 'split' && showProNavigation && (
 				<SliderNavigation
-					attributes={attributes}
-					currentSlideId={`pro-slide-${currentProSlideIndex}`}
-					innerBlocks={mockProBlocks}
-					onSlideChange={(slideId) => {
+					attributes={ attributes }
+					currentSlideId={ `pro-slide-${ currentProSlideIndex }` }
+					innerBlocks={ mockProBlocks }
+					onSlideChange={ ( slideId ) => {
 						const index = parseInt(
-							slideId.replace('pro-slide-', '')
+							slideId.replace( 'pro-slide-', '' )
 						);
-						handleProSlideChange(index);
-					}}
+						handleProSlideChange( index );
+					} }
 					position="split"
-					sliderId={clientId}
+					sliderId={ clientId }
 				/>
-			)}
+			) }
 
-			{ attributes.navigationType === 'bottom' && showRegularNavigation && (
-				<SliderNavigation
-					attributes={attributes}
-					currentSlideId={currentSlideId}
-					innerBlocks={innerBlocks.filter(
-						(block) => block.name === 'sliderberg/slide'
-					)}
-					onSlideChange={onSlideChange}
-					position="bottom"
-					sliderId={clientId}
-				/>
-			)}
+			{ attributes.navigationType === 'bottom' &&
+				showRegularNavigation && (
+					<SliderNavigation
+						attributes={ attributes }
+						currentSlideId={ currentSlideId }
+						innerBlocks={ innerBlocks.filter(
+							( block ) => block.name === 'sliderberg/slide'
+						) }
+						onSlideChange={ onSlideChange }
+						position="bottom"
+						sliderId={ clientId }
+					/>
+				) }
 
 			{ attributes.navigationType === 'bottom' && showProNavigation && (
 				<SliderNavigation
-					attributes={attributes}
-					currentSlideId={`pro-slide-${currentProSlideIndex}`}
-					innerBlocks={mockProBlocks}
-					onSlideChange={(slideId) => {
+					attributes={ attributes }
+					currentSlideId={ `pro-slide-${ currentProSlideIndex }` }
+					innerBlocks={ mockProBlocks }
+					onSlideChange={ ( slideId ) => {
 						const index = parseInt(
-							slideId.replace('pro-slide-', '')
+							slideId.replace( 'pro-slide-', '' )
 						);
-						handleProSlideChange(index);
-					}}
+						handleProSlideChange( index );
+					} }
 					position="bottom"
-					sliderId={clientId}
+					sliderId={ clientId }
 				/>
-			)}
+			) }
 		</>
 	);
 };

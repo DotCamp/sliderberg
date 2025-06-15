@@ -24,9 +24,10 @@ function updateSliderbergSlidesVisibility(): void {
 			);
 
 			// Check if carousel mode is enabled
-			const isCarouselMode = container.closest('.sliderberg-carousel-mode') !== null;
+			const isCarouselMode =
+				container.closest( '.sliderberg-carousel-mode' ) !== null;
 
-			if (isCarouselMode) {
+			if ( isCarouselMode ) {
 				// In carousel mode, show all slides but mark the current one as active
 				slides.forEach( ( slide ) => {
 					const slideId = slide.getAttribute( 'data-client-id' );
@@ -102,7 +103,7 @@ function updateSliderbergSlidesVisibility(): void {
 }
 
 // Initialize the visibility update function
-if (typeof window !== 'undefined') {
+if ( typeof window !== 'undefined' ) {
 	window.updateSliderbergSlidesVisibility = updateSliderbergSlidesVisibility;
 }
 

@@ -3,77 +3,89 @@ import { __ } from '@wordpress/i18n';
 import { ToggleControl, RangeControl, PanelBody } from '@wordpress/components';
 
 interface CarouselSettingsProps {
-    attributes: {
-        isCarouselMode: boolean;
-        slidesToShow: number;
-        slidesToScroll: number;
-        slideSpacing: number;
-        infiniteLoop: boolean;
-    };
-    setAttributes: (attrs: Partial<CarouselSettingsProps['attributes']>) => void;
+	attributes: {
+		isCarouselMode: boolean;
+		slidesToShow: number;
+		slidesToScroll: number;
+		slideSpacing: number;
+		infiniteLoop: boolean;
+	};
+	setAttributes: (
+		attrs: Partial< CarouselSettingsProps[ 'attributes' ] >
+	) => void;
 }
 
-export const CarouselSettings: React.FC<CarouselSettingsProps> = ({
-    attributes,
-    setAttributes,
-}) => {
-    const {
-        isCarouselMode,
-        slidesToShow,
-        slidesToScroll,
-        slideSpacing,
-        infiniteLoop,
-    } = attributes;
+export const CarouselSettings: React.FC< CarouselSettingsProps > = ( {
+	attributes,
+	setAttributes,
+} ) => {
+	const {
+		isCarouselMode,
+		slidesToShow,
+		slidesToScroll,
+		slideSpacing,
+		infiniteLoop,
+	} = attributes;
 
-    return (
-        <PanelBody
-            title={__('Carousel Settings', 'sliderberg')}
-            initialOpen={false}
-        >
-            <ToggleControl
-                label={__('Enable Carousel Mode', 'sliderberg')}
-                checked={isCarouselMode}
-                onChange={(value) => setAttributes({ isCarouselMode: value })}
-            />
+	return (
+		<PanelBody
+			title={ __( 'Carousel Settings', 'sliderberg' ) }
+			initialOpen={ false }
+		>
+			<ToggleControl
+				label={ __( 'Enable Carousel Mode', 'sliderberg' ) }
+				checked={ isCarouselMode }
+				onChange={ ( value ) =>
+					setAttributes( { isCarouselMode: value } )
+				}
+			/>
 
-            {isCarouselMode && (
-                <>
-                    <RangeControl
-                        label={__('Slides to Show', 'sliderberg')}
-                        value={slidesToShow}
-                        onChange={(value) => setAttributes({ slidesToShow: value })}
-                        min={1}
-                        max={6}
-                    />
+			{ isCarouselMode && (
+				<>
+					<RangeControl
+						label={ __( 'Slides to Show', 'sliderberg' ) }
+						value={ slidesToShow }
+						onChange={ ( value ) =>
+							setAttributes( { slidesToShow: value } )
+						}
+						min={ 1 }
+						max={ 6 }
+					/>
 
-                    <RangeControl
-                        label={__('Slides to Scroll', 'sliderberg')}
-                        value={slidesToScroll}
-                        onChange={(value) => setAttributes({ slidesToScroll: value })}
-                        min={1}
-                        max={slidesToShow}
-                    />
+					<RangeControl
+						label={ __( 'Slides to Scroll', 'sliderberg' ) }
+						value={ slidesToScroll }
+						onChange={ ( value ) =>
+							setAttributes( { slidesToScroll: value } )
+						}
+						min={ 1 }
+						max={ slidesToShow }
+					/>
 
-                    <RangeControl
-                        label={__('Slide Spacing', 'sliderberg')}
-                        value={slideSpacing}
-                        onChange={(value) => setAttributes({ slideSpacing: value })}
-                        min={0}
-                        max={100}
-                        step={5}
-                    />
+					<RangeControl
+						label={ __( 'Slide Spacing', 'sliderberg' ) }
+						value={ slideSpacing }
+						onChange={ ( value ) =>
+							setAttributes( { slideSpacing: value } )
+						}
+						min={ 0 }
+						max={ 100 }
+						step={ 5 }
+					/>
 
-                    <ToggleControl
-                        label={__('Infinite Loop', 'sliderberg')}
-                        checked={infiniteLoop}
-                        onChange={(value) => setAttributes({ infiniteLoop: value })}
-                        help={__(
-                            'Enable continuous looping of slides',
-                            'sliderberg'
-                        )}
-                    />
-                </>
-            )}
-        </PanelBody>
-    );
-}; 
+					<ToggleControl
+						label={ __( 'Infinite Loop', 'sliderberg' ) }
+						checked={ infiniteLoop }
+						onChange={ ( value ) =>
+							setAttributes( { infiniteLoop: value } )
+						}
+						help={ __(
+							'Enable continuous looping of slides',
+							'sliderberg'
+						) }
+					/>
+				</>
+			) }
+		</PanelBody>
+	);
+};
