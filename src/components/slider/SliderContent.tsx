@@ -212,7 +212,7 @@ export const SliderContent: React.FC<SliderContentProps> = ({
 	useEffect(() => {
 		if (!isCarouselMode) return;
 		// Find the .block-editor-block-list__layout inside the slides container with the correct path
-		const container = document.querySelector('.sliderberg-slides-container');
+		const container = document.querySelector(`.sliderberg-slides-container[data-slider-id="${clientId}"]`);
 		if (!container) return;
 		const layout = container.querySelector('.block-editor-inner-blocks .block-editor-block-list__layout') as HTMLElement | null;
 		if (!layout) return;
@@ -220,7 +220,7 @@ export const SliderContent: React.FC<SliderContentProps> = ({
 		const offset = startIndex > -1 ? -(startIndex * (100 / slidesToShow)) : 0;
 		layout.style.transition = 'transform 0.4s cubic-bezier(0.4,0,0.2,1)';
 		layout.style.transform = `translateX(${offset}%)`;
-	}, [startIndex, slidesToShow, isCarouselMode]);
+	}, [startIndex, slidesToShow, isCarouselMode, clientId]);
 
 	return (
 		<>
@@ -247,6 +247,7 @@ export const SliderContent: React.FC<SliderContentProps> = ({
 					) }
 					onSlideChange={ onSlideChange }
 					position="top"
+					sliderId={clientId}
 				/>
 			) }
 
@@ -262,6 +263,7 @@ export const SliderContent: React.FC<SliderContentProps> = ({
 						handleProSlideChange( index );
 					} }
 					position="top"
+					sliderId={clientId}
 				/>
 			) }
 
@@ -271,6 +273,7 @@ export const SliderContent: React.FC<SliderContentProps> = ({
 				<div
 					className="sliderberg-slides-container"
 					data-current-slide-id={currentSlideId || ''}
+					data-slider-id={clientId}
 					style={{
 						'--sliderberg-slides-to-show': slidesToShow,
 						'--sliderberg-slide-spacing': `${slideSpacing}px`,
@@ -294,6 +297,7 @@ export const SliderContent: React.FC<SliderContentProps> = ({
 					)}
 					onSlideChange={onSlideChange}
 					position="split"
+					sliderId={clientId}
 				/>
 			)}
 
@@ -309,6 +313,7 @@ export const SliderContent: React.FC<SliderContentProps> = ({
 						handleProSlideChange(index);
 					}}
 					position="split"
+					sliderId={clientId}
 				/>
 			)}
 
@@ -321,6 +326,7 @@ export const SliderContent: React.FC<SliderContentProps> = ({
 					)}
 					onSlideChange={onSlideChange}
 					position="bottom"
+					sliderId={clientId}
 				/>
 			)}
 
@@ -336,6 +342,7 @@ export const SliderContent: React.FC<SliderContentProps> = ({
 						handleProSlideChange(index);
 					}}
 					position="bottom"
+					sliderId={clientId}
 				/>
 			)}
 		</>

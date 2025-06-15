@@ -10,6 +10,7 @@ interface SliderNavigationProps {
 	innerBlocks: any[];
 	onSlideChange: ( slideId: string ) => void;
 	position: 'top' | 'bottom' | 'split';
+	sliderId: string;
 }
 
 export const SliderNavigation: React.FC< SliderNavigationProps > = ( {
@@ -18,6 +19,7 @@ export const SliderNavigation: React.FC< SliderNavigationProps > = ( {
 	innerBlocks,
 	onSlideChange,
 	position,
+	sliderId,
 } ) => {
 	const handlePrevSlide = () => {
 		if ( ! currentSlideId || innerBlocks.length === 0 ) return;
@@ -86,6 +88,7 @@ export const SliderNavigation: React.FC< SliderNavigationProps > = ( {
 					className="sliderberg-navigation"
 					data-type={ attributes.navigationType }
 					data-placement={ attributes.navigationPlacement }
+					data-slider-id={sliderId}
 					style={ { opacity: attributes.navigationOpacity } }
 				>
 					<div className="sliderberg-nav-controls">
@@ -139,6 +142,7 @@ export const SliderNavigation: React.FC< SliderNavigationProps > = ( {
 	return (
 		<div
 			className={ `sliderberg-navigation-bar sliderberg-navigation-bar-${ position }` }
+			data-slider-id={sliderId}
 		>
 			<div className="sliderberg-nav-controls sliderberg-nav-controls-grouped">
 				<Button
