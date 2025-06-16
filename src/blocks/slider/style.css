@@ -16,7 +16,7 @@
 
 .sliderberg-slides-container {
     display: flex;
-    transition: transform 0.3s ease;
+    transition: transform 0.5s ease; /* Default transition */
     width: 100%;
 }
 
@@ -340,4 +340,59 @@
         flex: 0 0 calc((100% - (min(var(--sliderberg-slides-to-show, 3), 1) - 1) * var(--sliderberg-slide-spacing, 20px)) / min(var(--sliderberg-slides-to-show, 3), 1));
         min-width: calc((100% - (min(var(--sliderberg-slides-to-show, 3), 1) - 1) * var(--sliderberg-slide-spacing, 20px)) / min(var(--sliderberg-slides-to-show, 3), 1));
     }
+}
+
+/* Migration fixes for old sliders with nested structure */
+/* Hide the entire nested slider wrapper but keep its contents */
+.wp-block-sliderberg-sliderberg .sliderberg-slides-container > .wp-block-sliderberg-sliderberg {
+    /* Remove wrapper styling but keep content */
+    all: unset;
+    display: contents !important;
+}
+
+/* Hide nested container and slides wrapper */
+.wp-block-sliderberg-sliderberg .sliderberg-slides-container > .wp-block-sliderberg-sliderberg > .sliderberg-container {
+    all: unset;
+    display: contents !important;
+}
+
+.wp-block-sliderberg-sliderberg .sliderberg-slides-container > .wp-block-sliderberg-sliderberg > .sliderberg-container > .sliderberg-slides {
+    all: unset;
+    display: contents !important;
+}
+
+/* Make the nested slides container act as the main container */
+.wp-block-sliderberg-sliderberg .sliderberg-slides-container > .wp-block-sliderberg-sliderberg .sliderberg-slides-container {
+    /* Keep the flex and transition properties from the original */
+    position: static !important;
+    display: flex !important;
+    width: 100% !important;
+    /* Don't override transition - let it use its inline styles or defaults */
+}
+
+/* Hide all navigation elements inside the slides container */
+.wp-block-sliderberg-sliderberg .sliderberg-slides-container .sliderberg-navigation-bar,
+.wp-block-sliderberg-sliderberg .sliderberg-slides-container .sliderberg-navigation,
+.wp-block-sliderberg-sliderberg .sliderberg-slides-container .sliderberg-nav-button,
+.wp-block-sliderberg-sliderberg .sliderberg-slides-container .sliderberg-slide-indicators {
+    display: none !important;
+}
+
+/* Ensure slides are properly displayed */
+.wp-block-sliderberg-sliderberg .sliderberg-slide {
+    /* Slides should maintain their styles */
+    position: relative;
+}
+
+/* Ensure nested slides container maintains proper slide behavior */
+.wp-block-sliderberg-sliderberg .sliderberg-slides-container .sliderberg-slides-container > .sliderberg-slide {
+    flex: 0 0 100%;
+    width: 100%;
+    min-width: 100%;
+}
+
+/* Important: Let JavaScript handle the transition timing and easing */
+.wp-block-sliderberg-sliderberg .sliderberg-slides-container .sliderberg-slides-container[style*="transition"] {
+    /* JS will set the transition inline, don't override it */
+    transition: var(--slider-transition, transform 0.5s ease) !important;
 } 

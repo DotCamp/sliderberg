@@ -262,9 +262,14 @@ const deprecated_v1_0_1 = {
 			</div>
 		);
 	},
-	migrate: (attributes: any) => {
+	migrate: (attributes: any, innerBlocks: any) => {
 		// Return all attributes as-is since they match the new structure
-		return attributes;
+		// The inner blocks (slides) will be preserved automatically
+		return [attributes, innerBlocks];
+	},
+	isEligible: (attributes: any, innerBlocks: any, outerHTML: any) => {
+		// This deprecation is eligible if we detect the old save structure
+		return true;
 	},
 };
 

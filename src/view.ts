@@ -136,9 +136,23 @@ class SliderBergController {
 	private constructor( sliderElement: Element, id: string ) {
 		this.id = id;
 
-		const container = sliderElement.querySelector(
+		// Look for the slides container - handle nested structures from old content
+		let container = sliderElement.querySelector(
 			'.sliderberg-slides-container'
 		);
+		
+		// If we have nested slider structure (old content), find the innermost container
+		if (container) {
+			const nestedContainer = container.querySelector('.sliderberg-slides-container');
+			if (nestedContainer && nestedContainer instanceof HTMLElement) {
+				// Use the nested container instead
+				container = nestedContainer;
+				// Ensure it has the proper initial styles
+				container.style.display = 'flex';
+				container.style.width = '100%';
+			}
+		}
+		
 		if ( ! container || ! ( container instanceof HTMLElement ) ) {
 			throw new Error( 'Slider container not found' );
 		}
@@ -153,14 +167,17 @@ class SliderBergController {
 			throw new Error( 'No slides found in slider' );
 		}
 
-		const prevButton = sliderElement.querySelector(
-			'.sliderberg-prev'
+		// For nested structures, look for navigation in the outermost container
+		const navContainer = sliderElement.querySelector('.sliderberg-slides-container') ? sliderElement : sliderElement.parentElement;
+		
+		const prevButton = navContainer?.querySelector(
+			'.sliderberg-prev:not(.sliderberg-slides-container .sliderberg-prev)'
 		) as HTMLElement | null;
-		const nextButton = sliderElement.querySelector(
-			'.sliderberg-next'
+		const nextButton = navContainer?.querySelector(
+			'.sliderberg-next:not(.sliderberg-slides-container .sliderberg-next)'
 		) as HTMLElement | null;
-		const indicators = sliderElement.querySelector(
-			'.sliderberg-slide-indicators'
+		const indicators = navContainer?.querySelector(
+			'.sliderberg-slide-indicators:not(.sliderberg-slides-container .sliderberg-slide-indicators)'
 		) as HTMLElement | null;
 
 		if ( ! prevButton || ! nextButton ) {
