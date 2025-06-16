@@ -5,6 +5,7 @@ import {
 	RangeControl,
 	ColorPicker,
 	ToggleControl,
+	ColorPalette,
 } from '@wordpress/components';
 import { validateColor, validateNumericRange } from '../../../utils/security';
 import { SliderAttributes } from '../../../types/slider';
@@ -82,25 +83,26 @@ export const NavigationSettings: React.FC< NavigationSettingsProps > = ( {
 			<div className="sliderberg-color-controls">
 				<div className="sliderberg-color-control">
 					<label>{ __( 'Arrow Color', 'sliderberg' ) }</label>
-					<ColorPicker
-						color={ attributes.navigationColor }
-						onChangeComplete={ ( color ) =>
+					<ColorPalette
+						value={ attributes.navigationColor }
+						onChange={ ( color ) =>
 							setAttributes( {
-								navigationColor: validateColor( color ),
+								navigationColor: validateColor( color || '' ),
 							} )
 						}
+						disableCustomColors={ false }
 					/>
 				</div>
 				<div className="sliderberg-color-control">
 					<label>{ __( 'Background Color', 'sliderberg' ) }</label>
-					<ColorPicker
-						color={ attributes.navigationBgColor }
-						onChangeComplete={ ( color ) =>
+					<ColorPalette
+						value={ attributes.navigationBgColor }
+						onChange={ ( color ) =>
 							setAttributes( {
-								navigationBgColor: validateColor( color ),
+								navigationBgColor: validateColor( color || '' ),
 							} )
 						}
-						enableAlpha
+						disableCustomColors={ false }
 					/>
 				</div>
 			</div>
@@ -177,28 +179,28 @@ export const NavigationSettings: React.FC< NavigationSettingsProps > = ( {
 						<p className="components-base-control__label">
 							{ __( 'Dot Color', 'sliderberg' ) }
 						</p>
-						<ColorPicker
-							color={ attributes.dotColor }
-							onChangeComplete={ ( color ) =>
+						<ColorPalette
+							value={ attributes.dotColor }
+							onChange={ ( color ) =>
 								setAttributes( {
-									dotColor: validateColor( color ),
+									dotColor: validateColor( color || '' ),
 								} )
 							}
-							enableAlpha
+							disableCustomColors={ false }
 						/>
 					</div>
 					<div className="sliderberg-dot-colors">
 						<p className="components-base-control__label">
 							{ __( 'Active Dot Color', 'sliderberg' ) }
 						</p>
-						<ColorPicker
-							color={ attributes.dotActiveColor }
-							onChangeComplete={ ( color ) =>
+						<ColorPalette
+							value={ attributes.dotActiveColor }
+							onChange={ ( color ) =>
 								setAttributes( {
-									dotActiveColor: validateColor( color ),
+									dotActiveColor: validateColor( color || '' ),
 								} )
 							}
-							enableAlpha
+							disableCustomColors={ false }
 						/>
 					</div>
 				</>
