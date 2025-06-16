@@ -33,6 +33,7 @@ import {
 	validateNumericRange,
 	validateContentPosition,
 } from '../../utils/security';
+import deprecated from './deprecated';
 
 interface MediaObject {
 	id: number;
@@ -544,4 +545,5 @@ registerBlockType( 'sliderberg/slide', {
 	save: () => {
 		return <InnerBlocks.Content />;
 	},
+	deprecated,
 } );
