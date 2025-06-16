@@ -141,6 +141,7 @@ export const NavigationSettings: React.FC< NavigationSettingsProps > = ( {
 					'Adjust the vertical position of the navigation arrows (in pixels)',
 					'sliderberg'
 				) }
+				disabled={ attributes.navigationType !== 'split' }
 			/>
 			<RangeControl
 				label={ __( 'Horizontal Position', 'sliderberg' ) }
@@ -162,6 +163,7 @@ export const NavigationSettings: React.FC< NavigationSettingsProps > = ( {
 					'Adjust the horizontal position of the navigation arrows (in pixels)',
 					'sliderberg'
 				) }
+				disabled={ attributes.navigationType !== 'split' }
 			/>
 			<ToggleControl
 				label={ __( 'Hide Dots', 'sliderberg' ) }
