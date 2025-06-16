@@ -28,6 +28,12 @@ export interface FocalPoint {
 	y: number;
 }
 
+export interface ResponsiveCarouselSettings {
+	slidesToShow: number;
+	slidesToScroll: number;
+	slideSpacing: number;
+}
+
 export interface SliderAttributes {
 	type: string;
 	navigationType: 'split' | 'top' | 'bottom';
@@ -76,4 +82,11 @@ export interface SliderAttributes {
 	slidesToScroll: number;
 	slideSpacing: number;
 	infiniteLoop: boolean;
+	// Responsive carousel settings
+	tabletSlidesToShow?: number;
+	tabletSlidesToScroll?: number;
+	tabletSlideSpacing?: number;
+	mobileSlidesToShow?: number;
+	mobileSlidesToScroll?: number;
+	mobileSlideSpacing?: number;
 }

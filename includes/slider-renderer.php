@@ -68,6 +68,14 @@ function render_sliderberg_slider_block($attributes, $content, $block) {
     $slide_spacing = max(0, min(100, intval($attributes['slideSpacing'] ?? 20)));
     $infinite_loop = (bool)($attributes['infiniteLoop'] ?? true);
     
+    // Responsive carousel attributes
+    $tablet_slides_to_show = max(1, min(10, intval($attributes['tabletSlidesToShow'] ?? 2)));
+    $tablet_slides_to_scroll = max(1, min($tablet_slides_to_show, intval($attributes['tabletSlidesToScroll'] ?? 1)));
+    $tablet_slide_spacing = max(0, min(100, intval($attributes['tabletSlideSpacing'] ?? 15)));
+    $mobile_slides_to_show = max(1, min(10, intval($attributes['mobileSlidesToShow'] ?? 1)));
+    $mobile_slides_to_scroll = max(1, min($mobile_slides_to_show, intval($attributes['mobileSlidesToScroll'] ?? 1)));
+    $mobile_slide_spacing = max(0, min(100, intval($attributes['mobileSlideSpacing'] ?? 10)));
+    
     // Validate transition effect
     $valid_effects = ['slide', 'fade', 'zoom'];
     if (!in_array($transition_effect, $valid_effects)) {
@@ -120,7 +128,14 @@ function render_sliderberg_slider_block($attributes, $content, $block) {
         'data-slides-to-show' => $slides_to_show,
         'data-slides-to-scroll' => $slides_to_scroll,
         'data-slide-spacing' => $slide_spacing,
-        'data-infinite-loop' => $infinite_loop ? 'true' : 'false'
+        'data-infinite-loop' => $infinite_loop ? 'true' : 'false',
+        // Responsive carousel attributes
+        'data-tablet-slides-to-show' => $tablet_slides_to_show,
+        'data-tablet-slides-to-scroll' => $tablet_slides_to_scroll,
+        'data-tablet-slide-spacing' => $tablet_slide_spacing,
+        'data-mobile-slides-to-show' => $mobile_slides_to_show,
+        'data-mobile-slides-to-scroll' => $mobile_slides_to_scroll,
+        'data-mobile-slide-spacing' => $mobile_slide_spacing
     ];
     
     // Navigation button styles
@@ -370,6 +385,30 @@ function sliderberg_register_slider_block() {
             'infiniteLoop' => [
                 'type' => 'boolean',
                 'default' => true
+            ],
+            'tabletSlidesToShow' => [
+                'type' => 'number',
+                'default' => 2
+            ],
+            'tabletSlidesToScroll' => [
+                'type' => 'number',
+                'default' => 1
+            ],
+            'tabletSlideSpacing' => [
+                'type' => 'number',
+                'default' => 15
+            ],
+            'mobileSlidesToShow' => [
+                'type' => 'number',
+                'default' => 1
+            ],
+            'mobileSlidesToScroll' => [
+                'type' => 'number',
+                'default' => 1
+            ],
+            'mobileSlideSpacing' => [
+                'type' => 'number',
+                'default' => 10
             ]
         ]
     ]);

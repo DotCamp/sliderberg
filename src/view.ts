@@ -44,6 +44,13 @@ interface SliderConfig {
 	slidesToScroll: number;
 	slideSpacing: number;
 	infiniteLoop: boolean;
+	// Responsive carousel attributes
+	tabletSlidesToShow: number;
+	tabletSlidesToScroll: number;
+	tabletSlideSpacing: number;
+	mobileSlidesToShow: number;
+	mobileSlidesToScroll: number;
+	mobileSlideSpacing: number;
 }
 
 interface SliderState {
@@ -283,6 +290,37 @@ class SliderBergController {
 				'data-infinite-loop',
 				false
 			),
+			// Responsive carousel attributes
+			tabletSlidesToShow: this.parseNumberAttribute(
+				container,
+				'data-tablet-slides-to-show',
+				2
+			),
+			tabletSlidesToScroll: this.parseNumberAttribute(
+				container,
+				'data-tablet-slides-to-scroll',
+				1
+			),
+			tabletSlideSpacing: this.parseNumberAttribute(
+				container,
+				'data-tablet-slide-spacing',
+				15
+			),
+			mobileSlidesToShow: this.parseNumberAttribute(
+				container,
+				'data-mobile-slides-to-show',
+				1
+			),
+			mobileSlidesToScroll: this.parseNumberAttribute(
+				container,
+				'data-mobile-slides-to-scroll',
+				1
+			),
+			mobileSlideSpacing: this.parseNumberAttribute(
+				container,
+				'data-mobile-slide-spacing',
+				10
+			),
 		};
 	}
 
@@ -339,15 +377,51 @@ class SliderBergController {
 		return `${ transitionDuration }ms ${ transitionEasing }`;
 	}
 
+	private getResponsiveSettings(): {
+		slidesToShow: number;
+		slidesToScroll: number;
+		slideSpacing: number;
+	} {
+		const { config } = this;
+		const viewportWidth = window.innerWidth;
+
+		// Mobile: < 768px
+		if ( viewportWidth < 768 ) {
+			return {
+				slidesToShow: config.mobileSlidesToShow,
+				slidesToScroll: config.mobileSlidesToScroll,
+				slideSpacing: config.mobileSlideSpacing,
+			};
+		}
+		// Tablet: 768px - 1024px
+		else if ( viewportWidth >= 768 && viewportWidth < 1024 ) {
+			return {
+				slidesToShow: config.tabletSlidesToShow,
+				slidesToScroll: config.tabletSlidesToScroll,
+				slideSpacing: config.tabletSlideSpacing,
+			};
+		}
+		// Desktop: >= 1024px
+		else {
+			return {
+				slidesToShow: config.slidesToShow,
+				slidesToScroll: config.slidesToScroll,
+				slideSpacing: config.slideSpacing,
+			};
+		}
+	}
+
 	private setupSliderLayout(): void {
 		const { container, slides } = this.elements;
 		const {
 			transitionEffect,
 			isCarouselMode,
-			slidesToShow,
-			slideSpacing,
 			infiniteLoop,
 		} = this.config;
+
+		// Get responsive settings
+		const responsiveSettings = this.getResponsiveSettings();
+		const { slidesToShow, slideSpacing } = responsiveSettings;
 
 		if (
 			transitionEffect === 'slide' &&
@@ -517,8 +591,12 @@ class SliderBergController {
 
 	private createIndicators(): void {
 		const { indicators } = this.elements;
-		const { isCarouselMode, slidesToShow, infiniteLoop } = this.config;
+		const { isCarouselMode, infiniteLoop } = this.config;
 		if ( ! indicators ) return;
+		
+		// Get responsive settings
+		const { slidesToShow } = this.getResponsiveSettings();
+		
 		const totalSlides = this.elements.slides.length;
 		const dotCount = infiniteLoop
 			? totalSlides
@@ -562,7 +640,7 @@ class SliderBergController {
 
 	private updateIndicators(): void {
 		const { indicators } = this.elements;
-		const { isCarouselMode, slidesToShow, infiniteLoop, transitionEffect } =
+		const { isCarouselMode, infiniteLoop, transitionEffect } =
 			this.config;
 		if ( ! indicators ) return;
 		const totalSlides = this.elements.slides.length;
@@ -603,10 +681,12 @@ class SliderBergController {
 		const {
 			transitionEffect,
 			isCarouselMode,
-			slidesToShow,
-			slidesToScroll,
 			infiniteLoop,
 		} = this.config;
+		
+		// Get responsive settings
+		const { slidesToShow, slidesToScroll } = this.getResponsiveSettings();
+		
 		const { container } = this.elements;
 		const realSlides = this.elements.slides.length;
 		let targetIndex = index;
@@ -862,11 +942,13 @@ class SliderBergController {
 		if ( this.state.isAnimating || this.state.destroyed ) return;
 		const {
 			isCarouselMode,
-			slidesToShow,
-			slidesToScroll,
 			infiniteLoop,
 			transitionEffect,
 		} = this.config;
+		
+		// Get responsive settings
+		const { slidesToShow, slidesToScroll } = this.getResponsiveSettings();
+		
 		const totalSlides = this.elements.slides.length;
 
 		// Don't navigate if there's only one slide
@@ -899,11 +981,13 @@ class SliderBergController {
 		if ( this.state.isAnimating || this.state.destroyed ) return;
 		const {
 			isCarouselMode,
-			slidesToShow,
-			slidesToScroll,
 			infiniteLoop,
 			transitionEffect,
 		} = this.config;
+		
+		// Get responsive settings
+		const { slidesToShow, slidesToScroll } = this.getResponsiveSettings();
+		
 		const totalSlides = this.elements.slides.length;
 
 		// Don't navigate if there's only one slide
@@ -1111,13 +1195,27 @@ class SliderBergController {
 
 	private handleResize(): void {
 		if ( this.state.destroyed ) return;
+		
+		// Recalculate layout with new responsive settings
+		if ( this.config.isCarouselMode ) {
+			this.setupSliderLayout();
+			this.updateIndicators();
+			
+			// Maintain current position but ensure it's valid
+			const { slidesToShow } = this.getResponsiveSettings();
+			const maxStartIndex = Math.max( 0, this.elements.slides.length - slidesToShow );
+			if ( this.state.startIndex > maxStartIndex ) {
+				this.goToSlide( maxStartIndex, null );
+			}
+		}
+		
 		if (
 			this.config.transitionEffect === 'fade' ||
 			this.config.transitionEffect === 'zoom'
 		) {
 			this.updateContainerHeight();
 		}
-		if ( this.config.transitionEffect === 'slide' ) {
+		if ( this.config.transitionEffect === 'slide' && !this.config.isCarouselMode ) {
 			const { container } = this.elements;
 			// No transition during resize adjustment
 			const originalTransition = container.style.transition;

@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { __ } from '@wordpress/i18n';
 import { ToggleControl, RangeControl, PanelBody } from '@wordpress/components';
+import { ResponsiveCarouselSettings } from './ResponsiveCarouselSettings';
 
 interface CarouselSettingsProps {
 	attributes: {
@@ -9,6 +10,12 @@ interface CarouselSettingsProps {
 		slidesToScroll: number;
 		slideSpacing: number;
 		infiniteLoop: boolean;
+		tabletSlidesToShow?: number;
+		tabletSlidesToScroll?: number;
+		tabletSlideSpacing?: number;
+		mobileSlidesToShow?: number;
+		mobileSlidesToScroll?: number;
+		mobileSlideSpacing?: number;
 	};
 	setAttributes: (
 		attrs: Partial< CarouselSettingsProps[ 'attributes' ] >
@@ -42,35 +49,9 @@ export const CarouselSettings: React.FC< CarouselSettingsProps > = ( {
 
 			{ isCarouselMode && (
 				<>
-					<RangeControl
-						label={ __( 'Slides to Show', 'sliderberg' ) }
-						value={ slidesToShow }
-						onChange={ ( value ) =>
-							setAttributes( { slidesToShow: value } )
-						}
-						min={ 1 }
-						max={ 6 }
-					/>
-
-					<RangeControl
-						label={ __( 'Slides to Scroll', 'sliderberg' ) }
-						value={ slidesToScroll }
-						onChange={ ( value ) =>
-							setAttributes( { slidesToScroll: value } )
-						}
-						min={ 1 }
-						max={ slidesToShow }
-					/>
-
-					<RangeControl
-						label={ __( 'Slide Spacing', 'sliderberg' ) }
-						value={ slideSpacing }
-						onChange={ ( value ) =>
-							setAttributes( { slideSpacing: value } )
-						}
-						min={ 0 }
-						max={ 100 }
-						step={ 5 }
+					<ResponsiveCarouselSettings
+						attributes={ attributes }
+						setAttributes={ setAttributes }
 					/>
 
 					<ToggleControl

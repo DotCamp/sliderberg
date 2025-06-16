@@ -68,6 +68,13 @@ const deprecated_v1 = {
 			dotColor: '#6c757d',
 			dotActiveColor: '#ffffff',
 			hideDots: false,
+			// Add responsive carousel attributes
+			tabletSlidesToShow: 2,
+			tabletSlidesToScroll: 1,
+			tabletSlideSpacing: 15,
+			mobileSlidesToShow: 1,
+			mobileSlidesToScroll: 1,
+			mobileSlideSpacing: 10,
 		};
 	},
 };

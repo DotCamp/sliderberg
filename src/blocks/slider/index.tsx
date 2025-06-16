@@ -144,6 +144,31 @@ registerBlockType( 'sliderberg/sliderberg', {
 			type: 'boolean',
 			default: true,
 		},
+		// Responsive carousel attributes
+		tabletSlidesToShow: {
+			type: 'number',
+			default: 2,
+		},
+		tabletSlidesToScroll: {
+			type: 'number',
+			default: 1,
+		},
+		tabletSlideSpacing: {
+			type: 'number',
+			default: 15,
+		},
+		mobileSlidesToShow: {
+			type: 'number',
+			default: 1,
+		},
+		mobileSlidesToScroll: {
+			type: 'number',
+			default: 1,
+		},
+		mobileSlideSpacing: {
+			type: 'number',
+			default: 10,
+		},
 	},
 	edit: Edit,
 	save: () => {
