@@ -26,7 +26,7 @@ if (!defined('ABSPATH')) {
 
 <div<?php echo $wrapper_attr_string; ?>>
     <?php if ($navigation_type === 'top'): ?>
-        <div class="sliderberg-navigation-bar sliderberg-navigation-bar-top">
+        <div class="sliderberg-navigation-bar sliderberg-navigation-bar-top" style="opacity: <?php echo esc_attr($navigation_opacity); ?>;">
             <div class="sliderberg-nav-controls sliderberg-nav-controls-grouped">
                 <?php echo render_nav_button('prev', $nav_button_styles, $navigation_shape, $navigation_size); ?>
                 <?php echo render_slide_indicators($hide_dots); ?>
@@ -66,7 +66,7 @@ if (!defined('ABSPATH')) {
     </div>
     
     <?php if ($navigation_type === 'bottom'): ?>
-        <div class="sliderberg-navigation-bar sliderberg-navigation-bar-bottom">
+        <div class="sliderberg-navigation-bar sliderberg-navigation-bar-bottom" style="opacity: <?php echo esc_attr($navigation_opacity); ?>;">
             <div class="sliderberg-nav-controls sliderberg-nav-controls-grouped">
                 <?php echo render_nav_button('prev', $nav_button_styles, $navigation_shape, $navigation_size); ?>
                 <?php echo render_slide_indicators($hide_dots); ?>
