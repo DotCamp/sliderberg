@@ -91,7 +91,18 @@ export const useSliderState = ( clientId: string, attributes: any ) => {
 			 ).getBlocks( clientId );
 			const newBlock = updatedBlocks[ updatedBlocks.length - 1 ];
 			if ( newBlock ) {
-				setCurrentSlideId( newBlock.clientId );
+				// If carousel mode, set currentSlideId to the first of the last N slides
+				if (attributes.isCarouselMode && attributes.slidesToShow > 1) {
+					const firstVisibleIdx = Math.max(updatedBlocks.length - attributes.slidesToShow, 0);
+					const firstVisibleBlock = updatedBlocks[firstVisibleIdx];
+					if (firstVisibleBlock) {
+						setCurrentSlideId(firstVisibleBlock.clientId);
+					} else {
+						setCurrentSlideId(newBlock.clientId);
+					}
+				} else {
+					setCurrentSlideId(newBlock.clientId);
+				}
 				setIsUpdating( true );
 
 				// Restore scroll position if it changed
