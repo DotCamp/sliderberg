@@ -129,6 +129,10 @@ Yes, carousel mode fully supports infinite loop scrolling, allowing your content
 2. Sliderberg settings panel
 3. Example of a slide with content
 4. Mobile view of the slider
+5. Layout Slider
+6. Promo Slider
+7. Slider With CTA button
+8. Testimonials Slider
 
 == Changelog ==
 
