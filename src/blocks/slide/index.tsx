@@ -135,11 +135,6 @@ registerBlockType( 'sliderberg/slide', {
 		html: false,
 		anchor: true,
 		inserter: false,
-		color: {
-			__experimentalDefaultControls: {
-				background: true,
-			},
-		},
 	},
 	attributes: {
 		backgroundType: {
