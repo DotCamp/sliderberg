@@ -44,7 +44,7 @@ const deprecated_v1_0_1 = {
 			default: false,
 		},
 	},
-	save: ({ attributes }: any) => {
+	save: ( { attributes }: any ) => {
 		const {
 			backgroundType,
 			backgroundImage,
@@ -57,35 +57,38 @@ const deprecated_v1_0_1 = {
 			isFixed,
 		} = attributes;
 
-		const blockProps = useBlockProps.save({
+		const blockProps = useBlockProps.save( {
 			className: classnames(
 				'sliderberg-slide',
-				`sliderberg-content-position-${contentPosition}`
+				`sliderberg-content-position-${ contentPosition }`
 			),
 			style: {
-				minHeight: `${minHeight}px`,
-				backgroundColor: backgroundType === 'color' ? backgroundColor : 'transparent',
+				minHeight: `${ minHeight }px`,
+				backgroundColor:
+					backgroundType === 'color'
+						? backgroundColor
+						: 'transparent',
 				backgroundImage:
 					backgroundType === 'image' && backgroundImage
-						? `url(${backgroundImage.url})`
+						? `url(${ backgroundImage.url })`
 						: 'none',
 				backgroundPosition:
 					backgroundType === 'image'
-						? `${focalPoint.x * 100}% ${focalPoint.y * 100}%`
+						? `${ focalPoint.x * 100 }% ${ focalPoint.y * 100 }%`
 						: 'center',
 				backgroundSize: 'cover',
 				backgroundAttachment: isFixed ? 'fixed' : 'scroll',
 			},
-		});
+		} );
 
 		return (
-			<div {...blockProps}>
+			<div { ...blockProps }>
 				<div
 					className="sliderberg-overlay"
-					style={{
+					style={ {
 						backgroundColor: overlayColor,
 						opacity: overlayOpacity,
-					}}
+					} }
 				/>
 				<div className="sliderberg-slide-content">
 					<InnerBlocks.Content />
@@ -93,11 +96,11 @@ const deprecated_v1_0_1 = {
 			</div>
 		);
 	},
-	migrate: (attributes: any) => {
+	migrate: ( attributes: any ) => {
 		// Return all attributes as-is since they match the new structure
 		return attributes;
 	},
 };
 
 // Export all deprecations
-export default [deprecated_v1_0_1];
+export default [ deprecated_v1_0_1 ];

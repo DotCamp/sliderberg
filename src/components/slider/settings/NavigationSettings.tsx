@@ -197,7 +197,9 @@ export const NavigationSettings: React.FC< NavigationSettingsProps > = ( {
 							value={ attributes.dotActiveColor }
 							onChange={ ( color ) =>
 								setAttributes( {
-									dotActiveColor: validateColor( color || '' ),
+									dotActiveColor: validateColor(
+										color || ''
+									),
 								} )
 							}
 							disableCustomColors={ false }

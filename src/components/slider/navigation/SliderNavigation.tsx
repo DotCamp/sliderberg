@@ -143,7 +143,7 @@ export const SliderNavigation: React.FC< SliderNavigationProps > = ( {
 		<div
 			className={ `sliderberg-navigation-bar sliderberg-navigation-bar-${ position }` }
 			data-slider-id={ sliderId }
-			style={{ opacity: attributes.navigationOpacity }}
+			style={ { opacity: attributes.navigationOpacity } }
 		>
 			<div className="sliderberg-nav-controls sliderberg-nav-controls-grouped">
 				<Button

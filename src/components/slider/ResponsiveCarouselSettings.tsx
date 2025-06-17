@@ -1,6 +1,13 @@
 import * as React from 'react';
 import { __ } from '@wordpress/i18n';
-import { RangeControl, Panel, PanelBody, PanelRow, TabPanel, __experimentalText as Text } from '@wordpress/components';
+import {
+	RangeControl,
+	Panel,
+	PanelBody,
+	PanelRow,
+	TabPanel,
+	__experimentalText as Text,
+} from '@wordpress/components';
 import { desktop, tablet, mobile } from '@wordpress/icons';
 import './responsive-carousel-settings.css';
 
@@ -21,10 +28,9 @@ interface ResponsiveCarouselSettingsProps {
 	) => void;
 }
 
-export const ResponsiveCarouselSettings: React.FC< ResponsiveCarouselSettingsProps > = ( {
-	attributes,
-	setAttributes,
-} ) => {
+export const ResponsiveCarouselSettings: React.FC<
+	ResponsiveCarouselSettingsProps
+> = ( { attributes, setAttributes } ) => {
 	const {
 		slidesToShow,
 		slidesToScroll,
@@ -40,32 +46,17 @@ export const ResponsiveCarouselSettings: React.FC< ResponsiveCarouselSettingsPro
 	const tabs = [
 		{
 			name: 'desktop',
-			title: (
-				<>
-					<span className="dashicon dashicons dashicons-desktop" style={{ marginRight: '4px' }} />
-					{ __( 'Desktop', 'sliderberg' ) }
-				</>
-			),
+			title: __( 'Desktop', 'sliderberg' ),
 			className: 'sliderberg-responsive-tab',
 		},
 		{
 			name: 'tablet',
-			title: (
-				<>
-					<span className="dashicon dashicons dashicons-tablet" style={{ marginRight: '4px' }} />
-					{ __( 'Tablet', 'sliderberg' ) }
-				</>
-			),
+			title: __( 'Tablet', 'sliderberg' ),
 			className: 'sliderberg-responsive-tab',
 		},
 		{
 			name: 'mobile',
-			title: (
-				<>
-					<span className="dashicon dashicons dashicons-smartphone" style={{ marginRight: '4px' }} />
-					{ __( 'Mobile', 'sliderberg' ) }
-				</>
-			),
+			title: __( 'Mobile', 'sliderberg' ),
 			className: 'sliderberg-responsive-tab',
 		},
 	];
@@ -82,7 +73,10 @@ export const ResponsiveCarouselSettings: React.FC< ResponsiveCarouselSettingsPro
 						return (
 							<>
 								<RangeControl
-									label={ __( 'Slides to Show', 'sliderberg' ) }
+									label={ __(
+										'Slides to Show',
+										'sliderberg'
+									) }
 									value={ slidesToShow }
 									onChange={ ( value ) =>
 										setAttributes( { slidesToShow: value } )
@@ -92,17 +86,25 @@ export const ResponsiveCarouselSettings: React.FC< ResponsiveCarouselSettingsPro
 								/>
 
 								<RangeControl
-									label={ __( 'Slides to Scroll', 'sliderberg' ) }
+									label={ __(
+										'Slides to Scroll',
+										'sliderberg'
+									) }
 									value={ slidesToScroll }
 									onChange={ ( value ) =>
-										setAttributes( { slidesToScroll: value } )
+										setAttributes( {
+											slidesToScroll: value,
+										} )
 									}
 									min={ 1 }
 									max={ slidesToShow }
 								/>
 
 								<RangeControl
-									label={ __( 'Slide Spacing', 'sliderberg' ) }
+									label={ __(
+										'Slide Spacing',
+										'sliderberg'
+									) }
 									value={ slideSpacing }
 									onChange={ ( value ) =>
 										setAttributes( { slideSpacing: value } )
@@ -116,34 +118,58 @@ export const ResponsiveCarouselSettings: React.FC< ResponsiveCarouselSettingsPro
 					} else if ( tab.name === 'tablet' ) {
 						return (
 							<>
-								<Text variant="muted" style={{ marginBottom: '12px', display: 'block' }}>
-									{ __( 'Settings for screens 768px - 1024px', 'sliderberg' ) }
+								<Text
+									variant="muted"
+									style={ {
+										marginBottom: '12px',
+										display: 'block',
+									} }
+								>
+									{ __(
+										'Settings for screens 768px - 1024px',
+										'sliderberg'
+									) }
 								</Text>
 								<RangeControl
-									label={ __( 'Slides to Show', 'sliderberg' ) }
+									label={ __(
+										'Slides to Show',
+										'sliderberg'
+									) }
 									value={ tabletSlidesToShow }
 									onChange={ ( value ) =>
-										setAttributes( { tabletSlidesToShow: value } )
+										setAttributes( {
+											tabletSlidesToShow: value,
+										} )
 									}
 									min={ 1 }
 									max={ 4 }
 								/>
 
 								<RangeControl
-									label={ __( 'Slides to Scroll', 'sliderberg' ) }
+									label={ __(
+										'Slides to Scroll',
+										'sliderberg'
+									) }
 									value={ tabletSlidesToScroll }
 									onChange={ ( value ) =>
-										setAttributes( { tabletSlidesToScroll: value } )
+										setAttributes( {
+											tabletSlidesToScroll: value,
+										} )
 									}
 									min={ 1 }
 									max={ tabletSlidesToShow }
 								/>
 
 								<RangeControl
-									label={ __( 'Slide Spacing', 'sliderberg' ) }
+									label={ __(
+										'Slide Spacing',
+										'sliderberg'
+									) }
 									value={ tabletSlideSpacing }
 									onChange={ ( value ) =>
-										setAttributes( { tabletSlideSpacing: value } )
+										setAttributes( {
+											tabletSlideSpacing: value,
+										} )
 									}
 									min={ 0 }
 									max={ 100 }
@@ -154,34 +180,58 @@ export const ResponsiveCarouselSettings: React.FC< ResponsiveCarouselSettingsPro
 					} else if ( tab.name === 'mobile' ) {
 						return (
 							<>
-								<Text variant="muted" style={{ marginBottom: '12px', display: 'block' }}>
-									{ __( 'Settings for screens below 768px', 'sliderberg' ) }
+								<Text
+									variant="muted"
+									style={ {
+										marginBottom: '12px',
+										display: 'block',
+									} }
+								>
+									{ __(
+										'Settings for screens below 768px',
+										'sliderberg'
+									) }
 								</Text>
 								<RangeControl
-									label={ __( 'Slides to Show', 'sliderberg' ) }
+									label={ __(
+										'Slides to Show',
+										'sliderberg'
+									) }
 									value={ mobileSlidesToShow }
 									onChange={ ( value ) =>
-										setAttributes( { mobileSlidesToShow: value } )
+										setAttributes( {
+											mobileSlidesToShow: value,
+										} )
 									}
 									min={ 1 }
 									max={ 3 }
 								/>
 
 								<RangeControl
-									label={ __( 'Slides to Scroll', 'sliderberg' ) }
+									label={ __(
+										'Slides to Scroll',
+										'sliderberg'
+									) }
 									value={ mobileSlidesToScroll }
 									onChange={ ( value ) =>
-										setAttributes( { mobileSlidesToScroll: value } )
+										setAttributes( {
+											mobileSlidesToScroll: value,
+										} )
 									}
 									min={ 1 }
 									max={ mobileSlidesToShow }
 								/>
 
 								<RangeControl
-									label={ __( 'Slide Spacing', 'sliderberg' ) }
+									label={ __(
+										'Slide Spacing',
+										'sliderberg'
+									) }
 									value={ mobileSlideSpacing }
 									onChange={ ( value ) =>
-										setAttributes( { mobileSlideSpacing: value } )
+										setAttributes( {
+											mobileSlideSpacing: value,
+										} )
 									}
 									min={ 0 }
 									max={ 100 }
