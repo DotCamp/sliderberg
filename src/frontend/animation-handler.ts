@@ -9,7 +9,7 @@ export class AnimationHandler {
 	private config: SliderConfig;
 	private state: SliderState;
 	private elements: SliderElements;
-	private activeTimeouts: Set<number> = new Set();
+	private activeTimeouts: Set< number > = new Set();
 
 	constructor(
 		config: SliderConfig,
@@ -23,6 +23,8 @@ export class AnimationHandler {
 
 	/**
 	 * Safe setTimeout that tracks timer IDs for cleanup
+	 * @param callback
+	 * @param delay
 	 */
 	private safeSetTimeout( callback: () => void, delay: number ): number {
 		const timeoutId = window.setTimeout( () => {

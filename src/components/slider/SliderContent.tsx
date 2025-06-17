@@ -7,12 +7,8 @@ import { SliderNavigation } from './navigation/SliderNavigation';
 import { SliderControls } from './SliderControls';
 import classnames from 'classnames';
 
-// Allow both regular slides and pro slider blocks
-const ALLOWED_BLOCKS = [
-	'sliderberg/slide',
-	'sliderberg-pro/posts-slider',
-	'sliderberg-pro/woo-products',
-];
+// Allow slide blocks
+const ALLOWED_BLOCKS = [ 'sliderberg/slide' ];
 
 interface SliderContentProps {
 	attributes: {
@@ -52,90 +48,22 @@ export const SliderContent: React.FC< SliderContentProps > = ( {
 		infiniteLoop,
 	} = attributes;
 
-	const [ proSlides, setProSlides ] = useState< HTMLElement[] >( [] );
-	const [ currentProSlideIndex, setCurrentProSlideIndex ] = useState( 0 );
+	// Pro state removed - can be extended via hooks/filters in pro version
 
 	// Check if we have pro blocks
-	const hasProBlocks = innerBlocks.some(
-		( block ) =>
-			block.name === 'sliderberg-pro/posts-slider' ||
-			block.name === 'sliderberg-pro/woo-products'
-	);
-
 	// Only show slide blocks
 	const hasRegularSlides = innerBlocks.some(
 		( block ) => block.name === 'sliderberg/slide'
 	);
 
-	// For pro blocks, we need to find the actual slide elements and manage navigation
-	useEffect( () => {
-		if ( hasProBlocks ) {
-			const timer = setTimeout( () => {
-				const proSlideElements = document.querySelectorAll(
-					'.sliderberg-post-slide'
-				) as NodeListOf< HTMLElement >;
-				if ( proSlideElements.length > 0 ) {
-					setProSlides( Array.from( proSlideElements ) );
-
-					// Check if any slide is already marked as active, otherwise show first
-					const activeSlide = Array.from( proSlideElements ).find(
-						( slide ) =>
-							slide.getAttribute( 'data-is-active' ) === 'true'
-					);
-
-					if ( activeSlide ) {
-						const activeIndex =
-							Array.from( proSlideElements ).indexOf(
-								activeSlide
-							);
-						setCurrentProSlideIndex( activeIndex );
-					} else {
-						// Show only the first slide initially and mark it as active
-						proSlideElements.forEach( ( slide, index ) => {
-							const isFirst = index === 0;
-							slide.style.display = isFirst ? 'block' : 'none';
-							slide.setAttribute(
-								'data-is-active',
-								isFirst ? 'true' : 'false'
-							);
-						} );
-						setCurrentProSlideIndex( 0 );
-					}
-				}
-			}, 200 ); // Give time for posts to load
-
-			return () => clearTimeout( timer );
-		}
-	}, [ hasProBlocks, innerBlocks ] );
-
-	// Handle pro slide navigation
-	const handleProSlideChange = ( index: number ) => {
-		if ( proSlides.length === 0 ) return;
-
-		setCurrentProSlideIndex( index );
-		proSlides.forEach( ( slide, slideIndex ) => {
-			slide.style.display = slideIndex === index ? 'block' : 'none';
-			// Add a data attribute to track the current state
-			slide.setAttribute(
-				'data-is-active',
-				slideIndex === index ? 'true' : 'false'
-			);
-		} );
-	};
-
-	// Create mock inner blocks for pro slides to work with navigation
-	const mockProBlocks = proSlides.map( ( _, index ) => ( {
-		clientId: `pro-slide-${ index }`,
-		name: 'sliderberg-pro/post-slide',
-	} ) );
+	// Pro functionality removed - can be extended via hooks/filters in pro version
 
 	// Determine what navigation to show
-	const showRegularNavigation = ! hasProBlocks && hasRegularSlides;
-	const showProNavigation = hasProBlocks && proSlides.length > 1;
+	const showRegularNavigation = hasRegularSlides;
+	const showProNavigation = false; // Pro navigation removed
 
-	// For pro blocks, we don't show the slide controls since they have their own content
-	const showSlideControls =
-		! hasProBlocks && ( hasRegularSlides || attributes.type === 'blocks' );
+	// Show slide controls for regular blocks
+	const showSlideControls = hasRegularSlides || attributes.type === 'blocks';
 
 	// Determine the template based on the type
 	let template: any[] | undefined;
@@ -144,9 +72,6 @@ export const SliderContent: React.FC< SliderContentProps > = ( {
 	if ( attributes.type === 'blocks' && innerBlocks.length === 0 ) {
 		// Only add default slide template for blocks type when there are no blocks
 		template = [ [ 'sliderberg/slide', {} ] ];
-	} else if ( hasProBlocks ) {
-		// For pro blocks, don't set any template
-		template = undefined;
 	}
 
 	// Calculate visible slides for carousel mode
@@ -259,21 +184,7 @@ export const SliderContent: React.FC< SliderContentProps > = ( {
 				/>
 			) }
 
-			{ attributes.navigationType === 'top' && showProNavigation && (
-				<SliderNavigation
-					attributes={ attributes }
-					currentSlideId={ `pro-slide-${ currentProSlideIndex }` }
-					innerBlocks={ mockProBlocks }
-					onSlideChange={ ( slideId ) => {
-						const index = parseInt(
-							slideId.replace( 'pro-slide-', '' )
-						);
-						handleProSlideChange( index );
-					} }
-					position="top"
-					sliderId={ clientId }
-				/>
-			) }
+			{ /* Pro navigation removed - can be extended via hooks/filters in pro version */ }
 
 			<div
 				className={ classnames( 'sliderberg-slides', {
@@ -316,21 +227,7 @@ export const SliderContent: React.FC< SliderContentProps > = ( {
 					/>
 				) }
 
-			{ attributes.navigationType === 'split' && showProNavigation && (
-				<SliderNavigation
-					attributes={ attributes }
-					currentSlideId={ `pro-slide-${ currentProSlideIndex }` }
-					innerBlocks={ mockProBlocks }
-					onSlideChange={ ( slideId ) => {
-						const index = parseInt(
-							slideId.replace( 'pro-slide-', '' )
-						);
-						handleProSlideChange( index );
-					} }
-					position="split"
-					sliderId={ clientId }
-				/>
-			) }
+			{ /* Pro navigation removed - can be extended via hooks/filters in pro version */ }
 
 			{ attributes.navigationType === 'bottom' &&
 				showRegularNavigation && (
@@ -346,21 +243,7 @@ export const SliderContent: React.FC< SliderContentProps > = ( {
 					/>
 				) }
 
-			{ attributes.navigationType === 'bottom' && showProNavigation && (
-				<SliderNavigation
-					attributes={ attributes }
-					currentSlideId={ `pro-slide-${ currentProSlideIndex }` }
-					innerBlocks={ mockProBlocks }
-					onSlideChange={ ( slideId ) => {
-						const index = parseInt(
-							slideId.replace( 'pro-slide-', '' )
-						);
-						handleProSlideChange( index );
-					} }
-					position="bottom"
-					sliderId={ clientId }
-				/>
-			) }
+			{ /* Pro navigation removed - can be extended via hooks/filters in pro version */ }
 		</>
 	);
 };

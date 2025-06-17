@@ -53,66 +53,9 @@ export const Edit: React.FC< EditProps > = ( {
 		}
 	}, [ attributes.widthPreset, attributes.align, setAttributes ] );
 
-	// Handle pro block insertion when type is set to a pro type
+	// Pro block auto-insertion removed - can be extended via hooks/filters in pro version
 	useEffect( () => {
-		const isProType = [ 'posts-slider', 'woo-products' ].includes(
-			attributes.type
-		);
-		const hasProChild = innerBlocks.some(
-			( block: BlockInstance ) =>
-				block.name === 'sliderberg-pro/posts-slider' ||
-				block.name === 'sliderberg-pro/woo-products'
-		);
-
-		if ( isProType && ! hasProChild ) {
-			console.log(
-				'Pro type detected, inserting pro block:',
-				attributes.type
-			);
-
-			// Remove any existing child blocks first
-			if ( innerBlocks.length > 0 ) {
-				const { removeBlocks } =
-					wp.data.dispatch( 'core/block-editor' );
-				const childClientIds = innerBlocks.map(
-					( block: BlockInstance ) => block.clientId
-				);
-				removeBlocks( childClientIds );
-			}
-
-			// Insert the appropriate pro block
-			setTimeout( () => {
-				const { insertBlocks } =
-					wp.data.dispatch( 'core/block-editor' );
-
-				if ( attributes.type === 'posts-slider' ) {
-					const postsSliderBlock = createBlock(
-						'sliderberg-pro/posts-slider',
-						{
-							postType: 'posts',
-							numberOfPosts: 5,
-							order: 'desc',
-							showFeaturedImage: true,
-							showTitle: true,
-							showExcerpt: true,
-						}
-					);
-					insertBlocks( [ postsSliderBlock ], 0, clientId );
-				} else if ( attributes.type === 'woo-products' ) {
-					const wooSliderBlock = createBlock(
-						'sliderberg-pro/woo-products',
-						{
-							productCategory: '',
-							numberOfProducts: 5,
-							productOrder: 'desc',
-							showPrice: true,
-							showAddToCart: true,
-						}
-					);
-					insertBlocks( [ wooSliderBlock ], 0, clientId );
-				}
-			}, 10 ); // Small delay to ensure state is updated
-		}
+		// Type change handling can be extended in pro version
 	}, [ attributes.type, innerBlocks, clientId ] );
 
 	// Build editor styles - this is the key fix!

@@ -10,7 +10,7 @@ declare global {
 }
 
 let observer: MutationObserver | null = null;
-let domInsertedHandler: ((event: Event) => void) | null = null;
+let domInsertedHandler: ( ( event: Event ) => void ) | null = null;
 
 function updateSliderbergSlidesVisibility(): void {
 	// Handle regular slide blocks
@@ -50,61 +50,7 @@ function updateSliderbergSlidesVisibility(): void {
 			}
 		} );
 
-	// Handle pro slides (posts slider, etc.)
-	document
-		.querySelectorAll< HTMLElement >( '.sliderberg-posts-slider-wrapper' )
-		.forEach( ( wrapper ) => {
-			const postSlides = Array.from(
-				wrapper.querySelectorAll< HTMLElement >(
-					'.sliderberg-post-slide'
-				)
-			);
-
-			if ( postSlides.length > 0 ) {
-				// Check if any slide is already marked as active
-				const activeSlide = postSlides.find(
-					( slide ) =>
-						slide.getAttribute( 'data-is-active' ) === 'true'
-				);
-
-				if ( activeSlide ) {
-					// Respect the current active state
-					postSlides.forEach( ( slide ) => {
-						const isActive =
-							slide.getAttribute( 'data-is-active' ) === 'true';
-						slide.style.display = isActive ? 'block' : 'none';
-					} );
-				} else {
-					// Only if no active slide is set, show the first one
-					postSlides.forEach( ( slide, index ) => {
-						const isFirst = index === 0;
-						slide.style.display = isFirst ? 'block' : 'none';
-						slide.setAttribute(
-							'data-is-active',
-							isFirst ? 'true' : 'false'
-						);
-					} );
-				}
-			}
-		} );
-
-	// Handle other pro slider types if they exist
-	document
-		.querySelectorAll< HTMLElement >( '.sliderberg-woo-products-wrapper' )
-		.forEach( ( wrapper ) => {
-			const productSlides = Array.from(
-				wrapper.querySelectorAll< HTMLElement >(
-					'.sliderberg-product-slide'
-				)
-			);
-
-			if ( productSlides.length > 0 ) {
-				// Show only the first product slide, hide others
-				productSlides.forEach( ( slide, index ) => {
-					slide.style.display = index === 0 ? 'block' : 'none';
-				} );
-			}
-		} );
+	// Pro functionality removed - can be extended via hooks/filters in pro version
 }
 
 // Cleanup function
@@ -176,14 +122,13 @@ document.addEventListener(
 	updateSliderbergSlidesVisibility
 );
 
-// Handle AJAX content updates (for dynamic post loading)
+// Handle AJAX content updates
 domInsertedHandler = ( event: Event ) => {
 	const target = event.target as HTMLElement;
 	if (
 		target &&
 		target.classList &&
-		( target.classList.contains( 'sliderberg-post-slide' ) ||
-			target.classList.contains( 'sliderberg-posts-slider-wrapper' ) )
+		target.classList.contains( 'sliderberg-slide' )
 	) {
 		setTimeout( updateSliderbergSlidesVisibility, 50 );
 	}

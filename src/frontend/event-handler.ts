@@ -385,8 +385,14 @@ export class EventHandler {
 				'touchstart',
 				this.boundHandleTouchStart
 			);
-			container.removeEventListener( 'touchmove', this.boundHandleTouchMove );
-			container.removeEventListener( 'touchend', this.boundHandleTouchEnd );
+			container.removeEventListener(
+				'touchmove',
+				this.boundHandleTouchMove
+			);
+			container.removeEventListener(
+				'touchend',
+				this.boundHandleTouchEnd
+			);
 
 			if ( this.config.pauseOnHover ) {
 				container.removeEventListener(

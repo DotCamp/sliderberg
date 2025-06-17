@@ -586,7 +586,7 @@ export class SliderBergController {
 	 */
 	public destroy(): void {
 		if ( this.state.destroyed ) return;
-		
+
 		// Mark as destroyed immediately to prevent any further operations
 		this.state.destroyed = true;
 
@@ -605,7 +605,9 @@ export class SliderBergController {
 		this.cleanupReferences();
 
 		// eslint-disable-next-line no-console
-		console.log( `SliderBerg instance ${ this.id } destroyed and cleaned.` );
+		console.log(
+			`SliderBerg instance ${ this.id } destroyed and cleaned.`
+		);
 	}
 
 	/**
