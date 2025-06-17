@@ -189,7 +189,7 @@ function render_nav_button($type, $styles, $shape, $size, $additional_styles = [
         esc_attr($shape),
         esc_attr($size),
         esc_attr($style_string),
-        $icon // Safe because it's hardcoded
+        $icon
     );
 }
 
@@ -251,7 +251,19 @@ function render_slide_indicators($hide_dots) {
  * Render the slider template
  */
 function sliderberg_render_slider_template($vars) {
-    extract($vars);
+    // Explicitly define variables instead of using extract()
+    $wrapper_attrs = isset($vars['wrapper_attrs']) ? $vars['wrapper_attrs'] : array();
+    $container_attrs = isset($vars['container_attrs']) ? $vars['container_attrs'] : array();
+    $navigation_type = isset($vars['navigation_type']) ? $vars['navigation_type'] : 'bottom';
+    $navigation_placement = isset($vars['navigation_placement']) ? $vars['navigation_placement'] : 'overlay';
+    $navigation_opacity = isset($vars['navigation_opacity']) ? floatval($vars['navigation_opacity']) : 1;
+    $navigation_shape = isset($vars['navigation_shape']) ? $vars['navigation_shape'] : 'circle';
+    $navigation_size = isset($vars['navigation_size']) ? $vars['navigation_size'] : 'medium';
+    $nav_button_styles = isset($vars['nav_button_styles']) ? $vars['nav_button_styles'] : array();
+    $split_nav_styles = isset($vars['split_nav_styles']) ? $vars['split_nav_styles'] : array();
+    $navigation_horizontal_pos = isset($vars['navigation_horizontal_pos']) ? intval($vars['navigation_horizontal_pos']) : 20;
+    $hide_dots = isset($vars['hide_dots']) ? (bool)$vars['hide_dots'] : false;
+    $content = isset($vars['content']) ? $vars['content'] : '';
     
     // Build wrapper attributes string
     $wrapper_attr_string = '';

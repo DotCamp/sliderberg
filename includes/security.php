@@ -29,15 +29,23 @@ function sliderberg_validate_color($color) {
     // Trim whitespace
     $color = trim($color);
     
-    // Check for CSS injection attempts
-    if (stripos($color, 'expression') !== false || 
-        stripos($color, 'javascript') !== false || 
-        stripos($color, 'script') !== false ||
-        stripos($color, 'url') !== false ||
-        stripos($color, 'import') !== false ||
-        strpos($color, ';') !== false ||
-        strpos($color, '}') !== false ||
-        strpos($color, '{') !== false) {
+    // Enhanced CSS injection prevention
+    $dangerous_patterns = array(
+        'expression', 'javascript', 'script', 'url', 'import', '@import',
+        'data:', '/*', '*/', '\\', '\u', '\x', ';', '}', '{', '<', '>',
+        'behavior', 'binding', '-moz-binding', 'include', 'filter',
+        'position:fixed', 'position:absolute'
+    );
+    
+    $color_lower = strtolower($color);
+    foreach ($dangerous_patterns as $pattern) {
+        if (stripos($color_lower, strtolower($pattern)) !== false) {
+            return '';
+        }
+    }
+    
+    // Additional check for hex escape sequences
+    if (preg_match('/\\\\[0-9a-fA-F]{1,6}/', $color)) {
         return '';
     }
     
@@ -235,5 +243,39 @@ function sliderberg_secure_include($file_path) {
     }
     
     include $file_path;
+    return true;
+}
+
+/**
+ * Simple rate limiting for AJAX actions
+ * 
+ * @param string $action The action to rate limit
+ * @param int $max_attempts Maximum attempts allowed
+ * @param int $window Time window in seconds
+ * @return bool True if allowed, false if rate limited
+ */
+function sliderberg_check_rate_limit($action, $max_attempts = 5, $window = 60) {
+    $user_id = get_current_user_id();
+    $ip = isset($_SERVER['REMOTE_ADDR']) ? sanitize_text_field($_SERVER['REMOTE_ADDR']) : '';
+    
+    // Create unique key for this user/IP and action
+    $key = 'sliderberg_rate_' . $action . '_' . $user_id . '_' . md5($ip);
+    
+    // Get current attempts
+    $attempts = get_transient($key);
+    
+    if ($attempts === false) {
+        // First attempt
+        set_transient($key, 1, $window);
+        return true;
+    }
+    
+    if ($attempts >= $max_attempts) {
+        // Rate limited
+        return false;
+    }
+    
+    // Increment attempts
+    set_transient($key, $attempts + 1, $window);
     return true;
 }

@@ -142,7 +142,12 @@ add_action('wp_enqueue_scripts', 'sliderberg_frontend_assets');
 function sliderberg_install_plugin() {
     // Check if request is AJAX
     if (!wp_doing_ajax()) {
-        wp_die('Invalid request');
+        wp_die('Invalid request', 'Invalid Request', array('response' => 400));
+    }
+    
+    // Check rate limiting
+    if (!sliderberg_check_rate_limit('install_plugin', 3, 300)) {
+        wp_send_json_error(array('message' => 'Too many requests. Please try again later.'));
     }
     
     // Check nonce
@@ -201,7 +206,12 @@ add_action('wp_ajax_sliderberg_install_plugin', 'sliderberg_install_plugin');
 function sliderberg_activate_plugin() {
     // Check if request is AJAX
     if (!wp_doing_ajax()) {
-        wp_die('Invalid request');
+        wp_die('Invalid request', 'Invalid Request', array('response' => 400));
+    }
+    
+    // Check rate limiting
+    if (!sliderberg_check_rate_limit('activate_plugin', 5, 300)) {
+        wp_send_json_error(array('message' => 'Too many requests. Please try again later.'));
     }
     
     // Check nonce
