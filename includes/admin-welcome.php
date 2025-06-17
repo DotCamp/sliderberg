@@ -19,13 +19,20 @@ define('SLIDERBERG_ALLOWED_ACTIONS', array(
  * Add admin menu with proper capability checks
  */
 function sliderberg_admin_menu() {
-    // Security: Use more specific capability for menu access
-    $capability = 'edit_posts'; // Changed from 'manage_options' to be more restrictive
+    // Security: Use appropriate capability based on functionality
+    // For plugin management functions, require higher privileges
+    $admin_capability = 'manage_options'; // For admin functions like plugin installation
+    $editor_capability = 'edit_posts';    // For content creation functions
+    
+    // Only show admin menu to users who can at least edit posts
+    if (!current_user_can($editor_capability)) {
+        return;
+    }
     
     add_menu_page(
         __('SliderBerg', 'sliderberg'),           // Page title
         __('SliderBerg', 'sliderberg'),           // Menu title
-        $capability,                               // Capability
+        $editor_capability,                        // Capability - allow editors access
         'sliderberg-welcome',                     // Menu slug
         'sliderberg_welcome_page',                // Callback function
         SLIDERBERG_PLUGIN_URL . 'assets/images/logo-icon.svg', // Icon
@@ -37,7 +44,7 @@ function sliderberg_admin_menu() {
         'sliderberg-welcome',                     // Parent slug
         __('Welcome', 'sliderberg'),              // Page title
         __('Welcome', 'sliderberg'),              // Menu title
-        $capability,                              // Capability
+        $editor_capability,                       // Capability
         'sliderberg-welcome',                     // Menu slug
         'sliderberg_welcome_page'                 // Callback function
     );
@@ -53,9 +60,8 @@ function sliderberg_validate_action_request($action) {
         return false;
     }
     
-    // Security: Verify nonce
-    $nonce_key = $action; // Use action name as nonce key
-    if (!isset($_GET['_wpnonce']) || !wp_verify_nonce($_GET['_wpnonce'], $nonce_key)) {
+    // Security: Verify secure nonce
+    if (!isset($_GET['_wpnonce']) || !sliderberg_verify_secure_nonce($_GET['_wpnonce'], $action)) {
         return false;
     }
     
@@ -326,9 +332,9 @@ function sliderberg_welcome_page() {
         );
     }
     
-    // Security: Generate secure nonces
-    $create_post_nonce = wp_create_nonce('sliderberg_create_post');
-    $create_page_nonce = wp_create_nonce('sliderberg_create_page');
+    // Security: Generate secure nonces with enhanced security
+    $create_post_nonce = sliderberg_generate_secure_nonce('sliderberg_create_post');
+    $create_page_nonce = sliderberg_generate_secure_nonce('sliderberg_create_page');
     
     // Security: Create properly escaped URLs
     $create_post_url = esc_url(admin_url('admin.php?page=sliderberg-welcome&action=sliderberg_create_post&_wpnonce=' . $create_post_nonce));
@@ -547,7 +553,8 @@ function sliderberg_welcome_page() {
                         <?php echo esc_html__('Contact Support', 'sliderberg'); ?>
                     </a>
                 </div>
-                <!-- Other Plugins -->
+                <?php if (current_user_can('install_plugins')) : ?>
+                <!-- Other Plugins - Only show to users who can install plugins -->
                 <div class="sliderberg-sidebar-section">
                     <h3><?php echo esc_html__('Our Other Plugins', 'sliderberg'); ?></h3>
                     
@@ -586,18 +593,26 @@ function sliderberg_welcome_page() {
                             <div class="sliderberg-plugin-card" data-plugin-slug="<?php echo esc_attr($plugin['slug']); ?>">
                                 <h4><?php echo esc_html($plugin['name']); ?></h4>
                                 <p><?php echo esc_html($plugin['description']); ?></p>
+                                <?php if (current_user_can('install_plugins') || (current_user_can('activate_plugins') && $status === 'inactive')) : ?>
                                 <button class="sliderberg-plugin-button" 
                                         data-plugin="<?php echo esc_attr($plugin['slug']); ?>"
                                         data-status="<?php echo esc_attr($status); ?>"
-                                        data-nonce="<?php echo wp_create_nonce('sliderberg_plugin_action'); ?>">
+                                        data-nonce="<?php echo wp_create_nonce('sliderberg_plugin_action'); ?>"
+                                        <?php echo ($status === 'active') ? 'disabled' : ''; ?>>
                                     <?php echo esc_html($button_text); ?>
                                 </button>
+                                <?php else : ?>
+                                <button class="sliderberg-plugin-button" disabled>
+                                    <?php echo esc_html__('Insufficient permissions', 'sliderberg'); ?>
+                                </button>
+                                <?php endif; ?>
                             </div>
                             <?php
                         }
                         ?>
                     </div>
                 </div>
+                <?php endif; ?>
 
                 
 

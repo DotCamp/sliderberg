@@ -29,23 +29,39 @@ function sliderberg_validate_color($color) {
     // Trim whitespace
     $color = trim($color);
     
-    // Enhanced CSS injection prevention
+    // Enhanced CSS injection prevention with comprehensive patterns
     $dangerous_patterns = array(
-        'expression', 'javascript', 'script', 'url', 'import', '@import',
+        'expression', 'javascript:', 'javascript', 'script', 'url(', '@import',
         'data:', '/*', '*/', '\\', '\u', '\x', ';', '}', '{', '<', '>',
-        'behavior', 'binding', '-moz-binding', 'include', 'filter',
-        'position:fixed', 'position:absolute'
+        'behavior:', 'binding:', '-moz-binding:', 'include', 'filter:',
+        'position:fixed', 'position:absolute', 'calc(', 'attr(', 'var(',
+        'counter(', 'counters(', 'content:', '@charset', '@namespace',
+        'element(', '-webkit-', '-moz-', 'image(', 'image-set(',
+        'cross-fade(', 'linear-gradient(', 'radial-gradient(',
+        'repeating-', 'conic-gradient(', '::', '!important'
     );
     
-    $color_lower = strtolower($color);
+    // Normalize the color for checking
+    $normalized = strtolower(preg_replace('/\s+/', '', $color));
+    
     foreach ($dangerous_patterns as $pattern) {
-        if (stripos($color_lower, strtolower($pattern)) !== false) {
+        if (strpos($normalized, strtolower($pattern)) !== false) {
             return '';
         }
     }
     
-    // Additional check for hex escape sequences
+    // Check for hex escape sequences
     if (preg_match('/\\\\[0-9a-fA-F]{1,6}/', $color)) {
+        return '';
+    }
+    
+    // Check for Unicode characters that could be used maliciously
+    if (preg_match('/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/', $color)) {
+        return '';
+    }
+    
+    // Check for encoded characters
+    if (preg_match('/%[0-9a-fA-F]{2}/', $color)) {
         return '';
     }
     
@@ -100,7 +116,34 @@ function sliderberg_validate_color($color) {
  * @return int Validated integer
  */
 function sliderberg_validate_numeric_range($value, $min, $max, $default) {
+    // First check for scientific notation or other bypass attempts
+    if (is_string($value)) {
+        // Remove whitespace
+        $value = trim($value);
+        
+        // Check for scientific notation (e.g., 1e10, 1E+10)
+        if (preg_match('/[eE]/i', $value)) {
+            return $default;
+        }
+        
+        // Check for hex (0x), octal (0), or binary (0b) notation
+        if (preg_match('/^0[xXbB]/', $value)) {
+            return $default;
+        }
+        
+        // Only allow digits, minus sign, and decimal point
+        if (!preg_match('/^-?\d+(\.\d+)?$/', $value)) {
+            return $default;
+        }
+    }
+    
+    // Convert to integer (this handles both string and numeric inputs)
     $value = intval($value);
+    
+    // Additional check for infinity or NaN
+    if (!is_finite($value)) {
+        return $default;
+    }
     
     if ($value < $min || $value > $max) {
         return $default;
@@ -247,6 +290,49 @@ function sliderberg_secure_include($file_path) {
 }
 
 /**
+ * Generate secure nonce with time-based data
+ * 
+ * @param string $action The action for the nonce
+ * @return string The generated nonce
+ */
+function sliderberg_generate_secure_nonce($action) {
+    $user_id = get_current_user_id();
+    $session_token = wp_get_session_token();
+    $timestamp = floor(time() / 86400); // Daily rotation
+    $nonce_data = $action . '|' . $user_id . '|' . $session_token . '|' . $timestamp . '|' . wp_salt('nonce');
+    
+    return wp_create_nonce($nonce_data);
+}
+
+/**
+ * Verify secure nonce
+ * 
+ * @param string $nonce The nonce to verify
+ * @param string $action The action for the nonce
+ * @return bool|int False if invalid, 1 if valid and recent, 2 if valid but older
+ */
+function sliderberg_verify_secure_nonce($nonce, $action) {
+    $user_id = get_current_user_id();
+    $session_token = wp_get_session_token();
+    $current_timestamp = floor(time() / 86400);
+    
+    // Check current day
+    $nonce_data = $action . '|' . $user_id . '|' . $session_token . '|' . $current_timestamp . '|' . wp_salt('nonce');
+    if (wp_verify_nonce($nonce, $nonce_data)) {
+        return 1;
+    }
+    
+    // Check previous day (for edge cases)
+    $prev_timestamp = $current_timestamp - 1;
+    $nonce_data_prev = $action . '|' . $user_id . '|' . $session_token . '|' . $prev_timestamp . '|' . wp_salt('nonce');
+    if (wp_verify_nonce($nonce, $nonce_data_prev)) {
+        return 2;
+    }
+    
+    return false;
+}
+
+/**
  * Simple rate limiting for AJAX actions
  * 
  * @param string $action The action to rate limit
@@ -258,8 +344,8 @@ function sliderberg_check_rate_limit($action, $max_attempts = 5, $window = 60) {
     $user_id = get_current_user_id();
     $ip = isset($_SERVER['REMOTE_ADDR']) ? sanitize_text_field($_SERVER['REMOTE_ADDR']) : '';
     
-    // Create unique key for this user/IP and action
-    $key = 'sliderberg_rate_' . $action . '_' . $user_id . '_' . md5($ip);
+    // Use stronger hashing algorithm
+    $key = 'sliderberg_rate_' . $action . '_' . $user_id . '_' . hash('sha256', $ip . wp_salt('auth'));
     
     // Get current attempts
     $attempts = get_transient($key);
@@ -278,4 +364,68 @@ function sliderberg_check_rate_limit($action, $max_attempts = 5, $window = 60) {
     // Increment attempts
     set_transient($key, $attempts + 1, $window);
     return true;
+}
+
+/**
+ * Validate AJAX request origin
+ * 
+ * @return bool True if valid origin, false otherwise
+ */
+function sliderberg_validate_ajax_origin() {
+    // Check if this is an AJAX request
+    if (!wp_doing_ajax()) {
+        return false;
+    }
+    
+    // Get the referer header
+    $referer = isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '';
+    
+    if (empty($referer)) {
+        return false;
+    }
+    
+    // Parse the referer URL
+    $referer_parts = wp_parse_url($referer);
+    if (!$referer_parts || !isset($referer_parts['host'])) {
+        return false;
+    }
+    
+    // Get the site URL parts
+    $site_url = get_site_url();
+    $site_parts = wp_parse_url($site_url);
+    if (!$site_parts || !isset($site_parts['host'])) {
+        return false;
+    }
+    
+    // Compare hosts (case-insensitive)
+    $referer_host = strtolower($referer_parts['host']);
+    $site_host = strtolower($site_parts['host']);
+    
+    // Direct host match
+    if ($referer_host === $site_host) {
+        return true;
+    }
+    
+    // Check for www prefix variations
+    if ('www.' . $referer_host === $site_host || $referer_host === 'www.' . $site_host) {
+        return true;
+    }
+    
+    // Check if referer is from a subdomain (if multisite)
+    if (is_multisite()) {
+        // Get the base domain
+        $base_domain = preg_replace('/^www\./', '', $site_host);
+        
+        // Check if referer is a subdomain of the base domain
+        if (substr($referer_host, -strlen($base_domain)) === $base_domain) {
+            return true;
+        }
+    }
+    
+    // Additional check: verify the request came from admin area
+    if (strpos($referer, admin_url()) === 0) {
+        return true;
+    }
+    
+    return false;
 }

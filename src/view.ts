@@ -19,6 +19,8 @@ import {
 	validateTransitionEasing,
 	validateNumericRange,
 	sanitizeAttributeValue,
+	sanitizeDOMId,
+	validateDOMNumeric,
 } from './utils/security';
 
 interface SliderBergInterface {
@@ -106,9 +108,22 @@ class SliderBergController {
 		sliderElement: Element
 	): SliderBergController | null {
 		try {
-			const id = `slider-${ Math.random()
-				.toString( 36 )
-				.substring( 2, 11 ) }`;
+			// Use crypto API for secure random ID generation
+			let id: string;
+			if ( typeof window.crypto !== 'undefined' && window.crypto.getRandomValues ) {
+				const array = new Uint32Array(2);
+				window.crypto.getRandomValues(array);
+				id = `slider-${ array[0].toString(36) }${ array[1].toString(36) }`;
+			} else {
+				// Fallback for older browsers
+				id = `slider-${ Date.now().toString(36) }-${ Math.random()
+					.toString( 36 )
+					.substring( 2, 11 ) }`;
+			}
+			
+			// Sanitize the ID
+			id = sanitizeDOMId( id );
+			
 			const instance = new SliderBergController( sliderElement, id );
 			this.instances.set( id, instance );
 			return instance;
@@ -356,9 +371,8 @@ class SliderBergController {
 		defaultValue: number
 	): number {
 		const value = element.getAttribute( name );
-		if ( value === null ) return defaultValue;
-		const parsed = parseInt( value, 10 );
-		return isNaN( parsed ) ? defaultValue : parsed;
+		// Use validateDOMNumeric to prevent scientific notation and other bypasses
+		return validateDOMNumeric( value, -999999, 999999, defaultValue );
 	}
 
 	private parseBooleanAttribute(

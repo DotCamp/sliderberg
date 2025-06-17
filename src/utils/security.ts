@@ -131,5 +131,51 @@ export function validateTransitionEasing(
  * @return A sanitized string safe for use in HTML attributes
  */
 export function sanitizeAttributeValue( value: string ): string {
-	return value.replace( /[^\w\s-_.]/g, '' );
+	// Remove any potentially dangerous characters
+	// Allow only alphanumeric, spaces, hyphens, underscores, periods
+	return value.replace( /[^\w\s\-_.]/g, '' );
+}
+
+/**
+ * Validates and sanitizes DOM element IDs
+ * @param id - The ID to validate
+ * @return A sanitized ID safe for DOM operations
+ */
+export function sanitizeDOMId( id: string ): string {
+	// DOM IDs must start with a letter and contain only alphanumeric, hyphens, underscores
+	const sanitized = id.replace( /[^a-zA-Z0-9\-_]/g, '' );
+	
+	// Ensure it starts with a letter
+	if ( !/^[a-zA-Z]/.test( sanitized ) ) {
+		return 'slide_' + sanitized;
+	}
+	
+	return sanitized;
+}
+
+/**
+ * Validates numeric attributes from DOM
+ * @param value - The value to validate
+ * @param min - Minimum allowed value
+ * @param max - Maximum allowed value
+ * @param defaultValue - Default if validation fails
+ * @return A validated number
+ */
+export function validateDOMNumeric(
+	value: string | null,
+	min: number,
+	max: number,
+	defaultValue: number
+): number {
+	if ( !value ) return defaultValue;
+	
+	// Remove any non-numeric characters except decimal point and minus
+	const cleaned = value.replace( /[^0-9.\-]/g, '' );
+	const parsed = parseFloat( cleaned );
+	
+	if ( isNaN( parsed ) || !isFinite( parsed ) ) {
+		return defaultValue;
+	}
+	
+	return validateNumericRange( parsed, min, max, defaultValue );
 }

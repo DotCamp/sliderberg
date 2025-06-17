@@ -145,6 +145,11 @@ function sliderberg_install_plugin() {
         wp_die('Invalid request', 'Invalid Request', array('response' => 400));
     }
     
+    // Validate request origin
+    if (!sliderberg_validate_ajax_origin()) {
+        wp_send_json_error(array('message' => 'Invalid request origin'));
+    }
+    
     // Check rate limiting
     if (!sliderberg_check_rate_limit('install_plugin', 3, 300)) {
         wp_send_json_error(array('message' => 'Too many requests. Please try again later.'));
@@ -207,6 +212,11 @@ function sliderberg_activate_plugin() {
     // Check if request is AJAX
     if (!wp_doing_ajax()) {
         wp_die('Invalid request', 'Invalid Request', array('response' => 400));
+    }
+    
+    // Validate request origin
+    if (!sliderberg_validate_ajax_origin()) {
+        wp_send_json_error(array('message' => 'Invalid request origin'));
     }
     
     // Check rate limiting

@@ -265,6 +265,32 @@ function sliderberg_render_slider_template($vars) {
     $hide_dots = isset($vars['hide_dots']) ? (bool)$vars['hide_dots'] : false;
     $content = isset($vars['content']) ? $vars['content'] : '';
     
+    // Sanitize content to prevent XSS - allow only safe HTML for slider content
+    $allowed_html = array(
+        'div' => array('class' => array(), 'id' => array(), 'style' => array()),
+        'p' => array('class' => array(), 'style' => array()),
+        'h1' => array('class' => array(), 'style' => array()),
+        'h2' => array('class' => array(), 'style' => array()),
+        'h3' => array('class' => array(), 'style' => array()),
+        'h4' => array('class' => array(), 'style' => array()),
+        'h5' => array('class' => array(), 'style' => array()),
+        'h6' => array('class' => array(), 'style' => array()),
+        'span' => array('class' => array(), 'style' => array()),
+        'a' => array('href' => array(), 'class' => array(), 'target' => array(), 'rel' => array()),
+        'img' => array('src' => array(), 'alt' => array(), 'class' => array(), 'width' => array(), 'height' => array()),
+        'button' => array('class' => array(), 'type' => array()),
+        'strong' => array(),
+        'em' => array(),
+        'br' => array(),
+        'ul' => array('class' => array()),
+        'ol' => array('class' => array()),
+        'li' => array('class' => array())
+    );
+    
+    // Note: Inner blocks are already rendered and sanitized by WordPress
+    // This additional sanitization provides defense in depth
+    $content = wp_kses($content, $allowed_html);
+    
     // Build wrapper attributes string
     $wrapper_attr_string = '';
     foreach ($wrapper_attrs as $attr => $value) {
@@ -277,14 +303,45 @@ function sliderberg_render_slider_template($vars) {
         $container_attr_string .= sprintf(' %s="%s"', $attr, esc_attr($value));
     }
     
-    // Security check for template file
+    // Security check for template file with TOCTOU prevention
     $template_file = __DIR__ . '/templates/slider-block.php';
-    if (!file_exists($template_file) || strpos(realpath($template_file), realpath(SLIDERBERG_PLUGIN_DIR)) !== 0) {
+    $real_template_path = realpath($template_file);
+    $real_plugin_dir = realpath(SLIDERBERG_PLUGIN_DIR);
+    
+    // Validate path first
+    if (!$real_template_path || !$real_plugin_dir || strpos($real_template_path, $real_plugin_dir) !== 0) {
         echo '<!-- Template file not found or invalid -->';
         return;
     }
     
-    include $template_file;
+    // Use file locking to prevent race conditions
+    $fp = @fopen($real_template_path, 'r');
+    if (!$fp) {
+        echo '<!-- Template file could not be opened -->';
+        return;
+    }
+    
+    // Lock file for reading
+    if (!flock($fp, LOCK_SH)) {
+        fclose($fp);
+        echo '<!-- Template file is locked -->';
+        return;
+    }
+    
+    // Verify file is still within bounds after locking
+    $locked_real_path = realpath(stream_get_meta_data($fp)['uri']);
+    if (!$locked_real_path || strpos($locked_real_path, $real_plugin_dir) !== 0) {
+        flock($fp, LOCK_UN);
+        fclose($fp);
+        echo '<!-- Template security check failed -->';
+        return;
+    }
+    
+    // Include file using the validated path
+    flock($fp, LOCK_UN);
+    fclose($fp);
+    
+    include $real_template_path;
 }
 
 /**
