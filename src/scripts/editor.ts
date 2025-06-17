@@ -3,9 +3,14 @@ import { HTMLElementWithDataClientId } from '../types/common';
 
 declare global {
 	interface Window {
-		updateSliderbergSlidesVisibility: () => void;
+		updateSliderbergSlidesVisibility?: () => void;
+		sliderbergCleanup?: () => void;
+		visibilityUpdateTimeout?: number;
 	}
 }
+
+let observer: MutationObserver | null = null;
+let domInsertedHandler: ((event: Event) => void) | null = null;
 
 function updateSliderbergSlidesVisibility(): void {
 	// Handle regular slide blocks
@@ -102,16 +107,57 @@ function updateSliderbergSlidesVisibility(): void {
 		} );
 }
 
-// Initialize the visibility update function
+// Cleanup function
+function cleanup(): void {
+	// Clear timeout
+	if ( window.visibilityUpdateTimeout ) {
+		clearTimeout( window.visibilityUpdateTimeout );
+		window.visibilityUpdateTimeout = undefined;
+	}
+
+	// Disconnect observer
+	if ( observer ) {
+		observer.disconnect();
+		observer = null;
+	}
+
+	// Remove event listeners
+	if ( domInsertedHandler ) {
+		document.removeEventListener( 'DOMNodeInserted', domInsertedHandler );
+		domInsertedHandler = null;
+	}
+
+	// Remove DOMContentLoaded listener
+	document.removeEventListener(
+		'DOMContentLoaded',
+		updateSliderbergSlidesVisibility
+	);
+
+	// Clear global functions
+	delete window.updateSliderbergSlidesVisibility;
+	delete window.sliderbergCleanup;
+}
+
+// Initialize the visibility update function with cleanup
 if ( typeof window !== 'undefined' ) {
 	window.updateSliderbergSlidesVisibility = updateSliderbergSlidesVisibility;
+	window.sliderbergCleanup = cleanup;
+
+	// Auto-cleanup on page unload
+	window.addEventListener( 'beforeunload', () => {
+		if ( window.sliderbergCleanup ) {
+			window.sliderbergCleanup();
+		}
+	} );
 }
 
 // Run on DOM changes (Gutenberg editor is dynamic)
-const observer: MutationObserver = new MutationObserver( () => {
+observer = new MutationObserver( () => {
 	// Debounce the visibility update to avoid excessive calls
-	clearTimeout( ( window as any ).visibilityUpdateTimeout );
-	( window as any ).visibilityUpdateTimeout = setTimeout(
+	if ( window.visibilityUpdateTimeout ) {
+		clearTimeout( window.visibilityUpdateTimeout );
+	}
+	window.visibilityUpdateTimeout = window.setTimeout(
 		updateSliderbergSlidesVisibility,
 		100
 	);
@@ -131,7 +177,7 @@ document.addEventListener(
 );
 
 // Handle AJAX content updates (for dynamic post loading)
-document.addEventListener( 'DOMNodeInserted', ( event ) => {
+domInsertedHandler = ( event: Event ) => {
 	const target = event.target as HTMLElement;
 	if (
 		target &&
@@ -141,6 +187,8 @@ document.addEventListener( 'DOMNodeInserted', ( event ) => {
 	) {
 		setTimeout( updateSliderbergSlidesVisibility, 50 );
 	}
-} );
+};
+
+document.addEventListener( 'DOMNodeInserted', domInsertedHandler );
 
 export {}; // Make this file a module

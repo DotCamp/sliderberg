@@ -586,14 +586,39 @@ export class SliderBergController {
 	 */
 	public destroy(): void {
 		if ( this.state.destroyed ) return;
+		
+		// Mark as destroyed immediately to prevent any further operations
 		this.state.destroyed = true;
 
-		// Delegate cleanup to handlers
-		this.eventHandler.cleanup();
+		// Cleanup handlers
+		if ( this.eventHandler ) {
+			this.eventHandler.cleanup();
+		}
+		if ( this.animationHandler && this.animationHandler.cleanup ) {
+			this.animationHandler.cleanup();
+		}
 
+		// Remove from instances map
 		SliderBergController.instances.delete( this.id );
+
+		// Null out all references to break circular dependencies
+		this.cleanupReferences();
+
 		// eslint-disable-next-line no-console
-		console.log( `SliderBerg instance ${ this.id } destroyed.` );
+		console.log( `SliderBerg instance ${ this.id } destroyed and cleaned.` );
+	}
+
+	/**
+	 * Cleanup all references to prevent memory leaks
+	 */
+	private cleanupReferences(): void {
+		// Null out all major references
+		this.elements = null as any;
+		this.config = null as any;
+		this.state = null as any;
+		this.animationHandler = null as any;
+		this.eventHandler = null as any;
+		this.boundHandleIntersection = null as any;
 	}
 
 	/**

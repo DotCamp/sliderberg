@@ -9,6 +9,7 @@ export class AnimationHandler {
 	private config: SliderConfig;
 	private state: SliderState;
 	private elements: SliderElements;
+	private activeTimeouts: Set<number> = new Set();
 
 	constructor(
 		config: SliderConfig,
@@ -18,6 +19,29 @@ export class AnimationHandler {
 		this.config = config;
 		this.state = state;
 		this.elements = elements;
+	}
+
+	/**
+	 * Safe setTimeout that tracks timer IDs for cleanup
+	 */
+	private safeSetTimeout( callback: () => void, delay: number ): number {
+		const timeoutId = window.setTimeout( () => {
+			this.activeTimeouts.delete( timeoutId );
+			if ( ! this.state.destroyed ) {
+				callback();
+			}
+		}, delay );
+		this.activeTimeouts.add( timeoutId );
+		return timeoutId;
+	}
+
+	/**
+	 * Cleanup all active timers
+	 */
+	cleanup(): void {
+		// Clear all active timers
+		this.activeTimeouts.forEach( ( id ) => clearTimeout( id ) );
+		this.activeTimeouts.clear();
 	}
 
 	/**
@@ -238,8 +262,7 @@ export class AnimationHandler {
 
 		if ( this.state.currentSlide === slides.length + 1 ) {
 			// Moved to the clone of the first slide
-			setTimeout( () => {
-				if ( this.state.destroyed ) return;
+			this.safeSetTimeout( () => {
 				container.style.transition = 'none';
 				this.state.currentSlide = 1; // Jump to the real first slide
 				container.style.transform = `translateX(-${
@@ -248,8 +271,7 @@ export class AnimationHandler {
 				// Force reflow
 				// eslint-disable-next-line no-unused-expressions
 				container.offsetHeight;
-				setTimeout( () => {
-					if ( this.state.destroyed ) return;
+				this.safeSetTimeout( () => {
 					container.style.transition = `transform ${ this.getTransitionString() }`;
 					this.state.isAnimating = false;
 				}, 10 ); // Small delay before restoring transition
@@ -274,8 +296,7 @@ export class AnimationHandler {
 
 		if ( this.state.currentSlide === 0 ) {
 			// Moved to the clone of the last slide
-			setTimeout( () => {
-				if ( this.state.destroyed ) return;
+			this.safeSetTimeout( () => {
 				container.style.transition = 'none';
 				this.state.currentSlide = slides.length; // Jump to the real last slide
 				container.style.transform = `translateX(-${
@@ -284,8 +305,7 @@ export class AnimationHandler {
 				// Force reflow
 				// eslint-disable-next-line no-unused-expressions
 				container.offsetHeight;
-				setTimeout( () => {
-					if ( this.state.destroyed ) return;
+				this.safeSetTimeout( () => {
 					container.style.transition = `transform ${ this.getTransitionString() }`;
 					this.state.isAnimating = false;
 				}, 10 ); // Small delay
@@ -443,10 +463,8 @@ export class AnimationHandler {
 	 * Schedules animation reset after transition
 	 */
 	scheduleAnimationReset(): void {
-		setTimeout( () => {
-			if ( ! this.state.destroyed ) {
-				this.state.isAnimating = false;
-			}
+		this.safeSetTimeout( () => {
+			this.state.isAnimating = false;
 		}, this.config.transitionDuration + 50 ); // Add a small buffer
 	}
 

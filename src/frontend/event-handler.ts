@@ -334,66 +334,122 @@ export class EventHandler {
 	 * Cleanup all event listeners
 	 */
 	cleanup(): void {
+		// Stop all ongoing operations
 		this.stopAutoplay();
 
+		// Cleanup observers with error handling
+		this.cleanupObservers();
+
+		// Remove all event listeners
+		this.cleanupEventListeners();
+
+		// Null out all references to prevent memory leaks
+		this.cleanupReferences();
+	}
+
+	/**
+	 * Cleanup observers safely
+	 */
+	private cleanupObservers(): void {
 		if ( this.state.observer ) {
-			this.state.observer.disconnect();
+			try {
+				this.state.observer.disconnect();
+			} catch ( e ) {
+				// eslint-disable-next-line no-console
+				console.warn( 'Observer cleanup error:', e );
+			}
 			this.state.observer = null;
 		}
+
 		if ( this.state.intersectionObserver ) {
-			this.state.intersectionObserver.disconnect();
+			try {
+				this.state.intersectionObserver.disconnect();
+			} catch ( e ) {
+				// eslint-disable-next-line no-console
+				console.warn( 'Intersection observer cleanup error:', e );
+			}
 			this.state.intersectionObserver = null;
 		}
+	}
 
+	/**
+	 * Remove all event listeners safely
+	 */
+	private cleanupEventListeners(): void {
 		const { container, prevButton, nextButton, wrapper, indicators } =
 			this.elements;
 
-		container.removeEventListener(
-			'touchstart',
-			this.boundHandleTouchStart
-		);
-		container.removeEventListener( 'touchmove', this.boundHandleTouchMove );
-		container.removeEventListener( 'touchend', this.boundHandleTouchEnd );
-
-		if ( this.config.pauseOnHover ) {
-			container.removeEventListener(
-				'mouseenter',
-				this.boundStopAutoplay
-			);
-			container.removeEventListener(
-				'mouseleave',
-				this.boundStartAutoplay
-			);
+		// Remove container listeners with existence check
+		if ( container && container.parentNode ) {
 			container.removeEventListener(
 				'touchstart',
-				this.boundStopAutoplay
+				this.boundHandleTouchStart
 			);
-			container.removeEventListener(
-				'touchend',
-				this.boundStartAutoplay
-			);
+			container.removeEventListener( 'touchmove', this.boundHandleTouchMove );
+			container.removeEventListener( 'touchend', this.boundHandleTouchEnd );
+
+			if ( this.config.pauseOnHover ) {
+				container.removeEventListener(
+					'mouseenter',
+					this.boundStopAutoplay
+				);
+				container.removeEventListener(
+					'mouseleave',
+					this.boundStartAutoplay
+				);
+				container.removeEventListener(
+					'touchstart',
+					this.boundStopAutoplay
+				);
+				container.removeEventListener(
+					'touchend',
+					this.boundStartAutoplay
+				);
+			}
 		}
 
-		if ( prevButton ) {
+		// Remove navigation listeners
+		if ( prevButton && prevButton.parentNode ) {
 			prevButton.removeEventListener( 'click', this.onPrevSlide );
 		}
-		if ( nextButton ) {
+		if ( nextButton && nextButton.parentNode ) {
 			nextButton.removeEventListener( 'click', this.onNextSlide );
 		}
 
-		wrapper.removeEventListener( 'keydown', this.boundHandleKeyboard );
-		wrapper.removeEventListener( 'focusin', this.boundHandleFocusIn );
-		wrapper.removeEventListener( 'focusout', this.boundHandleFocusOut );
-
-		// Remove indicator listeners
-		if ( indicators ) {
-			Array.from( indicators.children ).forEach( ( indicator ) => {
-				// Clone and replace to remove all listeners effectively
-				const newIndicator = indicator.cloneNode( true );
-				indicator.parentNode?.replaceChild( newIndicator, indicator );
-			} );
-			indicators.innerHTML = ''; // Clear out indicators
+		// Remove wrapper listeners
+		if ( wrapper && wrapper.parentNode ) {
+			wrapper.removeEventListener( 'keydown', this.boundHandleKeyboard );
+			wrapper.removeEventListener( 'focusin', this.boundHandleFocusIn );
+			wrapper.removeEventListener( 'focusout', this.boundHandleFocusOut );
 		}
+
+		// Clean indicators more aggressively
+		if ( indicators ) {
+			// Clear innerHTML first to remove all child elements
+			indicators.innerHTML = '';
+		}
+	}
+
+	/**
+	 * Null out all references to break circular dependencies
+	 */
+	private cleanupReferences(): void {
+		// Null out all bound handlers
+		this.boundHandleTouchStart = null as any;
+		this.boundHandleTouchMove = null as any;
+		this.boundHandleTouchEnd = null as any;
+		this.boundHandleKeyboard = null as any;
+		this.boundStopAutoplay = null as any;
+		this.boundStartAutoplay = null as any;
+		this.boundHandleResize = null as any;
+		this.boundHandleFocusIn = null as any;
+		this.boundHandleFocusOut = null as any;
+
+		// Clear callback references
+		this.onSlideChange = null as any;
+		this.onNextSlide = null as any;
+		this.onPrevSlide = null as any;
+		this.onResize = null as any;
 	}
 
 	/**
