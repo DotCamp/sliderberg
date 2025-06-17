@@ -5,35 +5,10 @@
  */
 
 /**
- * Sanitize CSS color values
+ * Sanitize CSS color values using enhanced security function
  */
 function sliderberg_sanitize_css_color($color) {
-    if (empty($color)) return '';
-    
-    // Validate hex colors
-    if (preg_match('/^#([0-9A-Fa-f]{3}){1,2}$/', $color)) {
-        return $color;
-    }
-    
-    // Validate rgba colors
-    if (preg_match('/^rgba?\(\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})\s*(?:,\s*(0(?:\.\d+)?|1(?:\.0+)?)\s*)?\)$/', $color, $matches)) {
-        $r = intval($matches[1]);
-        $g = intval($matches[2]); 
-        $b = intval($matches[3]);
-        
-        if ($r <= 255 && $g <= 255 && $b <= 255) {
-            if (isset($matches[4])) {
-                $alpha = floatval($matches[4]);
-                if ($alpha >= 0 && $alpha <= 1) {
-                    return sprintf('rgba(%d, %d, %d, %.3f)', $r, $g, $b, $alpha);
-                }
-            } else {
-                return sprintf('rgb(%d, %d, %d)', $r, $g, $b);
-            }
-        }
-    }
-    
-    return ''; // Invalid color
+    return sliderberg_validate_color($color);
 }
 
 function render_sliderberg_slider_block($attributes, $content, $block) {
@@ -96,9 +71,13 @@ function render_sliderberg_slider_block($attributes, $content, $block) {
         '--sliderberg-slide-spacing' => $slide_spacing . 'px',
     ];
     
-    // Add custom width if specified
+    // Add custom width if specified (with validation)
     if ($width_preset === 'custom' && $custom_width) {
-        $css_vars['--sliderberg-custom-width'] = $custom_width . 'px';
+        // Validate custom width is numeric and within reasonable bounds
+        $validated_width = intval($custom_width);
+        if ($validated_width > 0 && $validated_width <= 9999) {
+            $css_vars['--sliderberg-custom-width'] = $validated_width . 'px';
+        }
     }
     
     // Build wrapper attributes
@@ -215,13 +194,44 @@ function render_nav_button($type, $styles, $shape, $size, $additional_styles = [
 }
 
 /**
- * Build inline styles string
+ * Build inline styles string with proper escaping
  */
 function build_inline_styles($styles) {
     $style_parts = [];
+    $safe_properties = array(
+        'color', 'background-color', 'opacity', 'left', 'right', 
+        'top', 'bottom', 'transform', 'width', 'height'
+    );
+    
     foreach ($styles as $property => $value) {
+        // Validate property name
+        if (!in_array($property, $safe_properties)) {
+            continue;
+        }
+        
         if ($value) {
-            $style_parts[] = $property . ': ' . $value;
+            // Escape the value based on property type
+            if ($property === 'color' || $property === 'background-color') {
+                $value = sliderberg_sanitize_css_color($value);
+            } elseif (in_array($property, array('left', 'right', 'top', 'bottom', 'width', 'height'))) {
+                // Ensure numeric values with px
+                if (preg_match('/^(\d+(?:\.\d+)?)(px|%|em|rem)?$/', $value, $matches)) {
+                    $value = floatval($matches[1]) . ($matches[2] ?? 'px');
+                } else {
+                    continue;
+                }
+            } elseif ($property === 'opacity') {
+                $value = max(0, min(1, floatval($value)));
+            } elseif ($property === 'transform') {
+                // Only allow safe transform functions
+                if (!preg_match('/^(translateY|translateX|scale)\([^;]+\)$/', $value)) {
+                    continue;
+                }
+            }
+            
+            if ($value) {
+                $style_parts[] = esc_attr($property) . ': ' . esc_attr($value);
+            }
         }
     }
     return implode('; ', $style_parts);
@@ -255,7 +265,14 @@ function sliderberg_render_slider_template($vars) {
         $container_attr_string .= sprintf(' %s="%s"', $attr, esc_attr($value));
     }
     
-    include __DIR__ . '/templates/slider-block.php';
+    // Security check for template file
+    $template_file = __DIR__ . '/templates/slider-block.php';
+    if (!file_exists($template_file) || strpos(realpath($template_file), realpath(SLIDERBERG_PLUGIN_DIR)) !== 0) {
+        echo '<!-- Template file not found or invalid -->';
+        return;
+    }
+    
+    include $template_file;
 }
 
 /**

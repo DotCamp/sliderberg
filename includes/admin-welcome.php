@@ -128,7 +128,7 @@ function sliderberg_handle_create_post_action() {
         'post_content'  => $post_content, // Content kept exactly as provided
         'post_status'   => 'draft',
         'post_type'     => 'post',
-        'post_author'   => absint($user_id),
+        'post_author'   => get_current_user_id(),
         'meta_input'    => array(
             '_sliderberg_created' => current_time('mysql'),
             '_sliderberg_version' => SLIDERBERG_VERSION
@@ -217,7 +217,7 @@ function sliderberg_handle_create_page_action() {
         'post_content'  => $page_content, // Content kept exactly as provided
         'post_status'   => 'draft',
         'post_type'     => 'page',
-        'post_author'   => absint($user_id),
+        'post_author'   => get_current_user_id(),
         'meta_input'    => array(
             '_sliderberg_created' => current_time('mysql'),
             '_sliderberg_version' => SLIDERBERG_VERSION
@@ -310,7 +310,8 @@ function sliderberg_set_activation_redirect() {
         add_option('sliderberg_activation_redirect', true);
     }
 }
-register_activation_hook(__FILE__, 'sliderberg_set_activation_redirect');
+// Use the main plugin file for activation hook
+register_activation_hook(dirname(__DIR__) . '/sliderberg.php', 'sliderberg_set_activation_redirect');
 
 /**
  * Enhanced welcome page with security improvements

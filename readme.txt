@@ -1,6 +1,6 @@
 === Slider Block by Sliderberg - Best WordPress Slider & Carousel Plugin for Gutenberg ===
 Contributors: imtiazrayhan, dotcamp
-Tags: slider, carousel, image carousel, text slider, block, gutenberg, responsive slider
+Tags: slider, carousel, text slider, block, gutenberg
 Requires at least: 5.8
 Tested up to: 6.8
 Stable tag: 1.0.2

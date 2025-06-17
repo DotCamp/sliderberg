@@ -34,7 +34,7 @@ if ( ! function_exists( 'sli_fs' ) ) {
                 'id'                  => '19340',
                 'slug'                => 'sliderberg',
                 'type'                => 'plugin',
-                'public_key'          => 'pk_f6a90542b187793a33ebb75752ce7',
+                'public_key'          => 'pk_f6a90542b187793a33ebb75752ce7', // This is a public key, safe to expose
                 'is_premium'          => false,
                 'has_addons'          => false,
                 'has_paid_plans'      => false,
@@ -53,6 +53,9 @@ if ( ! function_exists( 'sli_fs' ) ) {
     // Signal that SDK was initiated.
     do_action( 'sli_fs_loaded' );
 }
+
+// Include security utilities
+require_once SLIDERBERG_PLUGIN_DIR . 'includes/security.php';
 
 // Include admin welcome page
 require_once SLIDERBERG_PLUGIN_DIR . 'includes/admin-welcome.php';
@@ -137,6 +140,11 @@ add_action('wp_enqueue_scripts', 'sliderberg_frontend_assets');
  * Handle plugin installation via AJAX
  */
 function sliderberg_install_plugin() {
+    // Check if request is AJAX
+    if (!wp_doing_ajax()) {
+        wp_die('Invalid request');
+    }
+    
     // Check nonce
     if (!check_ajax_referer('sliderberg_plugin_action', '_ajax_nonce', false)) {
         wp_send_json_error(array('message' => 'Security check failed'));
@@ -147,10 +155,21 @@ function sliderberg_install_plugin() {
         wp_send_json_error(array('message' => 'You do not have permission to install plugins'));
     }
 
-    // Get plugin slug
-    $plugin = isset($_POST['plugin']) ? sanitize_text_field($_POST['plugin']) : '';
-    if (empty($plugin)) {
-        wp_send_json_error(array('message' => 'Plugin slug is required'));
+    // Get plugin slug with strict validation
+    $plugin = isset($_POST['plugin']) ? sanitize_text_field(wp_unslash($_POST['plugin'])) : '';
+    
+    // Validate plugin slug format (alphanumeric and hyphens only)
+    if (!preg_match('/^[a-z0-9\-]+$/', $plugin)) {
+        wp_send_json_error(array('message' => 'Invalid plugin slug format'));
+    }
+    
+    if (empty($plugin) || strlen($plugin) > 50) {
+        wp_send_json_error(array('message' => 'Plugin slug is required and must be less than 50 characters'));
+    }
+    
+    // Validate plugin is in whitelist
+    if (!sliderberg_is_allowed_plugin($plugin)) {
+        wp_send_json_error(array('message' => 'Plugin not allowed'));
     }
 
     // Include required files
@@ -180,6 +199,11 @@ add_action('wp_ajax_sliderberg_install_plugin', 'sliderberg_install_plugin');
  * Handle plugin activation via AJAX
  */
 function sliderberg_activate_plugin() {
+    // Check if request is AJAX
+    if (!wp_doing_ajax()) {
+        wp_die('Invalid request');
+    }
+    
     // Check nonce
     if (!check_ajax_referer('sliderberg_plugin_action', '_ajax_nonce', false)) {
         wp_send_json_error(array('message' => 'Security check failed'));
@@ -190,10 +214,33 @@ function sliderberg_activate_plugin() {
         wp_send_json_error(array('message' => 'You do not have permission to activate plugins'));
     }
 
-    // Get plugin slug
-    $plugin = isset($_POST['plugin']) ? sanitize_text_field($_POST['plugin']) : '';
-    if (empty($plugin)) {
-        wp_send_json_error(array('message' => 'Plugin slug is required'));
+    // Get plugin slug with strict validation
+    $plugin = isset($_POST['plugin']) ? sanitize_text_field(wp_unslash($_POST['plugin'])) : '';
+    
+    // Validate plugin slug format (alphanumeric and hyphens only)
+    if (!preg_match('/^[a-z0-9\-]+$/', $plugin)) {
+        wp_send_json_error(array('message' => 'Invalid plugin slug format'));
+    }
+    
+    if (empty($plugin) || strlen($plugin) > 50) {
+        wp_send_json_error(array('message' => 'Plugin slug is required and must be less than 50 characters'));
+    }
+    
+    // Validate plugin is in whitelist
+    if (!sliderberg_is_allowed_plugin($plugin)) {
+        wp_send_json_error(array('message' => 'Plugin not allowed'));
+    }
+
+    // Validate plugin path to prevent directory traversal
+    $plugin_file = $plugin . '/' . $plugin . '.php';
+    if (strpos($plugin_file, '..') !== false || strpos($plugin_file, './') !== false || strpos($plugin_file, '\\') !== false) {
+        wp_send_json_error(array('message' => 'Invalid plugin path'));
+    }
+    
+    // Additional check: verify the plugin file exists in the correct location
+    $full_plugin_path = WP_PLUGIN_DIR . '/' . $plugin_file;
+    if (!file_exists($full_plugin_path)) {
+        wp_send_json_error(array('message' => 'Plugin file not found'));
     }
 
     // Activate plugin

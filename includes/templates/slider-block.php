@@ -49,12 +49,12 @@ if (!defined('ABSPATH')) {
                     <div class="sliderberg-nav-controls">
                         <?php 
                         $prev_styles = array_merge($nav_button_styles, $split_nav_styles, [
-                            'left' => $navigation_horizontal_pos . 'px'
+                            'left' => intval($navigation_horizontal_pos) . 'px'
                         ]);
                         echo render_nav_button('prev', $prev_styles, $navigation_shape, $navigation_size);
                         
                         $next_styles = array_merge($nav_button_styles, $split_nav_styles, [
-                            'right' => $navigation_horizontal_pos . 'px'
+                            'right' => intval($navigation_horizontal_pos) . 'px'
                         ]);
                         echo render_nav_button('next', $next_styles, $navigation_shape, $navigation_size);
                         ?>
