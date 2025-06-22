@@ -17,6 +17,12 @@ function render_sliderberg_slider_block($attributes, $content, $block) {
     
     // Set defaults and sanitize attributes
     $type = sanitize_text_field($attributes['type'] ?? '');
+    
+    // Allow complete custom rendering for specific slider types
+    $custom_output = apply_filters('sliderberg_render_slider_type', '', $attributes, $type, $block);
+    if (!empty($custom_output)) {
+        return $custom_output;
+    }
     $navigation_type = sanitize_text_field($attributes['navigationType'] ?? 'bottom');
     $navigation_placement = sanitize_text_field($attributes['navigationPlacement'] ?? 'overlay');
     $navigation_shape = sanitize_text_field($attributes['navigationShape'] ?? 'circle');
@@ -134,6 +140,9 @@ function render_sliderberg_slider_block($attributes, $content, $block) {
         ];
     }
     
+    // Allow modifying the slide content generation for different slider types
+    $slides_content = apply_filters('sliderberg_generate_slides', $content, $attributes, $type);
+    
     // Prepare variables for template
     $template_vars = [
         'wrapper_attrs' => $wrapper_attrs,
@@ -147,7 +156,7 @@ function render_sliderberg_slider_block($attributes, $content, $block) {
         'split_nav_styles' => $split_nav_styles,
         'navigation_horizontal_pos' => $navigation_horizontal_pos,
         'hide_dots' => $hide_dots,
-        'content' => $content // Inner blocks content
+        'content' => $slides_content // Modified content from filter
     ];
     
     // Allow actions before slider rendering

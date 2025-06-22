@@ -3,6 +3,7 @@
 import { registerBlockType } from '@wordpress/blocks';
 import { InnerBlocks } from '@wordpress/block-editor';
 import { __ } from '@wordpress/i18n';
+import { applyFilters } from '@wordpress/hooks';
 import * as React from 'react';
 
 // Import styles
@@ -17,6 +18,9 @@ import deprecated from './deprecated';
 
 // Import slide block
 import '../slide';
+
+// Allow pro features to add type-specific attributes
+const typeAttributes = applyFilters( 'sliderberg.blockAttributes', {} ) as Record<string, any>;
 
 // Register the main block
 registerBlockType( 'sliderberg/sliderberg', {
@@ -169,6 +173,8 @@ registerBlockType( 'sliderberg/sliderberg', {
 			type: 'number',
 			default: 10,
 		},
+		// Merge type-specific attributes
+		...typeAttributes,
 	},
 	edit: Edit,
 	save: () => {

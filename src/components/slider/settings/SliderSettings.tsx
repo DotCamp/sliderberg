@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { InspectorControls } from '@wordpress/block-editor';
 import { __ } from '@wordpress/i18n';
 import { PanelBody } from '@wordpress/components';
+import { applyFilters } from '@wordpress/hooks';
 import { AnimationSettings } from './AnimationSettings';
 import { AutoplaySettings } from './AutoplaySettings';
 import { NavigationSettings } from './NavigationSettings';
@@ -34,45 +35,95 @@ export const SliderSettings: React.FC< SliderSettingsProps > = ( {
 		setAttributes,
 	] );
 
+	// Get visible settings based on slider type
+	const visibleSettings = applyFilters(
+		'sliderberg.visibleSettings',
+		['width', 'animation', 'autoplay', 'navigation', 'carousel'],
+		attributes.type
+	) as string[];
+
+	// Get type-specific settings
+	const typeSpecificSettings = applyFilters(
+		'sliderberg.typeSettings',
+		null,
+		attributes.type,
+		attributes,
+		setAttributes
+	) as React.ReactNode;
+
+	// Before core settings slot
+	const beforeCoreSettings = applyFilters(
+		'sliderberg.beforeCoreSettings',
+		null,
+		attributes,
+		setAttributes
+	) as React.ReactNode;
+
+	// After core settings slot
+	const afterCoreSettings = applyFilters(
+		'sliderberg.afterCoreSettings',
+		null,
+		attributes,
+		setAttributes
+	) as React.ReactNode;
+
 	return (
 		<InspectorControls>
-			<WidthControl
-				attributes={ attributes }
-				setAttributes={ setAttributes }
-			/>
-			<PanelBody
-				title={ __( 'Animation Settings', 'sliderberg' ) }
-				initialOpen={ true }
-			>
-				<AnimationSettings
-					attributes={ attributes }
-					setAttributes={ setAttributes }
-				/>
-			</PanelBody>
+			{ beforeCoreSettings }
+			
+			{ typeSpecificSettings }
 
-			<PanelBody
-				title={ __( 'Autoplay Settings', 'sliderberg' ) }
-				initialOpen={ false }
-			>
-				<AutoplaySettings
+			{ visibleSettings.includes( 'width' ) && (
+				<WidthControl
 					attributes={ attributes }
 					setAttributes={ setAttributes }
 				/>
-			</PanelBody>
+			) }
 
-			<PanelBody
-				title={ __( 'Navigation Settings', 'sliderberg' ) }
-				initialOpen={ false }
-			>
-				<NavigationSettings
+			{ visibleSettings.includes( 'animation' ) && (
+				<PanelBody
+					title={ __( 'Animation Settings', 'sliderberg' ) }
+					initialOpen={ true }
+				>
+					<AnimationSettings
+						attributes={ attributes }
+						setAttributes={ setAttributes }
+					/>
+				</PanelBody>
+			) }
+
+			{ visibleSettings.includes( 'autoplay' ) && (
+				<PanelBody
+					title={ __( 'Autoplay Settings', 'sliderberg' ) }
+					initialOpen={ false }
+				>
+					<AutoplaySettings
+						attributes={ attributes }
+						setAttributes={ setAttributes }
+					/>
+				</PanelBody>
+			) }
+
+			{ visibleSettings.includes( 'navigation' ) && (
+				<PanelBody
+					title={ __( 'Navigation Settings', 'sliderberg' ) }
+					initialOpen={ false }
+				>
+					<NavigationSettings
+						attributes={ attributes }
+						setAttributes={ setAttributes }
+					/>
+				</PanelBody>
+			) }
+
+			{ visibleSettings.includes( 'carousel' ) && (
+				<CarouselSettings
 					attributes={ attributes }
 					setAttributes={ setAttributes }
 				/>
-			</PanelBody>
-			<CarouselSettings
-				attributes={ attributes }
-				setAttributes={ setAttributes }
-			/>
+			) }
+
+			{ afterCoreSettings }
 		</InspectorControls>
 	);
 };

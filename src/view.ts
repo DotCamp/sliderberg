@@ -13,6 +13,11 @@ declare global {
 			init: () => void;
 			destroyAll: () => void;
 		};
+		wp?: {
+			hooks?: {
+				applyFilters: ( filter: string, value: any, ...args: any[] ) => any;
+			};
+		};
 	}
 }
 
@@ -28,6 +33,20 @@ function initializeSliders(): void {
 		return;
 	}
 
+	// Allow pro features to extend initialization (only if wp.hooks is available)
+	if ( window.wp?.hooks?.applyFilters ) {
+		const customInit = window.wp.hooks.applyFilters(
+			'sliderberg.frontendInit',
+			null,
+			sliders
+		);
+
+		if ( customInit && typeof customInit === 'function' ) {
+			customInit( sliders );
+			return;
+		}
+	}
+
 	sliders.forEach( ( slider: Element ) => {
 		// Check if already initialized
 		let alreadyInitialized = false;
@@ -38,7 +57,19 @@ function initializeSliders(): void {
 		} );
 
 		if ( ! alreadyInitialized ) {
-			SliderBergController.createInstance( slider );
+			// Allow pro features to modify slider initialization (only if wp.hooks is available)
+			let shouldInit = true;
+			if ( window.wp?.hooks?.applyFilters ) {
+				shouldInit = window.wp.hooks.applyFilters(
+					'sliderberg.beforeSliderInit',
+					true,
+					slider
+				);
+			}
+
+			if ( shouldInit ) {
+				SliderBergController.createInstance( slider );
+			}
 		}
 	} );
 }

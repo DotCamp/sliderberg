@@ -36,8 +36,8 @@ if ( ! function_exists( 'sli_fs' ) ) {
                 'type'                => 'plugin',
                 'public_key'          => 'pk_f6a90542b187793a33ebb75752ce7', // This is a public key, safe to expose
                 'is_premium'          => false,
-                'has_addons'          => false,
-                'has_paid_plans'      => false,
+                'has_addons'          => true,
+                'has_paid_plans'      => true,
                 'menu'                => array(
                     'slug'           => 'sliderberg-welcome',
                     'contact'        => false,
@@ -141,6 +141,9 @@ function sliderberg_frontend_assets() {
     if (has_block('sliderberg/sliderberg')) {
         wp_enqueue_style('sliderberg-style');
         wp_enqueue_script('sliderberg-view');
+        
+        // Pro add-ons can enqueue wp-hooks here to enable frontend filters:
+        // wp_enqueue_script('wp-hooks');
     }
 }
 add_action('wp_enqueue_scripts', 'sliderberg_frontend_assets');
