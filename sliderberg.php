@@ -115,6 +115,15 @@ function sliderberg_editor_assets() {
         SLIDERBERG_VERSION,
         true
     );
+    
+    // Get valid transition effects through filter
+    $valid_effects = apply_filters('sliderberg_valid_transition_effects', array('slide', 'fade', 'zoom'));
+    
+    // Localize script data
+    wp_localize_script('sliderberg-editor', 'sliderbergData', array(
+        'validTransitionEffects' => $valid_effects
+    ));
+    
     // Enqueue the custom editor-only JS for slide visibility
     wp_enqueue_script(
         'sliderberg-editor-js',

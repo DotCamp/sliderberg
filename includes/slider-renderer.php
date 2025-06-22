@@ -12,6 +12,9 @@ function sliderberg_sanitize_css_color($color) {
 }
 
 function render_sliderberg_slider_block($attributes, $content, $block) {
+    // Allow pro plugin to modify attributes
+    $attributes = apply_filters('sliderberg_slider_attributes', $attributes, $attributes['type'] ?? '');
+    
     // Set defaults and sanitize attributes
     $type = sanitize_text_field($attributes['type'] ?? '');
     $navigation_type = sanitize_text_field($attributes['navigationType'] ?? 'bottom');
@@ -51,8 +54,8 @@ function render_sliderberg_slider_block($attributes, $content, $block) {
     $mobile_slides_to_scroll = max(1, min($mobile_slides_to_show, intval($attributes['mobileSlidesToScroll'] ?? 1)));
     $mobile_slide_spacing = max(0, min(100, intval($attributes['mobileSlideSpacing'] ?? 10)));
     
-    // Validate transition effect
-    $valid_effects = ['slide', 'fade', 'zoom'];
+    // Validate transition effect using filter
+    $valid_effects = apply_filters('sliderberg_valid_transition_effects', ['slide', 'fade', 'zoom']);
     if (!in_array($transition_effect, $valid_effects)) {
         $transition_effect = 'slide';
     }
@@ -147,9 +150,16 @@ function render_sliderberg_slider_block($attributes, $content, $block) {
         'content' => $content // Inner blocks content
     ];
     
-    // Render template
+    // Allow actions before slider rendering
     ob_start();
+    do_action('sliderberg_before_slider', $attributes, $type);
+    
+    // Render template
     sliderberg_render_slider_template($template_vars);
+    
+    // Allow actions after slider rendering
+    do_action('sliderberg_after_slider', $attributes, $type);
+    
     return ob_get_clean();
 }
 

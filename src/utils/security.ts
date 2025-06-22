@@ -3,6 +3,15 @@
  * Contains validation and sanitization functions for various data types
  */
 
+// Extend window interface for sliderbergData
+declare global {
+	interface Window {
+		sliderbergData?: {
+			validTransitionEffects?: string[];
+		};
+	}
+}
+
 /**
  * Validates and sanitizes color values
  * @param color - The color value to validate (string or object with hex property)
@@ -87,17 +96,29 @@ export function validateContentPosition( position: string ): string {
 }
 
 /**
+ * Get valid transition effects from PHP
+ * This allows the pro plugin to register additional effects via PHP filter
+ */
+function getValidTransitionEffects(): string[] {
+	// Default effects
+	const defaultEffects = [ 'slide', 'fade', 'zoom' ];
+	
+	// Check if additional effects are registered from PHP
+	if ( window.sliderbergData && window.sliderbergData.validTransitionEffects ) {
+		return window.sliderbergData.validTransitionEffects;
+	}
+	
+	return defaultEffects;
+}
+
+/**
  * Validates transition effect values
  * @param effect - The effect value to validate
  * @return A valid effect value or default
  */
-export function validateTransitionEffect(
-	effect: string
-): 'slide' | 'fade' | 'zoom' {
-	const validEffects = [ 'slide', 'fade', 'zoom' ];
-	return validEffects.includes( effect )
-		? ( effect as 'slide' | 'fade' | 'zoom' )
-		: 'slide';
+export function validateTransitionEffect( effect: string ): string {
+	const validEffects = getValidTransitionEffects();
+	return validEffects.includes( effect ) ? effect : 'slide';
 }
 
 /**

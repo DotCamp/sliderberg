@@ -1,6 +1,7 @@
 import React from 'react';
 import { __ } from '@wordpress/i18n';
 import { SelectControl, RangeControl } from '@wordpress/components';
+import { applyFilters } from '@wordpress/hooks';
 import {
 	validateTransitionEffect,
 	validateTransitionEasing,
@@ -13,38 +14,50 @@ interface AnimationSettingsProps {
 	setAttributes: ( attrs: Partial< SliderAttributes > ) => void;
 }
 
+interface TransitionEffectOption {
+	label: string;
+	value: string;
+	isPro?: boolean;
+}
+
 export const AnimationSettings: React.FC< AnimationSettingsProps > = ( {
 	attributes,
 	setAttributes,
 } ) => {
+	// Default transition effects
+	const defaultEffects: TransitionEffectOption[] = [
+		{
+			label: __( 'Slide', 'sliderberg' ),
+			value: 'slide',
+		},
+		{
+			label: __( 'Fade', 'sliderberg' ),
+			value: 'fade',
+		},
+		{
+			label: __( 'Zoom', 'sliderberg' ),
+			value: 'zoom',
+		},
+	];
+
+	// Allow pro plugin to add more transition effects
+	const allEffects = applyFilters(
+		'sliderberg.transitionEffects',
+		defaultEffects,
+		attributes.isCarouselMode
+	) as TransitionEffectOption[];
+
+	// Filter effects based on carousel mode
+	const availableEffects = attributes.isCarouselMode
+		? allEffects.filter( effect => effect.value === 'slide' )
+		: allEffects;
+
 	return (
 		<>
 			<SelectControl
 				label={ __( 'Transition Effect', 'sliderberg' ) }
 				value={ attributes.transitionEffect }
-				options={
-					attributes.isCarouselMode
-						? [
-								{
-									label: __( 'Slide', 'sliderberg' ),
-									value: 'slide',
-								},
-						  ]
-						: [
-								{
-									label: __( 'Slide', 'sliderberg' ),
-									value: 'slide',
-								},
-								{
-									label: __( 'Fade', 'sliderberg' ),
-									value: 'fade',
-								},
-								{
-									label: __( 'Zoom', 'sliderberg' ),
-									value: 'zoom',
-								},
-						  ]
-				}
+				options={ availableEffects }
 				onChange={ ( value ) =>
 					setAttributes( {
 						transitionEffect: validateTransitionEffect( value ),
