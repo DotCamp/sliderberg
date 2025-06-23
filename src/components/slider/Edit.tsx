@@ -105,6 +105,7 @@ export const Edit: React.FC< EditProps > = ( {
 	const blockProps = useBlockProps( {
 		style: getEditorStyles(),
 		'data-width-preset': attributes.widthPreset,
+		'data-type': attributes.type,
 		className: `sliderberg-editor-wrapper ${
 			attributes.widthPreset === 'full' || attributes.align === 'full'
 				? 'is-full-width'
