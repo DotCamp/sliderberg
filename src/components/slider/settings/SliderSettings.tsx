@@ -83,7 +83,7 @@ export const SliderSettings: React.FC< SliderSettingsProps > = ( {
 			{ visibleSettings.includes( 'animation' ) && (
 				<PanelBody
 					title={ __( 'Animation Settings', 'sliderberg' ) }
-					initialOpen={ true }
+					initialOpen={ attributes.type !== 'posts' }
 				>
 					<AnimationSettings
 						attributes={ attributes }
