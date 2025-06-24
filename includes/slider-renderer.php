@@ -104,6 +104,9 @@ function render_sliderberg_slider_block($attributes, $content, $block) {
         'style' => build_css_vars_string($css_vars)
     ];
     
+    // Allow pro plugin to modify wrapper attributes
+    $wrapper_attrs = apply_filters('sliderberg_wrapper_attributes', $wrapper_attrs, $attributes, $type);
+    
     // Build slides container data attributes for frontend JS
     $container_attrs = [
         'data-transition-effect' => $transition_effect,
