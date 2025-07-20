@@ -45,6 +45,7 @@ function render_sliderberg_slide_block($attributes, $content, $block) {
     $min_height = max(100, min(1000, intval($attributes['minHeight'] ?? 400)));
     $content_position = sanitize_text_field($attributes['contentPosition'] ?? 'center-center');
     $is_fixed = (bool)($attributes['isFixed'] ?? false);
+    $is_contained = (bool)($attributes['isContained'] ?? false);
     
     // Validate content position
     $valid_positions = [
@@ -76,7 +77,8 @@ function render_sliderberg_slide_block($attributes, $content, $block) {
             $focal_x = max(0, min(1, floatval($focal_point['x'] ?? 0.5))) * 100;
             $focal_y = max(0, min(1, floatval($focal_point['y'] ?? 0.5))) * 100;
             $styles[] = 'background-position: ' . esc_attr($focal_x) . '% ' . esc_attr($focal_y) . '%';
-            $styles[] = 'background-size: cover';
+            $styles[] = 'background-size: ' . ($is_contained ? 'contain' : 'cover');
+            $styles[] = 'background-repeat: no-repeat';
             $styles[] = 'background-attachment: ' . ($is_fixed ? 'fixed' : 'scroll');
         }
     } else {
