@@ -18,7 +18,7 @@ if (!defined('WPINC')) {
 }
 
 // Define plugin constants
-define('SLIDERBERG_VERSION', '1.0.2');
+define('SLIDERBERG_VERSION', '1.0.3');
 define('SLIDERBERG_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('SLIDERBERG_PLUGIN_URL', plugin_dir_url(__FILE__));
 
