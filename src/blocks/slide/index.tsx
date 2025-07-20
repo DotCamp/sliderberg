@@ -64,6 +64,7 @@ interface SlideAttributes {
 		| 'bottom-center'
 		| 'bottom-right';
 	isFixed: boolean;
+	isContained: boolean;
 }
 
 const ALLOWED_BLOCKS = [
@@ -174,6 +175,10 @@ registerBlockType( 'sliderberg/slide', {
 			type: 'boolean',
 			default: false,
 		},
+		isContained: {
+			type: 'boolean',
+			default: true,
+		},
 	},
 	edit: ( props: {
 		attributes: SlideAttributes;
@@ -192,6 +197,7 @@ registerBlockType( 'sliderberg/slide', {
 			minHeight,
 			contentPosition,
 			isFixed,
+			isContained
 		} = attributes;
 
 		// Get theme color palette
@@ -241,7 +247,7 @@ registerBlockType( 'sliderberg/slide', {
 								50
 						  ) }%`
 						: 'center',
-				backgroundSize: 'cover',
+				backgroundSize: isContained ? 'contain' : 'cover',
 				backgroundAttachment: isFixed ? 'fixed' : 'scroll',
 			},
 			'data-client-id': clientId,
@@ -428,6 +434,16 @@ registerBlockType( 'sliderberg/slide', {
 									checked={ isFixed }
 									onChange={ ( value ) =>
 										setAttributes( { isFixed: value } )
+									}
+								/>
+								<ToggleControl
+									label={ __(
+										'Contain whole image',
+										'sliderberg'
+									) }
+									checked={ isContained }
+									onChange={ ( value ) =>
+										setAttributes( { isContained: value } )
 									}
 								/>
 								<div className="sliderberg-focal-point-picker">
