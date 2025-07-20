@@ -177,7 +177,7 @@ registerBlockType( 'sliderberg/slide', {
 		},
 		isContained: {
 			type: 'boolean',
-			default: true,
+			default: false,
 		},
 	},
 	edit: ( props: {
@@ -438,7 +438,7 @@ registerBlockType( 'sliderberg/slide', {
 								/>
 								<ToggleControl
 									label={ __(
-										'Contain whole image',
+										'Fit background image to slide',
 										'sliderberg'
 									) }
 									checked={ isContained }
