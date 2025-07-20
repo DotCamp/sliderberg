@@ -29,6 +29,7 @@ export interface SlideAttributes {
 	minHeight: number;
 	contentPosition: ContentPosition;
 	isFixed: boolean;
+	isContained: boolean;
 }
 
 export interface SlideEditProps {
