@@ -64,6 +64,9 @@ require_once SLIDERBERG_PLUGIN_DIR . 'includes/admin-welcome.php';
 require_once SLIDERBERG_PLUGIN_DIR . 'includes/slider-renderer.php';
 require_once SLIDERBERG_PLUGIN_DIR . 'includes/slide-renderer.php';
 
+// Include review handler
+require_once SLIDERBERG_PLUGIN_DIR . 'includes/class-review-handler.php';
+
 /**
  * Registers the block using the metadata loaded from the `block.json` file.
  * Behind the scenes, it registers also all assets so they can be enqueued
@@ -105,6 +108,16 @@ function sliderberg_init() {
     );
 }
 add_action('init', 'sliderberg_init');
+
+// Initialize review handler
+add_action('init', function() {
+    new \SliderBerg\Review_Handler();
+});
+
+// Load plugin text domain
+add_action('plugins_loaded', function() {
+    load_plugin_textdomain('sliderberg', false, dirname(plugin_basename(__FILE__)) . '/languages');
+});
 
 // Enqueue editor assets
 function sliderberg_editor_assets() {

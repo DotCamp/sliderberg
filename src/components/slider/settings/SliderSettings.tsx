@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { InspectorControls } from '@wordpress/block-editor';
 import { __ } from '@wordpress/i18n';
 import { PanelBody } from '@wordpress/components';
@@ -9,6 +9,9 @@ import { NavigationSettings } from './NavigationSettings';
 import { SliderAttributes } from '../../../types/slider';
 import { WidthControl } from './WidthControl';
 import { CarouselSettings } from '../CarouselSettings';
+import { ReviewRequest } from '../../shared/ReviewRequest';
+import { useSaveTracking } from '../../../hooks/useSaveTracking';
+import { reviewStateManager } from '../../../utils/reviewState';
 
 interface SliderSettingsProps {
 	attributes: SliderAttributes;
@@ -19,6 +22,26 @@ export const SliderSettings: React.FC< SliderSettingsProps > = ( {
 	attributes,
 	setAttributes,
 } ) => {
+	// Review notification state
+	const [showReviewNotice, setShowReviewNotice] = useState(false);
+
+	// Track saves and manage review notification
+	useSaveTracking({
+		blockName: 'sliderberg/sliderberg',
+		onSaveComplete: () => {
+			reviewStateManager.incrementSaveCount();
+			
+			if (reviewStateManager.shouldShowNotice()) {
+				setShowReviewNotice(true);
+				reviewStateManager.markAsShown();
+			}
+		}
+	});
+
+	const handleReviewDismiss = (permanent: boolean) => {
+		setShowReviewNotice(false);
+		reviewStateManager.dismiss(permanent);
+	};
 	// Ensure navigation type and placement are consistent
 	useEffect( () => {
 		if (
@@ -69,6 +92,13 @@ export const SliderSettings: React.FC< SliderSettingsProps > = ( {
 
 	return (
 		<InspectorControls>
+			{ /* Show review notification at the top of sidebar */ }
+			{ showReviewNotice && (
+				<div className="sliderberg-sidebar-review-wrapper">
+					<ReviewRequest onDismiss={ handleReviewDismiss } />
+				</div>
+			) }
+
 			{ beforeCoreSettings }
 
 			{ typeSpecificSettings }
