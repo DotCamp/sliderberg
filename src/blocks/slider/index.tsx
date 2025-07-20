@@ -118,6 +118,10 @@ registerBlockType( 'sliderberg/sliderberg', {
 			type: 'boolean',
 			default: false,
 		},
+		hideNavigation: {
+			type: 'boolean',
+			default: false,
+		},
 		widthPreset: {
 			type: 'string',
 			default: 'full',

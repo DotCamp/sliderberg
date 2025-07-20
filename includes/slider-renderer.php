@@ -35,6 +35,7 @@ function render_sliderberg_slider_block($attributes, $content, $block) {
     $dot_color = sliderberg_sanitize_css_color($attributes['dotColor'] ?? '#6c757d');
     $dot_active_color = sliderberg_sanitize_css_color($attributes['dotActiveColor'] ?? '#ffffff');
     $hide_dots = (bool)($attributes['hideDots'] ?? false);
+    $hide_navigation = (bool)($attributes['hideNavigation'] ?? false);
     $transition_effect = sanitize_text_field($attributes['transitionEffect'] ?? 'slide');
     $transition_duration = intval($attributes['transitionDuration'] ?? 500);
     $transition_easing = sanitize_text_field($attributes['transitionEasing'] ?? 'ease');
@@ -159,6 +160,7 @@ function render_sliderberg_slider_block($attributes, $content, $block) {
         'split_nav_styles' => $split_nav_styles,
         'navigation_horizontal_pos' => $navigation_horizontal_pos,
         'hide_dots' => $hide_dots,
+        'hide_navigation' => $hide_navigation,
         'content' => $slides_content // Modified content from filter
     ];
     
@@ -285,6 +287,7 @@ function sliderberg_render_slider_template($vars) {
     $split_nav_styles = isset($vars['split_nav_styles']) ? $vars['split_nav_styles'] : array();
     $navigation_horizontal_pos = isset($vars['navigation_horizontal_pos']) ? intval($vars['navigation_horizontal_pos']) : 20;
     $hide_dots = isset($vars['hide_dots']) ? (bool)$vars['hide_dots'] : false;
+    $hide_navigation = isset($vars['hide_navigation']) ? (bool)$vars['hide_navigation'] : false;
     $content = isset($vars['content']) ? $vars['content'] : '';
     
     // Sanitize content to prevent XSS - allow only safe HTML for slider content

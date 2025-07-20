@@ -15,6 +15,7 @@
  * $split_nav_styles - Array of split navigation styles
  * $navigation_horizontal_pos - Horizontal position for split nav
  * $hide_dots - Boolean for hiding dots
+ * $hide_navigation - Boolean for hiding navigation arrows
  * $content - Inner blocks content
  */
 
@@ -28,9 +29,13 @@ if (!defined('ABSPATH')) {
     <?php if ($navigation_type === 'top'): ?>
         <div class="sliderberg-navigation-bar sliderberg-navigation-bar-top" style="opacity: <?php echo esc_attr($navigation_opacity); ?>;">
             <div class="sliderberg-nav-controls sliderberg-nav-controls-grouped">
-                <?php echo render_nav_button('prev', $nav_button_styles, $navigation_shape, $navigation_size); ?>
+                <?php if (!$hide_navigation): ?>
+                    <?php echo render_nav_button('prev', $nav_button_styles, $navigation_shape, $navigation_size); ?>
+                <?php endif; ?>
                 <?php echo render_slide_indicators($hide_dots); ?>
-                <?php echo render_nav_button('next', $nav_button_styles, $navigation_shape, $navigation_size); ?>
+                <?php if (!$hide_navigation): ?>
+                    <?php echo render_nav_button('next', $nav_button_styles, $navigation_shape, $navigation_size); ?>
+                <?php endif; ?>
             </div>
         </div>
     <?php endif; ?>
@@ -47,17 +52,19 @@ if (!defined('ABSPATH')) {
                      data-placement="<?php echo esc_attr($navigation_placement); ?>"
                      style="opacity: <?php echo esc_attr($navigation_opacity); ?>;">
                     <div class="sliderberg-nav-controls">
-                        <?php 
-                        $prev_styles = array_merge($nav_button_styles, $split_nav_styles, [
-                            'left' => intval($navigation_horizontal_pos) . 'px'
-                        ]);
-                        echo render_nav_button('prev', $prev_styles, $navigation_shape, $navigation_size);
-                        
-                        $next_styles = array_merge($nav_button_styles, $split_nav_styles, [
-                            'right' => intval($navigation_horizontal_pos) . 'px'
-                        ]);
-                        echo render_nav_button('next', $next_styles, $navigation_shape, $navigation_size);
-                        ?>
+                        <?php if (!$hide_navigation): ?>
+                            <?php 
+                            $prev_styles = array_merge($nav_button_styles, $split_nav_styles, [
+                                'left' => intval($navigation_horizontal_pos) . 'px'
+                            ]);
+                            echo render_nav_button('prev', $prev_styles, $navigation_shape, $navigation_size);
+                            
+                            $next_styles = array_merge($nav_button_styles, $split_nav_styles, [
+                                'right' => intval($navigation_horizontal_pos) . 'px'
+                            ]);
+                            echo render_nav_button('next', $next_styles, $navigation_shape, $navigation_size);
+                            ?>
+                        <?php endif; ?>
                     </div>
                 </div>
                 <?php echo render_slide_indicators($hide_dots); ?>
@@ -68,9 +75,13 @@ if (!defined('ABSPATH')) {
     <?php if ($navigation_type === 'bottom'): ?>
         <div class="sliderberg-navigation-bar sliderberg-navigation-bar-bottom" style="opacity: <?php echo esc_attr($navigation_opacity); ?>;">
             <div class="sliderberg-nav-controls sliderberg-nav-controls-grouped">
-                <?php echo render_nav_button('prev', $nav_button_styles, $navigation_shape, $navigation_size); ?>
+                <?php if (!$hide_navigation): ?>
+                    <?php echo render_nav_button('prev', $nav_button_styles, $navigation_shape, $navigation_size); ?>
+                <?php endif; ?>
                 <?php echo render_slide_indicators($hide_dots); ?>
-                <?php echo render_nav_button('next', $nav_button_styles, $navigation_shape, $navigation_size); ?>
+                <?php if (!$hide_navigation): ?>
+                    <?php echo render_nav_button('next', $nav_button_styles, $navigation_shape, $navigation_size); ?>
+                <?php endif; ?>
             </div>
         </div>
     <?php endif; ?>
