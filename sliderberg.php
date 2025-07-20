@@ -3,7 +3,7 @@
  * Plugin Name: Sliderberg
  * Plugin URI: https://sliderberg.com/
  * Description: Slider Block For the Block Editor (Gutenberg). Slide Anything With Ease.
- * Version: 1.0.2
+ * Version: 1.0.3
  * Author: DotCamp
  * Author URI: https://dotcamp.com/
  * License: GPL v2 or later
