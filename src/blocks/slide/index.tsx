@@ -140,7 +140,7 @@ registerBlockType( 'sliderberg/slide', {
 	attributes: {
 		backgroundType: {
 			type: 'string',
-			default: '',
+			default: 'color',
 		},
 		backgroundImage: {
 			type: 'object',
@@ -247,73 +247,6 @@ registerBlockType( 'sliderberg/slide', {
 			'data-client-id': clientId,
 		} );
 
-		// Placeholder UI (like Cover block)
-		if ( ! hasBackground ) {
-			return (
-				<div
-					className={ `sliderberg-slide sliderberg-slide-placeholder sliderberg-content-position-${ contentPosition }` }
-					data-client-id={ clientId }
-					style={ { minHeight: `${ minHeight }px` } }
-				>
-					<strong>{ __( 'Slide Background', 'sliderberg' ) }</strong>
-					<p>
-						{ __(
-							'Drag and drop an image, upload, or choose from your library.',
-							'sliderberg'
-						) }
-					</p>
-					<div className="sliderberg-placeholder-actions">
-						<MediaUploadCheck>
-							<MediaUpload
-								onSelect={ ( media: MediaObject ) =>
-									setAttributes( {
-										backgroundType: 'image',
-										backgroundImage: media,
-									} )
-								}
-								allowedTypes={ [ 'image' ] }
-								render={ ( { open }: { open: () => void } ) => (
-									<Button onClick={ open } variant="primary">
-										{ __( 'Upload', 'sliderberg' ) }
-									</Button>
-								) }
-							/>
-						</MediaUploadCheck>
-						<MediaUploadCheck>
-							<MediaUpload
-								onSelect={ ( media: MediaObject ) =>
-									setAttributes( {
-										backgroundType: 'image',
-										backgroundImage: media,
-									} )
-								}
-								allowedTypes={ [ 'image' ] }
-								render={ ( { open }: { open: () => void } ) => (
-									<Button onClick={ open }>
-										{ __( 'Media Library', 'sliderberg' ) }
-									</Button>
-								) }
-							/>
-						</MediaUploadCheck>
-					</div>
-					<div className="sliderberg-placeholder-colors">
-						<ColorPalette
-							colors={ colorSettings }
-							value={ backgroundColor }
-							onChange={ ( color ) =>
-								setAttributes( {
-									backgroundType: 'color',
-									backgroundColor: color || '',
-								} )
-							}
-							enableAlpha={ true }
-							clearable={ true }
-						/>
-					</div>
-				</div>
-			);
-		}
-
 		return (
 			<>
 				<InspectorControls>
@@ -349,7 +282,7 @@ registerBlockType( 'sliderberg/slide', {
 					</PanelBody>
 					<PanelBody
 						title={ __( 'Background Settings', 'sliderberg' ) }
-						initialOpen={ false }
+						initialOpen={ true }
 					>
 						<SelectControl
 							label={ __( 'Background Type', 'sliderberg' ) }
@@ -503,42 +436,106 @@ registerBlockType( 'sliderberg/slide', {
 						/>
 					</PanelBody>
 				</InspectorControls>
-				<div { ...blockProps }>
+				{ ! hasBackground ? (
 					<div
-						className="sliderberg-overlay"
-						style={ {
-							backgroundColor: overlayColor,
-							opacity: overlayOpacity,
-						} }
-					/>
-					<div className="sliderberg-slide-content">
-						<InnerBlocks
-							allowedBlocks={ ALLOWED_BLOCKS }
-							template={ [
-								[
-									'core/heading',
-									{
-										level: 2,
-										placeholder: __(
-											'Add a heading…',
-											'sliderberg'
-										),
-									},
-								],
-								[
-									'core/paragraph',
-									{
-										placeholder: __(
-											'Add your content here…',
-											'sliderberg'
-										),
-									},
-								],
-							] }
-							templateLock={ false }
-						/>
+						className={ `sliderberg-slide sliderberg-slide-placeholder sliderberg-content-position-${ contentPosition }` }
+						data-client-id={ clientId }
+						style={ { minHeight: `${ minHeight }px` } }
+					>
+						<strong>{ __( 'Slide Background', 'sliderberg' ) }</strong>
+						<p>
+							{ __(
+								'Drag and drop an image, upload, or choose from your library.',
+								'sliderberg'
+							) }
+						</p>
+						<div className="sliderberg-placeholder-actions">
+							<MediaUploadCheck>
+								<MediaUpload
+									onSelect={ ( media: MediaObject ) =>
+										setAttributes( {
+											backgroundType: 'image',
+											backgroundImage: media,
+										} )
+									}
+									allowedTypes={ [ 'image' ] }
+									render={ ( { open }: { open: () => void } ) => (
+										<Button onClick={ open } variant="primary">
+											{ __( 'Upload', 'sliderberg' ) }
+										</Button>
+									) }
+								/>
+							</MediaUploadCheck>
+							<MediaUploadCheck>
+								<MediaUpload
+									onSelect={ ( media: MediaObject ) =>
+										setAttributes( {
+											backgroundType: 'image',
+											backgroundImage: media,
+										} )
+									}
+									allowedTypes={ [ 'image' ] }
+									render={ ( { open }: { open: () => void } ) => (
+										<Button onClick={ open }>
+											{ __( 'Media Library', 'sliderberg' ) }
+										</Button>
+									) }
+								/>
+							</MediaUploadCheck>
+						</div>
+						<div className="sliderberg-placeholder-colors">
+							<ColorPalette
+								colors={ colorSettings }
+								value={ backgroundColor }
+								onChange={ ( color ) =>
+									setAttributes( {
+										backgroundType: 'color',
+										backgroundColor: color || '',
+									} )
+								}
+								enableAlpha={ true }
+								clearable={ true }
+							/>
+						</div>
 					</div>
-				</div>
+				) : (
+					<div { ...blockProps }>
+						<div
+							className="sliderberg-overlay"
+							style={ {
+								backgroundColor: overlayColor,
+								opacity: overlayOpacity,
+							} }
+						/>
+						<div className="sliderberg-slide-content">
+							<InnerBlocks
+								allowedBlocks={ ALLOWED_BLOCKS }
+								template={ [
+									[
+										'core/heading',
+										{
+											level: 2,
+											placeholder: __(
+												'Add a heading…',
+												'sliderberg'
+											),
+										},
+									],
+									[
+										'core/paragraph',
+										{
+											placeholder: __(
+												'Add your content here…',
+												'sliderberg'
+											),
+										},
+									],
+								] }
+								templateLock={ false }
+							/>
+						</div>
+					</div>
+				) }
 			</>
 		);
 	},
