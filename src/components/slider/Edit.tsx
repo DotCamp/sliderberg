@@ -64,7 +64,9 @@ export const Edit: React.FC< EditProps > = ( {
 			'--sliderberg-dot-color': attributes.dotColor,
 			'--sliderberg-dot-active-color': attributes.dotActiveColor,
 			'--sliderberg-slides-to-show': attributes.slidesToShow || 3,
-			'--sliderberg-slide-spacing': `${ attributes.slideSpacing || 20 }px`,
+			'--sliderberg-slide-spacing': `${
+				attributes.slideSpacing || 20
+			}px`,
 		};
 
 		// Handle custom width in editor

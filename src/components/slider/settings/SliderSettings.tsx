@@ -38,7 +38,7 @@ export const SliderSettings: React.FC< SliderSettingsProps > = ( {
 	// Get visible settings based on slider type
 	const visibleSettings = applyFilters(
 		'sliderberg.visibleSettings',
-		['width', 'animation', 'autoplay', 'navigation', 'carousel'],
+		[ 'width', 'animation', 'autoplay', 'navigation', 'carousel' ],
 		attributes.type
 	) as string[];
 
@@ -70,7 +70,7 @@ export const SliderSettings: React.FC< SliderSettingsProps > = ( {
 	return (
 		<InspectorControls>
 			{ beforeCoreSettings }
-			
+
 			{ typeSpecificSettings }
 
 			{ visibleSettings.includes( 'width' ) && (

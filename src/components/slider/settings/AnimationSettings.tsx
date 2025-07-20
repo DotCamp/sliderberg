@@ -49,7 +49,7 @@ export const AnimationSettings: React.FC< AnimationSettingsProps > = ( {
 
 	// Filter effects based on carousel mode
 	const availableEffects = attributes.isCarouselMode
-		? allEffects.filter( effect => effect.value === 'slide' )
+		? allEffects.filter( ( effect ) => effect.value === 'slide' )
 		: allEffects;
 
 	return (

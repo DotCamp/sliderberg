@@ -15,7 +15,11 @@ declare global {
 		};
 		wp?: {
 			hooks?: {
-				applyFilters: ( filter: string, value: any, ...args: any[] ) => any;
+				applyFilters: (
+					filter: string,
+					value: any,
+					...args: any[]
+				) => any;
 			};
 		};
 	}

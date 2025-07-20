@@ -102,12 +102,15 @@ export function validateContentPosition( position: string ): string {
 function getValidTransitionEffects(): string[] {
 	// Default effects
 	const defaultEffects = [ 'slide', 'fade', 'zoom' ];
-	
+
 	// Check if additional effects are registered from PHP
-	if ( window.sliderbergData && window.sliderbergData.validTransitionEffects ) {
+	if (
+		window.sliderbergData &&
+		window.sliderbergData.validTransitionEffects
+	) {
 		return window.sliderbergData.validTransitionEffects;
 	}
-	
+
 	return defaultEffects;
 }
 
