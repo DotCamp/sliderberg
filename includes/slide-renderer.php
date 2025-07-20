@@ -6,7 +6,7 @@
 
 function render_sliderberg_slide_block($attributes, $content, $block) {
     // Set defaults and sanitize
-    $background_type = sanitize_text_field($attributes['backgroundType'] ?? '');
+    $background_type = sanitize_text_field($attributes['backgroundType'] ?? 'color');
     $background_image = $attributes['backgroundImage'] ?? null;
     
     // Enhanced color validation - support hex, rgb, rgba
@@ -79,8 +79,6 @@ function render_sliderberg_slide_block($attributes, $content, $block) {
             $styles[] = 'background-size: cover';
             $styles[] = 'background-attachment: ' . ($is_fixed ? 'fixed' : 'scroll');
         }
-    } else {
-        $styles[] = 'background-color: transparent';
     }
     
     // Process inner blocks content
