@@ -353,16 +353,18 @@ registerBlockType( 'sliderberg/slide', {
 						) }
 						{ backgroundType === 'image' && backgroundImage && (
 							<>
-								<ToggleControl
-									label={ __(
-										'Fixed Background',
-										'sliderberg'
-									) }
-									checked={ isFixed }
-									onChange={ ( value ) =>
-										setAttributes( { isFixed: value } )
-									}
-								/>
+								<div style={ { marginTop: '16px' } }>
+									<ToggleControl
+										label={ __(
+											'Fixed Background',
+											'sliderberg'
+										) }
+										checked={ isFixed }
+										onChange={ ( value ) =>
+											setAttributes( { isFixed: value } )
+										}
+									/>
+								</div>
 								<div className="sliderberg-focal-point-picker">
 									<label>
 										{ __( 'Focal Point', 'sliderberg' ) }
@@ -417,23 +419,25 @@ registerBlockType( 'sliderberg/slide', {
 							enableAlpha={ true }
 							clearable={ false }
 						/>
-						<RangeControl
-							label={ __( 'Overlay Opacity', 'sliderberg' ) }
-							value={ overlayOpacity }
-							onChange={ ( value ) =>
-								setAttributes( {
-									overlayOpacity: validateNumericRange(
-										value ?? 0.5,
-										0,
-										1,
-										0.5
-									),
-								} )
-							}
-							min={ 0 }
-							max={ 1 }
-							step={ 0.1 }
-						/>
+						<div style={ { marginTop: '16px' } }>
+							<RangeControl
+								label={ __( 'Overlay Opacity', 'sliderberg' ) }
+								value={ overlayOpacity }
+								onChange={ ( value ) =>
+									setAttributes( {
+										overlayOpacity: validateNumericRange(
+											value ?? 0.5,
+											0,
+											1,
+											0.5
+										),
+									} )
+								}
+								min={ 0 }
+								max={ 1 }
+								step={ 0.1 }
+							/>
+						</div>
 					</PanelBody>
 				</InspectorControls>
 				{ ! hasBackground ? (
