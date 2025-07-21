@@ -136,6 +136,16 @@ Yes, carousel mode fully supports infinite loop scrolling, allowing your content
 
 == Changelog ==
 
+= 1.0.4 =
+
+* NEW: Drag and drop functionality for slide background images
+* NEW: Gradient background option for slide blocks with fallback support
+* NEW: Review request notification in sidebar after first save
+* NEW: Option to hide navigation arrows while keeping dots visible
+* FIX: Slide background colors not displaying correctly on frontend
+* FIX: Spacing issues in slide block settings panels
+* IMPROVED: Enhanced gradient background UX
+
 = 1.0.3 =
 
 * IMPROVED: Slide block UX - Options panel now shows during initial setup
