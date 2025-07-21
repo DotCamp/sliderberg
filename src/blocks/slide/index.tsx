@@ -210,7 +210,9 @@ registerBlockType( 'sliderberg/slide', {
 		const hasBackground =
 			( backgroundType === 'image' && backgroundImage ) ||
 			( backgroundType === 'color' && backgroundColor ) ||
-			( backgroundType === 'gradient' && backgroundGradient );
+			( backgroundType === 'gradient' && backgroundGradient ) ||
+			// Allow gradient type to show content if there's a previous background to fall back to
+			( backgroundType === 'gradient' && ( backgroundColor || backgroundImage ) );
 
 		const blockProps = useBlockProps( {
 			className: classnames(
@@ -226,10 +228,16 @@ registerBlockType( 'sliderberg/slide', {
 					1000,
 					400
 				) }px`,
-				backgroundColor:
-					backgroundType === 'color'
-						? validateColor( backgroundColor )
-						: 'transparent',
+				backgroundColor: ( () => {
+					if ( backgroundType === 'color' ) {
+						return validateColor( backgroundColor );
+					}
+					// Show previous color as fallback when gradient is empty
+					if ( backgroundType === 'gradient' && ! backgroundGradient && backgroundColor ) {
+						return validateColor( backgroundColor );
+					}
+					return 'transparent';
+				} )(),
 				backgroundImage: ( () => {
 					if (
 						backgroundType === 'image' &&
@@ -239,7 +247,14 @@ registerBlockType( 'sliderberg/slide', {
 						return `url(${ backgroundImage.url })`;
 					}
 					if ( backgroundType === 'gradient' ) {
-						return validateGradient( backgroundGradient );
+						// If gradient exists, use it
+						if ( backgroundGradient ) {
+							return validateGradient( backgroundGradient );
+						}
+						// Otherwise, show previous image as fallback if it exists
+						if ( backgroundImage && isValidMediaUrl( backgroundImage ) ) {
+							return `url(${ backgroundImage.url })`;
+						}
 					}
 					return 'none';
 				} )(),
