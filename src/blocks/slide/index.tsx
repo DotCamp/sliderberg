@@ -7,6 +7,7 @@ import {
 	InspectorControls,
 	MediaUpload,
 	MediaUploadCheck,
+	MediaPlaceholder,
 	BlockControls,
 	BlockAlignmentToolbar,
 	// @ts-ignore - WordPress experimental API
@@ -508,48 +509,28 @@ registerBlockType( 'sliderberg/slide', {
 						data-client-id={ clientId }
 						style={ { minHeight: `${ minHeight }px` } }
 					>
-						<strong>{ __( 'Slide Background', 'sliderberg' ) }</strong>
-						<p>
-							{ __(
-								'Drag and drop an image, upload, or choose from your library.',
-								'sliderberg'
-							) }
-						</p>
-						<div className="sliderberg-placeholder-actions">
-							<MediaUploadCheck>
-								<MediaUpload
-									onSelect={ ( media: MediaObject ) =>
-										setAttributes( {
-											backgroundType: 'image',
-											backgroundImage: media,
-										} )
-									}
-									allowedTypes={ [ 'image' ] }
-									render={ ( { open }: { open: () => void } ) => (
-										<Button onClick={ open } variant="primary">
-											{ __( 'Upload', 'sliderberg' ) }
-										</Button>
-									) }
-								/>
-							</MediaUploadCheck>
-							<MediaUploadCheck>
-								<MediaUpload
-									onSelect={ ( media: MediaObject ) =>
-										setAttributes( {
-											backgroundType: 'image',
-											backgroundImage: media,
-										} )
-									}
-									allowedTypes={ [ 'image' ] }
-									render={ ( { open }: { open: () => void } ) => (
-										<Button onClick={ open }>
-											{ __( 'Media Library', 'sliderberg' ) }
-										</Button>
-									) }
-								/>
-							</MediaUploadCheck>
-						</div>
+						<MediaPlaceholder
+							icon="format-image"
+							labels={ {
+								title: __( 'Slide Background', 'sliderberg' ),
+								instructions: __(
+									'Drag and drop an image, upload, or choose from your library.',
+									'sliderberg'
+								),
+							} }
+							onSelect={ ( media: MediaObject ) =>
+								setAttributes( {
+									backgroundType: 'image',
+									backgroundImage: media,
+								} )
+							}
+							accept="image/*"
+							allowedTypes={ [ 'image' ] }
+						/>
 						<div className="sliderberg-placeholder-colors">
+							<p>
+								{ __( 'Or choose a background color:', 'sliderberg' ) }
+							</p>
 							<ColorPalette
 								colors={ colorSettings }
 								value={ backgroundColor }
