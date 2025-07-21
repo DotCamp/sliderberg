@@ -24,6 +24,29 @@ function render_sliderberg_slide_block($attributes, $content, $block) {
         }
     }
     
+    // Gradient validation
+    $background_gradient = '';
+    if (!empty($attributes['backgroundGradient'])) {
+        $gradient = $attributes['backgroundGradient'];
+        // Remove any potential script injections
+        $gradient = preg_replace('/<script[^>]*>.*?<\/script>/i', '', $gradient);
+        $gradient = str_ireplace('javascript:', '', $gradient);
+        $gradient = trim($gradient);
+        
+        // Validate gradient syntax
+        if (preg_match('/^(linear-gradient|radial-gradient|conic-gradient|repeating-linear-gradient|repeating-radial-gradient)\s*\(/i', $gradient)) {
+            // Check for balanced parentheses
+            $open_count = substr_count($gradient, '(');
+            $close_count = substr_count($gradient, ')');
+            if ($open_count === $close_count && $open_count > 0) {
+                // Additional safety check for valid CSS color values
+                if (preg_match('/(#[0-9A-Fa-f]{3,8}|rgb|rgba|hsl|hsla|transparent|currentColor|[a-z]+)/i', $gradient)) {
+                    $background_gradient = $gradient;
+                }
+            }
+        }
+    }
+    
     $focal_point = $attributes['focalPoint'] ?? ['x' => 0.5, 'y' => 0.5];
     
     // Enhanced overlay color validation
@@ -67,6 +90,8 @@ function render_sliderberg_slide_block($attributes, $content, $block) {
     
     if ($background_type === 'color' && $background_color) {
         $styles[] = 'background-color: ' . esc_attr($background_color);
+    } elseif ($background_type === 'gradient' && $background_gradient) {
+        $styles[] = 'background-image: ' . esc_attr($background_gradient);
     } elseif ($background_type === 'image' && $background_image && !empty($background_image['url'])) {
         // Validate image URL
         $image_url = esc_url($background_image['url']);

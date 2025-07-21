@@ -9,7 +9,7 @@ import {
 	MediaUploadCheck,
 	BlockControls,
 	BlockAlignmentToolbar,
-	__experimentalColorGradientSettingsDropdown as ColorGradientSettingsDropdown,
+	// @ts-ignore - WordPress experimental API
 	__experimentalUseMultipleOriginColorsAndGradients as useMultipleOriginColorsAndGradients,
 	useSetting,
 } from '@wordpress/block-editor';
@@ -23,12 +23,14 @@ import {
 	ToolbarGroup,
 	ToolbarButton,
 	ColorPalette,
+	GradientPicker,
 } from '@wordpress/components';
 import './style.css';
 import './editor.css';
 import classnames from 'classnames';
 import {
 	validateColor,
+	validateGradient,
 	isValidMediaUrl,
 	validateNumericRange,
 	validateContentPosition,
@@ -46,9 +48,10 @@ interface FocalPoint {
 }
 
 interface SlideAttributes {
-	backgroundType: 'image' | 'color';
+	backgroundType: 'image' | 'color' | 'gradient';
 	backgroundImage: MediaObject | null;
 	backgroundColor: string;
+	backgroundGradient: string;
 	focalPoint: FocalPoint;
 	overlayColor: string;
 	overlayOpacity: number;
@@ -140,13 +143,17 @@ registerBlockType( 'sliderberg/slide', {
 	attributes: {
 		backgroundType: {
 			type: 'string',
-			default: 'color',
+			default: 'color' as 'color' | 'image' | 'gradient',
 		},
 		backgroundImage: {
 			type: 'object',
 			default: null,
 		},
 		backgroundColor: {
+			type: 'string',
+			default: '',
+		},
+		backgroundGradient: {
 			type: 'string',
 			default: '',
 		},
@@ -175,17 +182,18 @@ registerBlockType( 'sliderberg/slide', {
 			default: false,
 		},
 	},
-	edit: ( props: {
+	edit: function Edit( props: {
 		attributes: SlideAttributes;
 		setAttributes: ( attrs: Partial< SlideAttributes > ) => void;
 		isSelected: boolean;
 		clientId: string;
-	} ) => {
+	} ) {
 		const { attributes, setAttributes, isSelected, clientId } = props;
 		const {
 			backgroundType,
 			backgroundImage,
 			backgroundColor,
+			backgroundGradient,
 			focalPoint,
 			overlayColor,
 			overlayOpacity,
@@ -201,7 +209,8 @@ registerBlockType( 'sliderberg/slide', {
 		// Placeholder UI logic
 		const hasBackground =
 			( backgroundType === 'image' && backgroundImage ) ||
-			( backgroundType === 'color' && backgroundColor );
+			( backgroundType === 'color' && backgroundColor ) ||
+			( backgroundType === 'gradient' && backgroundGradient );
 
 		const blockProps = useBlockProps( {
 			className: classnames(
@@ -221,12 +230,19 @@ registerBlockType( 'sliderberg/slide', {
 					backgroundType === 'color'
 						? validateColor( backgroundColor )
 						: 'transparent',
-				backgroundImage:
-					backgroundType === 'image' &&
-					backgroundImage &&
-					isValidMediaUrl( backgroundImage )
-						? `url(${ backgroundImage.url })`
-						: 'none',
+				backgroundImage: ( () => {
+					if (
+						backgroundType === 'image' &&
+						backgroundImage &&
+						isValidMediaUrl( backgroundImage )
+					) {
+						return `url(${ backgroundImage.url })`;
+					}
+					if ( backgroundType === 'gradient' ) {
+						return validateGradient( backgroundGradient );
+					}
+					return 'none';
+				} )(),
 				backgroundPosition:
 					backgroundType === 'image'
 						? `${ validateNumericRange(
@@ -293,64 +309,95 @@ registerBlockType( 'sliderberg/slide', {
 									value: 'color',
 								},
 								{
+									label: __( 'Gradient', 'sliderberg' ),
+									value: 'gradient',
+								},
+								{
 									label: __( 'Image', 'sliderberg' ),
 									value: 'image',
 								},
 							] }
 							onChange={ ( value ) =>
 								setAttributes( {
-									backgroundType: value as 'color' | 'image',
+									backgroundType: value as
+										| 'color'
+										| 'image'
+										| 'gradient',
 								} )
 							}
 						/>
-						{ backgroundType === 'color' ? (
-							<ColorPalette
-								colors={ colorSettings }
-								value={ backgroundColor }
-								onChange={ ( color ) =>
-									setAttributes( {
-										backgroundColor: validateColor(
-											color || ''
-										),
-									} )
-								}
-								enableAlpha={ true }
-								clearable={ true }
-							/>
-						) : (
-							<MediaUploadCheck>
-								<MediaUpload
-									onSelect={ ( media: MediaObject ) =>
-										setAttributes( {
-											backgroundImage: media,
-										} )
-									}
-									allowedTypes={ [ 'image' ] }
-									value={ backgroundImage?.id }
-									render={ ( {
-										open,
-									}: {
-										open: () => void;
-									} ) => (
-										<Button
-											onClick={ open }
-											variant="secondary"
-											className="editor-post-featured-image__toggle"
-										>
-											{ backgroundImage
-												? __(
-														'Replace Image',
-														'sliderberg'
-												  )
-												: __(
-														'Add Image',
-														'sliderberg'
-												  ) }
-										</Button>
-									) }
-								/>
-							</MediaUploadCheck>
-						) }
+						{ ( () => {
+							if ( backgroundType === 'color' ) {
+								return (
+									<ColorPalette
+										colors={ colorSettings }
+										value={ backgroundColor }
+										onChange={ ( color ) =>
+											setAttributes( {
+												backgroundColor: validateColor(
+													color || ''
+												),
+											} )
+										}
+										enableAlpha={ true }
+										clearable={ true }
+									/>
+								);
+							}
+							if ( backgroundType === 'gradient' ) {
+								return (
+									<GradientPicker
+										value={ backgroundGradient || null }
+										onChange={ ( gradient ) =>
+											setAttributes( {
+												backgroundGradient:
+													validateGradient(
+														gradient || ''
+													),
+											} )
+										}
+										gradients={
+											colorGradientSettings?.gradients ||
+											[]
+										}
+									/>
+								);
+							}
+							return (
+								<MediaUploadCheck>
+									<MediaUpload
+										onSelect={ ( media: MediaObject ) =>
+											setAttributes( {
+												backgroundImage: media,
+											} )
+										}
+										allowedTypes={ [ 'image' ] }
+										value={ backgroundImage?.id }
+										render={ ( {
+											open,
+										}: {
+											open: () => void;
+										} ) => (
+											<Button
+												onClick={ open }
+												variant="secondary"
+												className="editor-post-featured-image__toggle"
+											>
+												{ backgroundImage
+													? __(
+															'Replace Image',
+															'sliderberg'
+													  )
+													: __(
+															'Add Image',
+															'sliderberg'
+													  ) }
+											</Button>
+										) }
+									/>
+								</MediaUploadCheck>
+							);
+						} )() }
 						{ backgroundType === 'image' && backgroundImage && (
 							<>
 								<div style={ { marginTop: '16px' } }>

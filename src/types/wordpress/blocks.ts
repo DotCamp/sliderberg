@@ -25,6 +25,5 @@ declare module '@wordpress/blocks' {
 declare module '@wordpress/block-editor' {
 	export function useSetting( name: string ): any;
 	export function useMultipleOriginColorsAndGradients(): any;
-	export function __experimentalColorGradientSettingsDropdown(): any;
 	export function __experimentalUseMultipleOriginColorsAndGradients(): any;
 }
