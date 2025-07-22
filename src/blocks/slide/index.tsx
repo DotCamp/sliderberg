@@ -36,6 +36,7 @@ import {
 	isValidMediaUrl,
 	validateNumericRange,
 	validateContentPosition,
+	validateBorderStyle,
 } from '../../utils/security';
 import deprecated from './deprecated';
 
@@ -74,6 +75,10 @@ interface SlideAttributes {
 	setDateBegin: boolean;
 	dateBegin: number;
 	dateEnd: number;
+	borderWidth: number;
+	borderColor: string;
+	borderStyle: 'solid' | 'dashed' | 'dotted' | 'double';
+	borderRadius: number;
 }
 
 const ALLOWED_BLOCKS = [
@@ -208,7 +213,22 @@ registerBlockType( 'sliderberg/slide', {
 			type: 'number',
 			default: '',
 		},
-
+		borderWidth: {
+			type: 'number',
+			default: 0,
+		},
+		borderColor: {
+			type: 'string',
+			default: '#000000',
+		},
+		borderStyle: {
+			type: 'string',
+			default: 'solid',
+		},
+		borderRadius: {
+			type: 'number',
+			default: 0,
+		},
 	},
 	edit: function Edit( props: {
 		attributes: SlideAttributes;
@@ -232,7 +252,11 @@ registerBlockType( 'sliderberg/slide', {
 			setDateEnd,
 			setDateBegin,
 			dateBegin,
-			dateEnd
+			dateEnd,
+			borderWidth,
+			borderColor,
+			borderStyle,
+			borderRadius,
 		} = attributes;
 
 		// Get theme color palette
@@ -245,14 +269,18 @@ registerBlockType( 'sliderberg/slide', {
 			( backgroundType === 'color' && backgroundColor ) ||
 			( backgroundType === 'gradient' && backgroundGradient ) ||
 			// Allow gradient type to show content if there's a previous background to fall back to
-			( backgroundType === 'gradient' && ( backgroundColor || backgroundImage ) );
+			( backgroundType === 'gradient' &&
+				( backgroundColor || backgroundImage ) );
 
 		const blockProps = useBlockProps( {
 			className: classnames(
 				'sliderberg-slide',
 				`sliderberg-content-position-${ validateContentPosition(
 					contentPosition
-				) }`
+				) }`,
+				{
+					'has-border': borderWidth > 0,
+				}
 			),
 			style: {
 				minHeight: `${ validateNumericRange(
@@ -266,7 +294,11 @@ registerBlockType( 'sliderberg/slide', {
 						return validateColor( backgroundColor );
 					}
 					// Show previous color as fallback when gradient is empty
-					if ( backgroundType === 'gradient' && ! backgroundGradient && backgroundColor ) {
+					if (
+						backgroundType === 'gradient' &&
+						! backgroundGradient &&
+						backgroundColor
+					) {
 						return validateColor( backgroundColor );
 					}
 					return 'transparent';
@@ -285,7 +317,10 @@ registerBlockType( 'sliderberg/slide', {
 							return validateGradient( backgroundGradient );
 						}
 						// Otherwise, show previous image as fallback if it exists
-						if ( backgroundImage && isValidMediaUrl( backgroundImage ) ) {
+						if (
+							backgroundImage &&
+							isValidMediaUrl( backgroundImage )
+						) {
 							return `url(${ backgroundImage.url })`;
 						}
 					}
@@ -307,6 +342,21 @@ registerBlockType( 'sliderberg/slide', {
 						: 'center',
 				backgroundSize: isContained ? 'contain' : 'cover',
 				backgroundAttachment: isFixed ? 'fixed' : 'scroll',
+				borderWidth:
+					borderWidth > 0
+						? `${ validateNumericRange( borderWidth, 0, 50, 0 ) }px`
+						: '0',
+				borderColor: validateColor( borderColor ),
+				borderStyle: validateBorderStyle( borderStyle ),
+				borderRadius:
+					borderRadius > 0
+						? `${ validateNumericRange(
+								borderRadius,
+								0,
+								100,
+								0
+						  ) }px`
+						: '0',
 			},
 			'data-client-id': clientId,
 		} );
@@ -472,10 +522,15 @@ registerBlockType( 'sliderberg/slide', {
 									}
 								/>
 								<div className="sliderberg-focal-point-picker">
-									<label>
+									<label htmlFor="focal-point-grid">
 										{ __( 'Focal Point', 'sliderberg' ) }
 									</label>
-									<div className="sliderberg-focal-point-grid">
+									<div
+										id="focal-point-grid"
+										className="sliderberg-focal-point-grid"
+										role="group"
+										aria-labelledby="focal-point-grid"
+									>
 										{ Array.from( { length: 9 } ).map(
 											( _, index ) => {
 												const x = ( index % 3 ) / 2;
@@ -604,12 +659,147 @@ registerBlockType( 'sliderberg/slide', {
 							/>
 						</div>
 					</PanelBody>
+					<PanelBody
+						title={ __( 'Border & Radius Settings', 'sliderberg' ) }
+						initialOpen={ false }
+					>
+						<RangeControl
+							label={ __( 'Border Width', 'sliderberg' ) }
+							value={ borderWidth }
+							onChange={ ( value ) =>
+								setAttributes( {
+									borderWidth: validateNumericRange(
+										value ?? 0,
+										0,
+										50,
+										0
+									),
+								} )
+							}
+							min={ 0 }
+							max={ 50 }
+							step={ 1 }
+						/>
+						{ borderWidth > 0 && (
+							<>
+								<ColorPalette
+									colors={ colorSettings }
+									value={ borderColor }
+									onChange={ ( color ) =>
+										setAttributes( {
+											borderColor: validateColor(
+												color || '#000000'
+											),
+										} )
+									}
+									enableAlpha={ true }
+									clearable={ false }
+								/>
+								<div style={ { marginTop: '16px' } }>
+									<SelectControl
+										label={ __(
+											'Border Style',
+											'sliderberg'
+										) }
+										value={ borderStyle }
+										options={ [
+											{
+												label: __(
+													'Solid',
+													'sliderberg'
+												),
+												value: 'solid',
+											},
+											{
+												label: __(
+													'Dashed',
+													'sliderberg'
+												),
+												value: 'dashed',
+											},
+											{
+												label: __(
+													'Dotted',
+													'sliderberg'
+												),
+												value: 'dotted',
+											},
+											{
+												label: __(
+													'Double',
+													'sliderberg'
+												),
+												value: 'double',
+											},
+										] }
+										onChange={ ( value ) =>
+											setAttributes( {
+												borderStyle: value as
+													| 'solid'
+													| 'dashed'
+													| 'dotted'
+													| 'double',
+											} )
+										}
+									/>
+								</div>
+							</>
+						) }
+						<div style={ { marginTop: '16px' } }>
+							<RangeControl
+								label={ __( 'Border Radius', 'sliderberg' ) }
+								value={ borderRadius }
+								onChange={ ( value ) =>
+									setAttributes( {
+										borderRadius: validateNumericRange(
+											value ?? 0,
+											0,
+											100,
+											0
+										),
+									} )
+								}
+								min={ 0 }
+								max={ 100 }
+								step={ 1 }
+							/>
+						</div>
+					</PanelBody>
 				</InspectorControls>
 				{ ! hasBackground ? (
 					<div
-						className={ `sliderberg-slide sliderberg-slide-placeholder sliderberg-content-position-${ contentPosition }` }
+						className={ classnames(
+							'sliderberg-slide',
+							'sliderberg-slide-placeholder',
+							`sliderberg-content-position-${ contentPosition }`,
+							{
+								'has-border': borderWidth > 0,
+							}
+						) }
 						data-client-id={ clientId }
-						style={ { minHeight: `${ minHeight }px` } }
+						style={ {
+							minHeight: `${ minHeight }px`,
+							borderWidth:
+								borderWidth > 0
+									? `${ validateNumericRange(
+											borderWidth,
+											0,
+											50,
+											0
+									  ) }px`
+									: '0',
+							borderColor: validateColor( borderColor ),
+							borderStyle: validateBorderStyle( borderStyle ),
+							borderRadius:
+								borderRadius > 0
+									? `${ validateNumericRange(
+											borderRadius,
+											0,
+											100,
+											0
+									  ) }px`
+									: '0',
+						} }
 					>
 						<MediaPlaceholder
 							icon="format-image"
@@ -631,7 +821,10 @@ registerBlockType( 'sliderberg/slide', {
 						/>
 						<div className="sliderberg-placeholder-colors">
 							<p>
-								{ __( 'Or choose a background color:', 'sliderberg' ) }
+								{ __(
+									'Or choose a background color:',
+									'sliderberg'
+								) }
 							</p>
 							<ColorPalette
 								colors={ colorSettings }

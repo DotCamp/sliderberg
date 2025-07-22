@@ -11,46 +11,58 @@ declare global {
 
 let observer: MutationObserver | null = null;
 let domInsertedHandler: ( ( event: Event ) => void ) | null = null;
+let rafId: number | null = null;
 
 function updateSliderbergSlidesVisibility(): void {
-	// Handle regular slide blocks
-	document
-		.querySelectorAll< HTMLElementWithDataClientId >(
-			'.sliderberg-slides-container[data-current-slide-id]'
-		)
-		.forEach( ( container ) => {
-			const currentId: string | null = container.getAttribute(
-				'data-current-slide-id'
-			);
-			const slides: HTMLElementWithDataClientId[] = Array.from(
-				container.querySelectorAll< HTMLElementWithDataClientId >(
-					'.sliderberg-slide'
-				)
-			);
+	// Cancel any pending animation frame to prevent multiple queued updates
+	if ( rafId !== null ) {
+		cancelAnimationFrame( rafId );
+	}
 
-			// Check if carousel mode is enabled
-			const isCarouselMode =
-				container.closest( '.sliderberg-carousel-mode' ) !== null;
+	// Schedule the DOM updates for the next animation frame
+	rafId = requestAnimationFrame( () => {
+		// Handle regular slide blocks
+		document
+			.querySelectorAll< HTMLElementWithDataClientId >(
+				'.sliderberg-slides-container[data-current-slide-id]'
+			)
+			.forEach( ( container ) => {
+				const currentId: string | null = container.getAttribute(
+					'data-current-slide-id'
+				);
+				const slides: HTMLElementWithDataClientId[] = Array.from(
+					container.querySelectorAll< HTMLElementWithDataClientId >(
+						'.sliderberg-slide'
+					)
+				);
 
-			if ( isCarouselMode ) {
-				// In carousel mode, show all slides but mark the current one as active
-				slides.forEach( ( slide ) => {
-					const slideId = slide.getAttribute( 'data-client-id' );
-					slide.style.display = '';
-					slide.classList.toggle( 'active', slideId === currentId );
-				} );
-			} else {
-				// In regular mode, only show the current slide
-				slides.forEach( ( slide ) => {
-					slide.style.display =
-						slide.getAttribute( 'data-client-id' ) === currentId
-							? ''
-							: 'none';
-				} );
-			}
-		} );
+				// Check if carousel mode is enabled
+				const isCarouselMode =
+					container.closest( '.sliderberg-carousel-mode' ) !== null;
 
-	// Pro functionality removed - can be extended via hooks/filters in pro version
+				if ( isCarouselMode ) {
+					// In carousel mode, show all slides but mark the current one as active
+					slides.forEach( ( slide ) => {
+						const slideId = slide.getAttribute( 'data-client-id' );
+						slide.style.display = '';
+						slide.classList.toggle( 'active', slideId === currentId );
+					} );
+				} else {
+					// In regular mode, only show the current slide
+					slides.forEach( ( slide ) => {
+						slide.style.display =
+							slide.getAttribute( 'data-client-id' ) === currentId
+								? ''
+								: 'none';
+					} );
+				}
+			} );
+
+		// Pro functionality removed - can be extended via hooks/filters in pro version
+		
+		// Clear the RAF ID after execution
+		rafId = null;
+	} );
 }
 
 // Cleanup function
@@ -59,6 +71,12 @@ function cleanup(): void {
 	if ( window.visibilityUpdateTimeout ) {
 		clearTimeout( window.visibilityUpdateTimeout );
 		window.visibilityUpdateTimeout = undefined;
+	}
+
+	// Cancel any pending animation frame
+	if ( rafId !== null ) {
+		cancelAnimationFrame( rafId );
+		rafId = null;
 	}
 
 	// Disconnect observer

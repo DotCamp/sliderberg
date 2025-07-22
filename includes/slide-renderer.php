@@ -77,6 +77,30 @@ function render_sliderberg_slide_block($attributes, $content, $block) {
     $is_fixed = (bool)($attributes['isFixed'] ?? false);
     $is_contained = (bool)($attributes['isContained'] ?? false);
     
+    // Border and radius attributes
+    $border_width = max(0, min(50, intval($attributes['borderWidth'] ?? 0)));
+    $border_color = '#000000';
+    if (!empty($attributes['borderColor'])) {
+        if (preg_match('/^#([0-9A-Fa-f]{3}){1,2}$/', $attributes['borderColor'])) {
+            $border_color = $attributes['borderColor'];
+        } elseif (preg_match('/^rgba?\(\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})\s*(?:,\s*(0(?:\.\d+)?|1(?:\.0+)?)\s*)?\)$/', $attributes['borderColor'], $matches)) {
+            $r = intval($matches[1]);
+            $g = intval($matches[2]);
+            $b = intval($matches[3]);
+            if ($r <= 255 && $g <= 255 && $b <= 255) {
+                $border_color = $attributes['borderColor'];
+            }
+        }
+    }
+    
+    $border_style = sanitize_text_field($attributes['borderStyle'] ?? 'solid');
+    $valid_border_styles = ['solid', 'dashed', 'dotted', 'double'];
+    if (!in_array($border_style, $valid_border_styles)) {
+        $border_style = 'solid';
+    }
+    
+    $border_radius = max(0, min(100, intval($attributes['borderRadius'] ?? 0)));
+    
     // Validate content position
     $valid_positions = [
         'top-left', 'top-center', 'top-right',
@@ -93,8 +117,25 @@ function render_sliderberg_slide_block($attributes, $content, $block) {
         'sliderberg-content-position-' . $content_position
     ];
     
+    // Add border class if slide has borders
+    if ($border_width > 0) {
+        $classes[] = 'has-border';
+    }
+    
     // Build styles
     $styles = ['min-height: ' . $min_height . 'px'];
+    
+    // Add border styles
+    if ($border_width > 0) {
+        $styles[] = 'border-width: ' . $border_width . 'px';
+        $styles[] = 'border-color: ' . esc_attr($border_color);
+        $styles[] = 'border-style: ' . esc_attr($border_style);
+    }
+    
+    // Add border radius
+    if ($border_radius > 0) {
+        $styles[] = 'border-radius: ' . $border_radius . 'px';
+    }
     
     if ($background_type === 'color' && $background_color) {
         $styles[] = 'background-color: ' . esc_attr($background_color);

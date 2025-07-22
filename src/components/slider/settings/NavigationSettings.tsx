@@ -170,7 +170,9 @@ export const NavigationSettings: React.FC< NavigationSettingsProps > = ( {
 			<ToggleControl
 				label={ __( 'Hide Navigation Arrows', 'sliderberg' ) }
 				checked={ attributes.hideNavigation }
-				onChange={ ( value ) => setAttributes( { hideNavigation: value } ) }
+				onChange={ ( value ) =>
+					setAttributes( { hideNavigation: value } )
+				}
 				help={ __( 'Hide the navigation arrow buttons', 'sliderberg' ) }
 			/>
 			<ToggleControl
