@@ -3,7 +3,7 @@
  * Plugin Name: Sliderberg
  * Plugin URI: https://sliderberg.com/
  * Description: Slider Block For the Block Editor (Gutenberg). Slide Anything With Ease.
- * Version: 1.0.3
+ * Version: 1.0.4
  * Author: DotCamp
  * Author URI: https://dotcamp.com/
  * License: GPL v2 or later
@@ -18,7 +18,7 @@ if (!defined('WPINC')) {
 }
 
 // Define plugin constants
-define('SLIDERBERG_VERSION', '1.0.3');
+define('SLIDERBERG_VERSION', '1.0.4');
 define('SLIDERBERG_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('SLIDERBERG_PLUGIN_URL', plugin_dir_url(__FILE__));
 
@@ -64,6 +64,9 @@ require_once SLIDERBERG_PLUGIN_DIR . 'includes/admin-welcome.php';
 require_once SLIDERBERG_PLUGIN_DIR . 'includes/slider-renderer.php';
 require_once SLIDERBERG_PLUGIN_DIR . 'includes/slide-renderer.php';
 
+// Include review handler
+require_once SLIDERBERG_PLUGIN_DIR . 'includes/class-review-handler.php';
+
 /**
  * Registers the block using the metadata loaded from the `block.json` file.
  * Behind the scenes, it registers also all assets so they can be enqueued
@@ -105,6 +108,16 @@ function sliderberg_init() {
     );
 }
 add_action('init', 'sliderberg_init');
+
+// Initialize review handler
+add_action('init', function() {
+    new \SliderBerg\Review_Handler();
+});
+
+// Load plugin text domain
+add_action('plugins_loaded', function() {
+    load_plugin_textdomain('sliderberg', false, dirname(plugin_basename(__FILE__)) . '/languages');
+});
 
 // Enqueue editor assets
 function sliderberg_editor_assets() {

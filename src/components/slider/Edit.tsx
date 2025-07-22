@@ -64,7 +64,9 @@ export const Edit: React.FC< EditProps > = ( {
 			'--sliderberg-dot-color': attributes.dotColor,
 			'--sliderberg-dot-active-color': attributes.dotActiveColor,
 			'--sliderberg-slides-to-show': attributes.slidesToShow || 3,
-			'--sliderberg-slide-spacing': `${ attributes.slideSpacing || 20 }px`,
+			'--sliderberg-slide-spacing': `${
+				attributes.slideSpacing || 20
+			}px`,
 		};
 
 		// Handle custom width in editor
@@ -155,10 +157,13 @@ export const Edit: React.FC< EditProps > = ( {
 
 	return (
 		<div { ...blockProps }>
-			<SliderSettings
-				attributes={ attributes }
-				setAttributes={ setAttributes }
-			/>
+			{ /* Only show settings after a type has been selected */ }
+			{ ( attributes.type || hasProChild ) && (
+				<SliderSettings
+					attributes={ attributes }
+					setAttributes={ setAttributes }
+				/>
+			) }
 
 			{ ! attributes.type && ! hasProChild ? (
 				<TypeSelector onTypeSelect={ handleTypeSelect } />

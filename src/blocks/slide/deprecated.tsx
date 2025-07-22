@@ -103,4 +103,56 @@ const deprecated_v1_0_1 = {
 };
 
 // Export all deprecations
-export default [ deprecated_v1_0_1 ];
+// Deprecation for v1.0.3 - before gradient support
+const deprecatedV1_0_3 = {
+	attributes: {
+		backgroundType: {
+			type: 'string',
+			default: 'color',
+		},
+		backgroundImage: {
+			type: 'object',
+			default: null,
+		},
+		backgroundColor: {
+			type: 'string',
+			default: '',
+		},
+		focalPoint: {
+			type: 'object',
+			default: { x: 0.5, y: 0.5 },
+		},
+		overlayColor: {
+			type: 'string',
+			default: '#000000',
+		},
+		overlayOpacity: {
+			type: 'number',
+			default: 0,
+		},
+		minHeight: {
+			type: 'number',
+			default: 400,
+		},
+		contentPosition: {
+			type: 'string',
+			default: 'center-center',
+		},
+		isFixed: {
+			type: 'boolean',
+			default: false,
+		},
+	},
+	save: () => {
+		return <InnerBlocks.Content />;
+	},
+	migrate: ( attributes: any ) => {
+		// Add the new backgroundGradient attribute with empty default
+		return {
+			...attributes,
+			backgroundGradient: '',
+		};
+	},
+};
+
+export default [ deprecatedV1_0_3, deprecated_v1_0_1 ];

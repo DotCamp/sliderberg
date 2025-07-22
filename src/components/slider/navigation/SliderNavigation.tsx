@@ -2,6 +2,7 @@ import React from 'react';
 import { __ } from '@wordpress/i18n';
 import { Button } from '@wordpress/components';
 import { chevronLeft, chevronRight } from '@wordpress/icons';
+import { useSelect } from '@wordpress/data';
 import { SlideIndicators } from './SlideIndicators';
 
 interface SliderNavigationProps {
@@ -21,6 +22,19 @@ export const SliderNavigation: React.FC< SliderNavigationProps > = ( {
 	position,
 	sliderId,
 } ) => {
+	// Detect if we're in the block editor context
+	// Since this component only renders in the editor, we can use a simpler detection
+	const isEditor = React.useMemo( () => {
+		// Check if we're in the WordPress admin environment
+		if ( typeof window !== 'undefined' ) {
+			return (
+				window.location.pathname.includes( '/wp-admin/' ) ||
+				document.body.classList.contains( 'block-editor-page' ) ||
+				document.querySelector( '.block-editor' ) !== null
+			);
+		}
+		return true; // Default to editor mode for SSR
+	}, [] );
 	const handlePrevSlide = () => {
 		if ( ! currentSlideId || innerBlocks.length === 0 ) return;
 		const idx = innerBlocks.findIndex(
@@ -82,50 +96,106 @@ export const SliderNavigation: React.FC< SliderNavigationProps > = ( {
 	};
 
 	if ( position === 'split' ) {
+		// Editor mode: render buttons directly without overlay container
+		if ( isEditor && attributes.navigationPlacement === 'overlay' ) {
+			return (
+				<>
+					{ ! attributes.hideNavigation && (
+						<>
+							<Button
+								className="sliderberg-nav-button sliderberg-prev sliderberg-editor-direct"
+								onClick={ handlePrevSlide }
+								icon={ chevronLeft }
+								label={ __( 'Previous Slide', 'sliderberg' ) }
+								data-shape={ attributes.navigationShape }
+								data-size={ attributes.navigationSize }
+								data-slider-id={ sliderId }
+								style={ {
+									color: attributes.navigationColor,
+									backgroundColor: attributes.navigationBgColor,
+									opacity: attributes.navigationOpacity,
+									'--sliderberg-nav-horizontal-position': `${ attributes.navigationHorizontalPosition }px`,
+									'--sliderberg-nav-vertical-position': `${ attributes.navigationVerticalPosition }px`,
+								} as React.CSSProperties }
+							/>
+							<Button
+								className="sliderberg-nav-button sliderberg-next sliderberg-editor-direct"
+								onClick={ handleNextSlide }
+								icon={ chevronRight }
+								label={ __( 'Next Slide', 'sliderberg' ) }
+								data-shape={ attributes.navigationShape }
+								data-size={ attributes.navigationSize }
+								data-slider-id={ sliderId }
+								style={ {
+									color: attributes.navigationColor,
+									backgroundColor: attributes.navigationBgColor,
+									opacity: attributes.navigationOpacity,
+									'--sliderberg-nav-horizontal-position': `${ attributes.navigationHorizontalPosition }px`,
+									'--sliderberg-nav-vertical-position': `${ attributes.navigationVerticalPosition }px`,
+								} as React.CSSProperties }
+							/>
+						</>
+					) }
+					<SlideIndicators
+						innerBlocks={ innerBlocks }
+						currentSlideId={ currentSlideId }
+						onSlideChange={ onSlideChange }
+						dotColor={ attributes.dotColor }
+						dotActiveColor={ attributes.dotActiveColor }
+						hideDots={ attributes.hideDots }
+					/>
+				</>
+			);
+		}
+
+		// Standard mode: use overlay container (frontend or non-overlay placement)
 		return (
 			<>
-				<div
-					className="sliderberg-navigation"
-					data-type={ attributes.navigationType }
-					data-placement={ attributes.navigationPlacement }
-					data-slider-id={ sliderId }
-					style={ { opacity: attributes.navigationOpacity } }
-				>
-					<div className="sliderberg-nav-controls">
-						<Button
-							className="sliderberg-nav-button sliderberg-prev"
-							onClick={ handlePrevSlide }
-							icon={ chevronLeft }
-							label={ __( 'Previous Slide', 'sliderberg' ) }
-							data-shape={ attributes.navigationShape }
-							data-size={ attributes.navigationSize }
-							style={ {
-								color: attributes.navigationColor,
-								backgroundColor: attributes.navigationBgColor,
-								...( attributes.navigationType === 'split' && {
-									transform: `translateY(calc(-50% + ${ attributes.navigationVerticalPosition }px))`,
-									left: `${ attributes.navigationHorizontalPosition }px`,
-								} ),
-							} }
-						/>
-						<Button
-							className="sliderberg-nav-button sliderberg-next"
-							onClick={ handleNextSlide }
-							icon={ chevronRight }
-							label={ __( 'Next Slide', 'sliderberg' ) }
-							data-shape={ attributes.navigationShape }
-							data-size={ attributes.navigationSize }
-							style={ {
-								color: attributes.navigationColor,
-								backgroundColor: attributes.navigationBgColor,
-								...( attributes.navigationType === 'split' && {
-									transform: `translateY(calc(-50% + ${ attributes.navigationVerticalPosition }px))`,
-									right: `${ attributes.navigationHorizontalPosition }px`,
-								} ),
-							} }
-						/>
+				{ ! attributes.hideNavigation && (
+					<div
+						className="sliderberg-navigation"
+						data-type={ attributes.navigationType }
+						data-placement={ attributes.navigationPlacement }
+						data-slider-id={ sliderId }
+						data-editor-context={ isEditor ? 'true' : 'false' }
+						style={ { opacity: attributes.navigationOpacity } }
+					>
+						<div className="sliderberg-nav-controls">
+							<Button
+								className="sliderberg-nav-button sliderberg-prev"
+								onClick={ handlePrevSlide }
+								icon={ chevronLeft }
+								label={ __( 'Previous Slide', 'sliderberg' ) }
+								data-shape={ attributes.navigationShape }
+								data-size={ attributes.navigationSize }
+								style={ {
+									color: attributes.navigationColor,
+									backgroundColor: attributes.navigationBgColor,
+									...( attributes.navigationType === 'split' && {
+										transform: `translateY(calc(-50% + ${ attributes.navigationVerticalPosition }px))`,
+										left: `${ attributes.navigationHorizontalPosition }px`,
+									} ),
+								} }
+							/>
+							<Button
+								className="sliderberg-nav-button sliderberg-next"
+								onClick={ handleNextSlide }
+								icon={ chevronRight }
+								label={ __( 'Next Slide', 'sliderberg' ) }
+								data-shape={ attributes.navigationShape }
+								data-size={ attributes.navigationSize }
+								style={ {
+									color: attributes.navigationColor,
+									backgroundColor: attributes.navigationBgColor,
+									...( attributes.navigationType === 'split' && {
+										transform: `translateY(calc(-50% + ${ attributes.navigationVerticalPosition }px))`,
+										right: `${ attributes.navigationHorizontalPosition }px`,
+									} ),
+								} }
+							/>
+						</div>
 					</div>
-				</div>
+				) }
 				<SlideIndicators
 					innerBlocks={ innerBlocks }
 					currentSlideId={ currentSlideId }
@@ -143,21 +213,24 @@ export const SliderNavigation: React.FC< SliderNavigationProps > = ( {
 		<div
 			className={ `sliderberg-navigation-bar sliderberg-navigation-bar-${ position }` }
 			data-slider-id={ sliderId }
+			data-editor-context={ isEditor ? 'true' : 'false' }
 			style={ { opacity: attributes.navigationOpacity } }
 		>
 			<div className="sliderberg-nav-controls sliderberg-nav-controls-grouped">
-				<Button
-					className="sliderberg-nav-button sliderberg-prev"
-					onClick={ handlePrevSlide }
-					icon={ chevronLeft }
-					label={ __( 'Previous Slide', 'sliderberg' ) }
-					data-shape={ attributes.navigationShape }
-					data-size={ attributes.navigationSize }
-					style={ {
-						color: attributes.navigationColor,
-						backgroundColor: attributes.navigationBgColor,
-					} }
-				/>
+				{ ! attributes.hideNavigation && (
+					<Button
+						className="sliderberg-nav-button sliderberg-prev"
+						onClick={ handlePrevSlide }
+						icon={ chevronLeft }
+						label={ __( 'Previous Slide', 'sliderberg' ) }
+						data-shape={ attributes.navigationShape }
+						data-size={ attributes.navigationSize }
+						style={ {
+							color: attributes.navigationColor,
+							backgroundColor: attributes.navigationBgColor,
+						} }
+					/>
+				) }
 				<SlideIndicators
 					innerBlocks={ innerBlocks }
 					currentSlideId={ currentSlideId }
@@ -166,18 +239,20 @@ export const SliderNavigation: React.FC< SliderNavigationProps > = ( {
 					dotActiveColor={ attributes.dotActiveColor }
 					hideDots={ attributes.hideDots }
 				/>
-				<Button
-					className="sliderberg-nav-button sliderberg-next"
-					onClick={ handleNextSlide }
-					icon={ chevronRight }
-					label={ __( 'Next Slide', 'sliderberg' ) }
-					data-shape={ attributes.navigationShape }
-					data-size={ attributes.navigationSize }
-					style={ {
-						color: attributes.navigationColor,
-						backgroundColor: attributes.navigationBgColor,
-					} }
-				/>
+				{ ! attributes.hideNavigation && (
+					<Button
+						className="sliderberg-nav-button sliderberg-next"
+						onClick={ handleNextSlide }
+						icon={ chevronRight }
+						label={ __( 'Next Slide', 'sliderberg' ) }
+						data-shape={ attributes.navigationShape }
+						data-size={ attributes.navigationSize }
+						style={ {
+							color: attributes.navigationColor,
+							backgroundColor: attributes.navigationBgColor,
+						} }
+					/>
+				) }
 			</div>
 		</div>
 	);

@@ -38,6 +38,53 @@ export function validateColor( color: string | { hex: string } ): string {
 }
 
 /**
+ * Validates and sanitizes gradient values
+ * @param gradient - The gradient value to validate
+ * @return A sanitized gradient value or empty string
+ */
+export function validateGradient( gradient: string ): string {
+	if ( ! gradient || typeof gradient !== 'string' ) {
+		return '';
+	}
+
+	// Remove any potential script injections
+	const cleaned = gradient
+		.replace( /<script[^>]*>.*?<\/script>/gi, '' )
+		.replace( /javascript:/gi, '' )
+		.trim();
+
+	// Basic validation for CSS gradient functions
+	const gradientRegex =
+		/^(linear-gradient|radial-gradient|conic-gradient|repeating-linear-gradient|repeating-radial-gradient)\s*\(/i;
+
+	if ( ! gradientRegex.test( cleaned ) ) {
+		return '';
+	}
+
+	// Check for balanced parentheses
+	let parenthesesCount = 0;
+	for ( const char of cleaned ) {
+		if ( char === '(' ) parenthesesCount++;
+		if ( char === ')' ) parenthesesCount--;
+		if ( parenthesesCount < 0 ) return ''; // Closing parenthesis before opening
+	}
+	if ( parenthesesCount !== 0 ) return ''; // Unbalanced parentheses
+
+	// Additional safety check for common CSS gradient patterns
+	// This ensures the gradient contains valid CSS color values
+	const hasValidColors =
+		/(#[0-9A-F]{3,8}|rgb|rgba|hsl|hsla|transparent|currentColor|[a-z]+)/i.test(
+			cleaned
+		);
+
+	if ( ! hasValidColors ) {
+		return '';
+	}
+
+	return cleaned;
+}
+
+/**
  * Validates media URLs
  * @param media - The media object containing the URL
  * @return Boolean indicating if the URL is valid
@@ -102,12 +149,15 @@ export function validateContentPosition( position: string ): string {
 function getValidTransitionEffects(): string[] {
 	// Default effects
 	const defaultEffects = [ 'slide', 'fade', 'zoom' ];
-	
+
 	// Check if additional effects are registered from PHP
-	if ( window.sliderbergData && window.sliderbergData.validTransitionEffects ) {
+	if (
+		window.sliderbergData &&
+		window.sliderbergData.validTransitionEffects
+	) {
 		return window.sliderbergData.validTransitionEffects;
 	}
-	
+
 	return defaultEffects;
 }
 

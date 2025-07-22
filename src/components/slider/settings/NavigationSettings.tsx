@@ -168,6 +168,12 @@ export const NavigationSettings: React.FC< NavigationSettingsProps > = ( {
 				disabled={ attributes.navigationType !== 'split' }
 			/>
 			<ToggleControl
+				label={ __( 'Hide Navigation Arrows', 'sliderberg' ) }
+				checked={ attributes.hideNavigation }
+				onChange={ ( value ) => setAttributes( { hideNavigation: value } ) }
+				help={ __( 'Hide the navigation arrow buttons', 'sliderberg' ) }
+			/>
+			<ToggleControl
 				label={ __( 'Hide Dots', 'sliderberg' ) }
 				checked={ attributes.hideDots }
 				onChange={ ( value ) => setAttributes( { hideDots: value } ) }

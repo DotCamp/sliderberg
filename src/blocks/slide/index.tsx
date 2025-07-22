@@ -7,9 +7,10 @@ import {
 	InspectorControls,
 	MediaUpload,
 	MediaUploadCheck,
+	MediaPlaceholder,
 	BlockControls,
 	BlockAlignmentToolbar,
-	__experimentalColorGradientSettingsDropdown as ColorGradientSettingsDropdown,
+	// @ts-ignore - WordPress experimental API
 	__experimentalUseMultipleOriginColorsAndGradients as useMultipleOriginColorsAndGradients,
 	useSetting,
 } from '@wordpress/block-editor';
@@ -24,12 +25,14 @@ import {
 	ToolbarButton,
 	ColorPalette,
 	DateTimePicker,
+	GradientPicker,
 } from '@wordpress/components';
 import './style.css';
 import './editor.css';
 import classnames from 'classnames';
 import {
 	validateColor,
+	validateGradient,
 	isValidMediaUrl,
 	validateNumericRange,
 	validateContentPosition,
@@ -47,9 +50,10 @@ interface FocalPoint {
 }
 
 interface SlideAttributes {
-	backgroundType: 'image' | 'color';
+	backgroundType: 'image' | 'color' | 'gradient';
 	backgroundImage: MediaObject | null;
 	backgroundColor: string;
+	backgroundGradient: string;
 	focalPoint: FocalPoint;
 	overlayColor: string;
 	overlayOpacity: number;
@@ -146,13 +150,17 @@ registerBlockType( 'sliderberg/slide', {
 	attributes: {
 		backgroundType: {
 			type: 'string',
-			default: '',
+			default: 'color' as 'color' | 'image' | 'gradient',
 		},
 		backgroundImage: {
 			type: 'object',
 			default: null,
 		},
 		backgroundColor: {
+			type: 'string',
+			default: '',
+		},
+		backgroundGradient: {
 			type: 'string',
 			default: '',
 		},
@@ -202,17 +210,18 @@ registerBlockType( 'sliderberg/slide', {
 		},
 
 	},
-	edit: ( props: {
+	edit: function Edit( props: {
 		attributes: SlideAttributes;
 		setAttributes: ( attrs: Partial< SlideAttributes > ) => void;
 		isSelected: boolean;
 		clientId: string;
-	} ) => {
+	} ) {
 		const { attributes, setAttributes, isSelected, clientId } = props;
 		const {
 			backgroundType,
 			backgroundImage,
 			backgroundColor,
+			backgroundGradient,
 			focalPoint,
 			overlayColor,
 			overlayOpacity,
@@ -233,7 +242,10 @@ registerBlockType( 'sliderberg/slide', {
 		// Placeholder UI logic
 		const hasBackground =
 			( backgroundType === 'image' && backgroundImage ) ||
-			( backgroundType === 'color' && backgroundColor );
+			( backgroundType === 'color' && backgroundColor ) ||
+			( backgroundType === 'gradient' && backgroundGradient ) ||
+			// Allow gradient type to show content if there's a previous background to fall back to
+			( backgroundType === 'gradient' && ( backgroundColor || backgroundImage ) );
 
 		const blockProps = useBlockProps( {
 			className: classnames(
@@ -249,16 +261,36 @@ registerBlockType( 'sliderberg/slide', {
 					1000,
 					400
 				) }px`,
-				backgroundColor:
-					backgroundType === 'color'
-						? validateColor( backgroundColor )
-						: 'transparent',
-				backgroundImage:
-					backgroundType === 'image' &&
-					backgroundImage &&
-					isValidMediaUrl( backgroundImage )
-						? `url(${ backgroundImage.url })`
-						: 'none',
+				backgroundColor: ( () => {
+					if ( backgroundType === 'color' ) {
+						return validateColor( backgroundColor );
+					}
+					// Show previous color as fallback when gradient is empty
+					if ( backgroundType === 'gradient' && ! backgroundGradient && backgroundColor ) {
+						return validateColor( backgroundColor );
+					}
+					return 'transparent';
+				} )(),
+				backgroundImage: ( () => {
+					if (
+						backgroundType === 'image' &&
+						backgroundImage &&
+						isValidMediaUrl( backgroundImage )
+					) {
+						return `url(${ backgroundImage.url })`;
+					}
+					if ( backgroundType === 'gradient' ) {
+						// If gradient exists, use it
+						if ( backgroundGradient ) {
+							return validateGradient( backgroundGradient );
+						}
+						// Otherwise, show previous image as fallback if it exists
+						if ( backgroundImage && isValidMediaUrl( backgroundImage ) ) {
+							return `url(${ backgroundImage.url })`;
+						}
+					}
+					return 'none';
+				} )(),
 				backgroundPosition:
 					backgroundType === 'image'
 						? `${ validateNumericRange(
@@ -278,74 +310,6 @@ registerBlockType( 'sliderberg/slide', {
 			},
 			'data-client-id': clientId,
 		} );
-
-
-		// Placeholder UI (like Cover block)
-		if ( ! hasBackground ) {
-			return (
-				<div
-					className={ `sliderberg-slide sliderberg-slide-placeholder sliderberg-content-position-${ contentPosition }` }
-					data-client-id={ clientId }
-					style={ { minHeight: `${ minHeight }px` } }
-				>
-					<strong>{ __( 'Slide Background', 'sliderberg' ) }</strong>
-					<p>
-						{ __(
-							'Drag and drop an image, upload, or choose from your library.',
-							'sliderberg'
-						) }
-					</p>
-					<div className="sliderberg-placeholder-actions">
-						<MediaUploadCheck>
-							<MediaUpload
-								onSelect={ ( media: MediaObject ) =>
-									setAttributes( {
-										backgroundType: 'image',
-										backgroundImage: media,
-									} )
-								}
-								allowedTypes={ [ 'image' ] }
-								render={ ( { open }: { open: () => void } ) => (
-									<Button onClick={ open } variant="primary">
-										{ __( 'Upload', 'sliderberg' ) }
-									</Button>
-								) }
-							/>
-						</MediaUploadCheck>
-						<MediaUploadCheck>
-							<MediaUpload
-								onSelect={ ( media: MediaObject ) =>
-									setAttributes( {
-										backgroundType: 'image',
-										backgroundImage: media,
-									} )
-								}
-								allowedTypes={ [ 'image' ] }
-								render={ ( { open }: { open: () => void } ) => (
-									<Button onClick={ open }>
-										{ __( 'Media Library', 'sliderberg' ) }
-									</Button>
-								) }
-							/>
-						</MediaUploadCheck>
-					</div>
-					<div className="sliderberg-placeholder-colors">
-						<ColorPalette
-							colors={ colorSettings }
-							value={ backgroundColor }
-							onChange={ ( color ) =>
-								setAttributes( {
-									backgroundType: 'color',
-									backgroundColor: color || '',
-								} )
-							}
-							enableAlpha={ true }
-							clearable={ true }
-						/>
-					</div>
-				</div>
-			);
-		}
 
 		return (
 			<>
@@ -382,7 +346,7 @@ registerBlockType( 'sliderberg/slide', {
 					</PanelBody>
 					<PanelBody
 						title={ __( 'Background Settings', 'sliderberg' ) }
-						initialOpen={ false }
+						initialOpen={ true }
 					>
 						<SelectControl
 							label={ __( 'Background Type', 'sliderberg' ) }
@@ -393,76 +357,110 @@ registerBlockType( 'sliderberg/slide', {
 									value: 'color',
 								},
 								{
+									label: __( 'Gradient', 'sliderberg' ),
+									value: 'gradient',
+								},
+								{
 									label: __( 'Image', 'sliderberg' ),
 									value: 'image',
 								},
 							] }
 							onChange={ ( value ) =>
 								setAttributes( {
-									backgroundType: value as 'color' | 'image',
+									backgroundType: value as
+										| 'color'
+										| 'image'
+										| 'gradient',
 								} )
 							}
 						/>
-						{ backgroundType === 'color' ? (
-							<ColorPalette
-								colors={ colorSettings }
-								value={ backgroundColor }
-								onChange={ ( color ) =>
-									setAttributes( {
-										backgroundColor: validateColor(
-											color || ''
-										),
-									} )
-								}
-								enableAlpha={ true }
-								clearable={ true }
-							/>
-						) : (
-							<MediaUploadCheck>
-								<MediaUpload
-									onSelect={ ( media: MediaObject ) =>
-										setAttributes( {
-											backgroundImage: media,
-										} )
-									}
-									allowedTypes={ [ 'image' ] }
-									value={ backgroundImage?.id }
-									render={ ( {
-										open,
-									}: {
-										open: () => void;
-									} ) => (
-										<Button
-											onClick={ open }
-											variant="secondary"
-											className="editor-post-featured-image__toggle"
-										>
-											{ backgroundImage
-												? __(
-														'Replace Image',
-														'sliderberg'
-												  )
-												: __(
-														'Add Image',
-														'sliderberg'
-												  ) }
-										</Button>
-									) }
-								/>
-							</MediaUploadCheck>
-						) }
+						{ ( () => {
+							if ( backgroundType === 'color' ) {
+								return (
+									<ColorPalette
+										colors={ colorSettings }
+										value={ backgroundColor }
+										onChange={ ( color ) =>
+											setAttributes( {
+												backgroundColor: validateColor(
+													color || ''
+												),
+											} )
+										}
+										enableAlpha={ true }
+										clearable={ true }
+									/>
+								);
+							}
+							if ( backgroundType === 'gradient' ) {
+								return (
+									<GradientPicker
+										value={ backgroundGradient || null }
+										onChange={ ( gradient ) =>
+											setAttributes( {
+												backgroundGradient:
+													validateGradient(
+														gradient || ''
+													),
+											} )
+										}
+										gradients={
+											colorGradientSettings?.gradients ||
+											[]
+										}
+									/>
+								);
+							}
+							return (
+								<MediaUploadCheck>
+									<MediaUpload
+										onSelect={ ( media: MediaObject ) =>
+											setAttributes( {
+												backgroundImage: media,
+											} )
+										}
+										allowedTypes={ [ 'image' ] }
+										value={ backgroundImage?.id }
+										render={ ( {
+											open,
+										}: {
+											open: () => void;
+										} ) => (
+											<Button
+												onClick={ open }
+												variant="secondary"
+												className="editor-post-featured-image__toggle"
+											>
+												{ backgroundImage
+													? __(
+															'Replace Image',
+															'sliderberg'
+													  )
+													: __(
+															'Add Image',
+															'sliderberg'
+													  ) }
+											</Button>
+										) }
+									/>
+								</MediaUploadCheck>
+							);
+						} )() }
 						{ backgroundType === 'image' && backgroundImage && (
 							<>
-								<ToggleControl
-									label={ __(
-										'Fixed Background',
-										'sliderberg'
-									) }
-									checked={ isFixed }
-									onChange={ ( value ) =>
-										setAttributes( { isFixed: value } )
-									}
-								/>
+
+								<div style={ { marginTop: '16px' } }>
+									<ToggleControl
+										label={ __(
+											'Fixed Background',
+											'sliderberg'
+										) }
+										checked={ isFixed }
+										onChange={ ( value ) =>
+											setAttributes( { isFixed: value } )
+										}
+									/>
+								</div>
 								<ToggleControl
 									label={ __(
 										'Fit background image to slide',
@@ -586,78 +584,122 @@ registerBlockType( 'sliderberg/slide', {
 							enableAlpha={ true }
 							clearable={ false }
 						/>
-						<RangeControl
-							label={ __( 'Overlay Opacity', 'sliderberg' ) }
-							value={ overlayOpacity }
-							onChange={ ( value ) =>
-								setAttributes( {
-									overlayOpacity: validateNumericRange(
-										value ?? 0.5,
-										0,
-										1,
-										0.5
-									),
-								} )
-							}
-							min={ 0 }
-							max={ 1 }
-							step={ 0.1 }
-						/>
+						<div style={ { marginTop: '16px' } }>
+							<RangeControl
+								label={ __( 'Overlay Opacity', 'sliderberg' ) }
+								value={ overlayOpacity }
+								onChange={ ( value ) =>
+									setAttributes( {
+										overlayOpacity: validateNumericRange(
+											value ?? 0.5,
+											0,
+											1,
+											0.5
+										),
+									} )
+								}
+								min={ 0 }
+								max={ 1 }
+								step={ 0.1 }
+							/>
+						</div>
 					</PanelBody>
 				</InspectorControls>
-				<div { ...blockProps }>
-
-					<small>
-					{ setDateBegin === true && (
-							 sprintf(__(
-											'Start showing at %s. ',
-											'sliderberg'
-										), new Date(dateBegin*1000).toLocaleString())
-
-						) }
-					{ setDateEnd === true && (
-							 sprintf(__(
-											'Stop showing after %s. ',
-											'sliderberg'
-										), new Date(dateEnd*1000).toLocaleString())
-					) }
-					</small>
-
+				{ ! hasBackground ? (
 					<div
-						className="sliderberg-overlay"
-						style={ {
-							backgroundColor: overlayColor,
-							opacity: overlayOpacity,
-						} }
-					/>
-					<div className="sliderberg-slide-content">
-						<InnerBlocks
-							allowedBlocks={ ALLOWED_BLOCKS }
-							template={ [
-								[
-									'core/heading',
-									{
-										level: 2,
-										placeholder: __(
-											'Add a heading…',
-											'sliderberg'
-										),
-									},
-								],
-								[
-									'core/paragraph',
-									{
-										placeholder: __(
-											'Add your content here…',
-											'sliderberg'
-										),
-									},
-								],
-							] }
-							templateLock={ false }
+						className={ `sliderberg-slide sliderberg-slide-placeholder sliderberg-content-position-${ contentPosition }` }
+						data-client-id={ clientId }
+						style={ { minHeight: `${ minHeight }px` } }
+					>
+						<MediaPlaceholder
+							icon="format-image"
+							labels={ {
+								title: __( 'Slide Background', 'sliderberg' ),
+								instructions: __(
+									'Drag and drop an image, upload, or choose from your library.',
+									'sliderberg'
+								),
+							} }
+							onSelect={ ( media: MediaObject ) =>
+								setAttributes( {
+									backgroundType: 'image',
+									backgroundImage: media,
+								} )
+							}
+							accept="image/*"
+							allowedTypes={ [ 'image' ] }
 						/>
+						<div className="sliderberg-placeholder-colors">
+							<p>
+								{ __( 'Or choose a background color:', 'sliderberg' ) }
+							</p>
+							<ColorPalette
+								colors={ colorSettings }
+								value={ backgroundColor }
+								onChange={ ( color ) =>
+									setAttributes( {
+										backgroundType: 'color',
+										backgroundColor: color || '',
+									} )
+								}
+								enableAlpha={ true }
+								clearable={ true }
+							/>
+						</div>
 					</div>
-				</div>
+				) : (
+					<div { ...blockProps }>
+						<small>
+						{ setDateBegin === true && (
+								sprintf(__(
+												'Start showing at %s. ',
+												'sliderberg'
+											), new Date(dateBegin*1000).toLocaleString())
+
+							) }
+						{ setDateEnd === true && (
+								sprintf(__(
+												'Stop showing after %s. ',
+												'sliderberg'
+											), new Date(dateEnd*1000).toLocaleString())
+						) }
+						</small>
+						<div
+							className="sliderberg-overlay"
+							style={ {
+								backgroundColor: overlayColor,
+								opacity: overlayOpacity,
+							} }
+						/>
+						<div className="sliderberg-slide-content">
+							<InnerBlocks
+								allowedBlocks={ ALLOWED_BLOCKS }
+								template={ [
+									[
+										'core/heading',
+										{
+											level: 2,
+											placeholder: __(
+												'Add a heading…',
+												'sliderberg'
+											),
+										},
+									],
+									[
+										'core/paragraph',
+										{
+											placeholder: __(
+												'Add your content here…',
+												'sliderberg'
+											),
+										},
+									],
+								] }
+								templateLock={ false }
+							/>
+						</div>
+					</div>
+				) }
 			</>
 		);
 	},

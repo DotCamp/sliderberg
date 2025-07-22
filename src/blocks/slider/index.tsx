@@ -20,7 +20,10 @@ import deprecated from './deprecated';
 import '../slide';
 
 // Allow pro features to add type-specific attributes
-const typeAttributes = applyFilters( 'sliderberg.blockAttributes', {} ) as Record<string, any>;
+const typeAttributes = applyFilters(
+	'sliderberg.blockAttributes',
+	{}
+) as Record< string, any >;
 
 // Register the main block
 registerBlockType( 'sliderberg/sliderberg', {
@@ -112,6 +115,10 @@ registerBlockType( 'sliderberg/sliderberg', {
 			default: '#ffffff',
 		},
 		hideDots: {
+			type: 'boolean',
+			default: false,
+		},
+		hideNavigation: {
 			type: 'boolean',
 			default: false,
 		},

@@ -396,5 +396,157 @@ const deprecated_v1 = {
 	},
 };
 
+// Deprecation for v1.0.3 - before hideNavigation attribute
+const deprecated_v1_0_3 = {
+	attributes: {
+		align: {
+			type: 'string',
+			default: 'full',
+		},
+		type: {
+			type: 'string',
+			default: '',
+		},
+		autoplay: {
+			type: 'boolean',
+			default: false,
+		},
+		autoplaySpeed: {
+			type: 'number',
+			default: 5000,
+		},
+		pauseOnHover: {
+			type: 'boolean',
+			default: true,
+		},
+		transitionEffect: {
+			type: 'string',
+			default: 'slide',
+		},
+		transitionDuration: {
+			type: 'number',
+			default: 500,
+		},
+		transitionEasing: {
+			type: 'string',
+			default: 'ease',
+		},
+		navigationType: {
+			type: 'string',
+			default: 'bottom',
+		},
+		navigationPlacement: {
+			type: 'string',
+			default: 'overlay',
+		},
+		navigationShape: {
+			type: 'string',
+			default: 'circle',
+		},
+		navigationSize: {
+			type: 'string',
+			default: 'medium',
+		},
+		navigationColor: {
+			type: 'string',
+			default: '#ffffff',
+		},
+		navigationBgColor: {
+			type: 'string',
+			default: 'rgba(0, 0, 0, 0.5)',
+		},
+		navigationOpacity: {
+			type: 'number',
+			default: 1,
+		},
+		navigationVerticalPosition: {
+			type: 'number',
+			default: 20,
+		},
+		navigationHorizontalPosition: {
+			type: 'number',
+			default: 20,
+		},
+		dotColor: {
+			type: 'string',
+			default: '#6c757d',
+		},
+		dotActiveColor: {
+			type: 'string',
+			default: '#ffffff',
+		},
+		hideDots: {
+			type: 'boolean',
+			default: false,
+		},
+		widthPreset: {
+			type: 'string',
+			default: 'full',
+		},
+		customWidth: {
+			type: 'string',
+			default: '',
+		},
+		widthUnit: {
+			type: 'string',
+			default: 'px',
+		},
+		isCarouselMode: {
+			type: 'boolean',
+			default: false,
+		},
+		slidesToShow: {
+			type: 'number',
+			default: 3,
+		},
+		slidesToScroll: {
+			type: 'number',
+			default: 1,
+		},
+		slideSpacing: {
+			type: 'number',
+			default: 20,
+		},
+		infiniteLoop: {
+			type: 'boolean',
+			default: true,
+		},
+		tabletSlidesToShow: {
+			type: 'number',
+			default: 2,
+		},
+		tabletSlidesToScroll: {
+			type: 'number',
+			default: 1,
+		},
+		tabletSlideSpacing: {
+			type: 'number',
+			default: 15,
+		},
+		mobileSlidesToShow: {
+			type: 'number',
+			default: 1,
+		},
+		mobileSlidesToScroll: {
+			type: 'number',
+			default: 1,
+		},
+		mobileSlideSpacing: {
+			type: 'number',
+			default: 10,
+		},
+	},
+	save: () => {
+		return <InnerBlocks.Content />;
+	},
+	migrate: ( attributes: any ) => {
+		// Add the new hideNavigation attribute
+		return {
+			...attributes,
+			hideNavigation: false,
+		};
+	},
+};
+
 // Export all deprecations - add more as needed
-export default [ deprecated_v1_0_1, deprecated_v1 ];
+export default [ deprecated_v1_0_3, deprecated_v1_0_1, deprecated_v1 ];

@@ -658,3 +658,131 @@
     position: relative;
     z-index: 11;
 }
+
+/* LEGACY: Overlay navigation styles (only used for non-editor or non-overlay modes) */
+/* These styles are kept for backwards compatibility but are bypassed by the editor direct mode */
+.sliderberg-navigation[data-placement="overlay"]:not([data-editor-context="true"]) {
+    pointer-events: none !important;
+    background: transparent !important;
+}
+
+.sliderberg-navigation[data-placement="overlay"]:not([data-editor-context="true"]) .sliderberg-nav-controls {
+    pointer-events: none !important;
+    background: transparent !important;
+}
+
+.sliderberg-navigation[data-placement="overlay"]:not([data-editor-context="true"]) .sliderberg-nav-button {
+    pointer-events: auto !important;
+    position: absolute !important;
+    z-index: 15 !important;
+    padding: 8px !important;
+    margin: 0 !important;
+}
+
+/* Allow original positioning logic to work - don't override positioning */
+/* The SliderNavigation component handles positioning via inline styles using navigationHorizontalPosition/navigationVerticalPosition */
+
+/* Ensure slide indicators don't block clicks either */
+.sliderberg-navigation[data-placement="overlay"] .sliderberg-slide-indicators {
+    pointer-events: auto !important;
+    position: absolute !important;
+    bottom: 10px !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    z-index: 15 !important;
+    background: transparent !important;
+}
+
+/* Make sure slide content area is fully clickable in editor */
+.sliderberg-slides-container {
+    position: relative !important;
+    z-index: 1 !important;
+}
+
+/* Ensure slide blocks themselves are interactive */
+.sliderberg-slides-container .block-editor-block-list__block {
+    pointer-events: auto !important;
+    position: relative !important;
+    z-index: 5 !important;
+}
+
+/* Editor-specific: Direct button positioning (no overlay container) */
+.sliderberg-nav-button.sliderberg-editor-direct {
+    position: absolute !important;
+    z-index: 15 !important;
+    top: 50% !important;
+    pointer-events: auto !important;
+}
+
+/* Position buttons using CSS custom properties for user settings */
+.sliderberg-nav-button.sliderberg-editor-direct.sliderberg-prev {
+    left: var(--sliderberg-nav-horizontal-position, 20px) !important;
+    transform: translateY(calc(-50% + var(--sliderberg-nav-vertical-position, 20px))) !important;
+}
+
+.sliderberg-nav-button.sliderberg-editor-direct.sliderberg-next {
+    right: var(--sliderberg-nav-horizontal-position, 20px) !important;
+    transform: translateY(calc(-50% + var(--sliderberg-nav-vertical-position, 20px))) !important;
+}
+
+/* Button sizes for editor direct mode */
+.sliderberg-nav-button.sliderberg-editor-direct[data-size="small"] {
+    padding: 6px !important;
+    min-width: 32px !important;
+    min-height: 32px !important;
+}
+
+.sliderberg-nav-button.sliderberg-editor-direct[data-size="medium"] {
+    padding: 8px !important;
+    min-width: 40px !important;
+    min-height: 40px !important;
+}
+
+.sliderberg-nav-button.sliderberg-editor-direct[data-size="large"] {
+    padding: 12px !important;
+    min-width: 48px !important;
+    min-height: 48px !important;
+}
+
+/* Button shapes for editor direct mode */
+.sliderberg-nav-button.sliderberg-editor-direct[data-shape="circle"] {
+    border-radius: 50% !important;
+}
+
+.sliderberg-nav-button.sliderberg-editor-direct[data-shape="square"] {
+    border-radius: 4px !important;
+}
+
+/* Ensure buttons appear above slide content but are small enough not to interfere */
+.sliderberg-nav-button.sliderberg-editor-direct {
+    border: 1px solid rgba(0, 0, 0, 0.1) !important;
+    cursor: pointer !important;
+    transition: all 0.2s ease !important;
+    backdrop-filter: blur(4px) !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+.sliderberg-nav-button.sliderberg-editor-direct:hover {
+    transform: translateY(calc(-50% + var(--sliderberg-nav-vertical-position, 20px))) scale(1.05) !important;
+}
+
+/* Legacy overlay styles for non-editor or non-overlay modes */
+.sliderberg-navigation[data-placement="overlay"] .sliderberg-nav-button[data-size="small"] {
+    padding: 4px !important;
+    min-width: 32px !important;
+    min-height: 32px !important;
+}
+
+.sliderberg-navigation[data-placement="overlay"] .sliderberg-nav-button[data-size="medium"] {
+    padding: 6px !important;
+    min-width: 36px !important;
+    min-height: 36px !important;
+}
+
+.sliderberg-navigation[data-placement="overlay"] .sliderberg-nav-button[data-size="large"] {
+    padding: 8px !important;
+    min-width: 40px !important;
+    min-height: 40px !important;
+}
