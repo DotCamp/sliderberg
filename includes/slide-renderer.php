@@ -5,6 +5,13 @@
  */
 
 function render_sliderberg_slide_block($attributes, $content, $block) {
+
+    if(!is_admin()) {
+        $now = time();
+        if(isset($attributes['setDateEnd']) && $attributes['setDateEnd'] && isset($attributes['dateEnd']) && $attributes['dateEnd']<$now) return ;
+        if(isset($attributes['setDateBegin']) && $attributes['setDateBegin'] && isset($attributes['dateBegin']) && $attributes['dateBegin']>$now) return ;
+    }
+
     // Set defaults and sanitize
     $background_type = sanitize_text_field($attributes['backgroundType'] ?? '');
     $background_image = $attributes['backgroundImage'] ?? null;
@@ -104,6 +111,8 @@ function render_sliderberg_slide_block($attributes, $content, $block) {
     
     // Render template with security check
     ob_start();
+
+
     $template_file = __DIR__ . '/templates/slide-block.php';
     
     // Prevent TOCTOU race condition by using file handle

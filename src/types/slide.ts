@@ -30,6 +30,11 @@ export interface SlideAttributes {
 	contentPosition: ContentPosition;
 	isFixed: boolean;
 	isContained: boolean;
+	isTemporary: boolean;
+	setDateEnd: boolean;
+	setDateBegin: boolean;
+	dateBegin: number;
+	dateEnd: number;
 }
 
 export interface SlideEditProps {
