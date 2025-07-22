@@ -41,13 +41,13 @@ export const useSliderState = ( clientId: string, attributes: any ) => {
 				innerBlocks.some( ( b: any ) => b.clientId === currentSlideId );
 			if ( ! currentSlideExists ) {
 				setCurrentSlideId( innerBlocks[ 0 ].clientId );
-				
+
 				// If this is the first slide being added (going from 0 to 1 slide),
 				// select it to show slide options in the sidebar
 				if ( innerBlocks.length === 1 && ! currentSlideId ) {
 					selectBlock( innerBlocks[ 0 ].clientId );
 				}
-				
+
 				if (
 					typeof window !== 'undefined' &&
 					window.updateSliderbergSlidesVisibility

@@ -23,24 +23,24 @@ export const SliderSettings: React.FC< SliderSettingsProps > = ( {
 	setAttributes,
 } ) => {
 	// Review notification state
-	const [showReviewNotice, setShowReviewNotice] = useState(false);
+	const [ showReviewNotice, setShowReviewNotice ] = useState( false );
 
 	// Track saves and manage review notification
-	useSaveTracking({
+	useSaveTracking( {
 		blockName: 'sliderberg/sliderberg',
 		onSaveComplete: () => {
 			reviewStateManager.incrementSaveCount();
-			
-			if (reviewStateManager.shouldShowNotice()) {
-				setShowReviewNotice(true);
+
+			if ( reviewStateManager.shouldShowNotice() ) {
+				setShowReviewNotice( true );
 				reviewStateManager.markAsShown();
 			}
-		}
-	});
+		},
+	} );
 
-	const handleReviewDismiss = (permanent: boolean) => {
-		setShowReviewNotice(false);
-		reviewStateManager.dismiss(permanent);
+	const handleReviewDismiss = ( permanent: boolean ) => {
+		setShowReviewNotice( false );
+		reviewStateManager.dismiss( permanent );
 	};
 	// Ensure navigation type and placement are consistent
 	useEffect( () => {

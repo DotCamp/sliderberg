@@ -110,13 +110,16 @@ export const SliderNavigation: React.FC< SliderNavigationProps > = ( {
 								data-shape={ attributes.navigationShape }
 								data-size={ attributes.navigationSize }
 								data-slider-id={ sliderId }
-								style={ {
-									color: attributes.navigationColor,
-									backgroundColor: attributes.navigationBgColor,
-									opacity: attributes.navigationOpacity,
-									'--sliderberg-nav-horizontal-position': `${ attributes.navigationHorizontalPosition }px`,
-									'--sliderberg-nav-vertical-position': `${ attributes.navigationVerticalPosition }px`,
-								} as React.CSSProperties }
+								style={
+									{
+										color: attributes.navigationColor,
+										backgroundColor:
+											attributes.navigationBgColor,
+										opacity: attributes.navigationOpacity,
+										'--sliderberg-nav-horizontal-position': `${ attributes.navigationHorizontalPosition }px`,
+										'--sliderberg-nav-vertical-position': `${ attributes.navigationVerticalPosition }px`,
+									} as React.CSSProperties
+								}
 							/>
 							<Button
 								className="sliderberg-nav-button sliderberg-next sliderberg-editor-direct"
@@ -126,13 +129,16 @@ export const SliderNavigation: React.FC< SliderNavigationProps > = ( {
 								data-shape={ attributes.navigationShape }
 								data-size={ attributes.navigationSize }
 								data-slider-id={ sliderId }
-								style={ {
-									color: attributes.navigationColor,
-									backgroundColor: attributes.navigationBgColor,
-									opacity: attributes.navigationOpacity,
-									'--sliderberg-nav-horizontal-position': `${ attributes.navigationHorizontalPosition }px`,
-									'--sliderberg-nav-vertical-position': `${ attributes.navigationVerticalPosition }px`,
-								} as React.CSSProperties }
+								style={
+									{
+										color: attributes.navigationColor,
+										backgroundColor:
+											attributes.navigationBgColor,
+										opacity: attributes.navigationOpacity,
+										'--sliderberg-nav-horizontal-position': `${ attributes.navigationHorizontalPosition }px`,
+										'--sliderberg-nav-vertical-position': `${ attributes.navigationVerticalPosition }px`,
+									} as React.CSSProperties
+								}
 							/>
 						</>
 					) }
@@ -170,8 +176,10 @@ export const SliderNavigation: React.FC< SliderNavigationProps > = ( {
 								data-size={ attributes.navigationSize }
 								style={ {
 									color: attributes.navigationColor,
-									backgroundColor: attributes.navigationBgColor,
-									...( attributes.navigationType === 'split' && {
+									backgroundColor:
+										attributes.navigationBgColor,
+									...( attributes.navigationType ===
+										'split' && {
 										transform: `translateY(calc(-50% + ${ attributes.navigationVerticalPosition }px))`,
 										left: `${ attributes.navigationHorizontalPosition }px`,
 									} ),
@@ -186,8 +194,10 @@ export const SliderNavigation: React.FC< SliderNavigationProps > = ( {
 								data-size={ attributes.navigationSize }
 								style={ {
 									color: attributes.navigationColor,
-									backgroundColor: attributes.navigationBgColor,
-									...( attributes.navigationType === 'split' && {
+									backgroundColor:
+										attributes.navigationBgColor,
+									...( attributes.navigationType ===
+										'split' && {
 										transform: `translateY(calc(-50% + ${ attributes.navigationVerticalPosition }px))`,
 										right: `${ attributes.navigationHorizontalPosition }px`,
 									} ),

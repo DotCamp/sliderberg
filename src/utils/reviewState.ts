@@ -18,12 +18,12 @@ export class ReviewStateManager {
 
 	private loadState(): ReviewState {
 		try {
-			const stored = localStorage.getItem(STORAGE_KEY);
-			if (stored) {
-				return JSON.parse(stored);
+			const stored = localStorage.getItem( STORAGE_KEY );
+			if ( stored ) {
+				return JSON.parse( stored );
 			}
-		} catch (e) {
-			console.error('Failed to load review state:', e);
+		} catch ( e ) {
+			console.error( 'Failed to load review state:', e );
 		}
 
 		return {
@@ -36,9 +36,9 @@ export class ReviewStateManager {
 
 	private saveState(): void {
 		try {
-			localStorage.setItem(STORAGE_KEY, JSON.stringify(this.state));
-		} catch (e) {
-			console.error('Failed to save review state:', e);
+			localStorage.setItem( STORAGE_KEY, JSON.stringify( this.state ) );
+		} catch ( e ) {
+			console.error( 'Failed to save review state:', e );
 		}
 	}
 
@@ -49,19 +49,21 @@ export class ReviewStateManager {
 
 	shouldShowNotice(): boolean {
 		// Don't show if permanently dismissed
-		if (this.state.hasDismissedPermanently) {
+		if ( this.state.hasDismissedPermanently ) {
 			return false;
 		}
 
 		// Don't show if not enough saves
-		if (this.state.saveCount < SAVES_BEFORE_SHOW) {
+		if ( this.state.saveCount < SAVES_BEFORE_SHOW ) {
 			return false;
 		}
 
 		// Don't show if shown recently
-		if (this.state.lastShownDate) {
-			const daysSinceLastShow = (Date.now() - this.state.lastShownDate) / (1000 * 60 * 60 * 24);
-			if (daysSinceLastShow < DAYS_BETWEEN_SHOWS) {
+		if ( this.state.lastShownDate ) {
+			const daysSinceLastShow =
+				( Date.now() - this.state.lastShownDate ) /
+				( 1000 * 60 * 60 * 24 );
+			if ( daysSinceLastShow < DAYS_BETWEEN_SHOWS ) {
 				return false;
 			}
 		}
@@ -75,8 +77,8 @@ export class ReviewStateManager {
 		this.saveState();
 	}
 
-	dismiss(permanent: boolean = false): void {
-		if (permanent) {
+	dismiss( permanent: boolean = false ): void {
+		if ( permanent ) {
 			this.state.hasDismissedPermanently = true;
 		}
 		this.state.lastShownDate = Date.now();
@@ -93,7 +95,7 @@ export class ReviewStateManager {
 		this.saveState();
 	}
 
-	getState(): Readonly<ReviewState> {
+	getState(): Readonly< ReviewState > {
 		return { ...this.state };
 	}
 }
