@@ -229,6 +229,8 @@
     margin: 0;
 }
 
+
+
 .sliderberg-navigation {
     position: absolute;
     bottom: 20px;
@@ -342,6 +344,39 @@
 .sliderberg-carousel-mode .block-editor-inner-blocks .block-editor-block-list__layout > .block-editor-block-list__block {
     min-width: calc((100% - (var(--sliderberg-slides-to-show, 3) - 1) * var(--sliderberg-slide-spacing, 20px)) / var(--sliderberg-slides-to-show, 3)) !important;
     margin: 0 !important;
+    position: relative !important;
+    transition: all 0.3s ease !important;
+}
+
+/* Active slide indicator in carousel mode */
+.sliderberg-carousel-mode .block-editor-inner-blocks .block-editor-block-list__layout > .block-editor-block-list__block.active::before {
+    content: "✓ Active" !important;
+    position: absolute !important;
+    top: -8px !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    background: #007cba !important;
+    color: white !important;
+    padding: 4px 8px !important;
+    border-radius: 4px !important;
+    font-size: 11px !important;
+    font-weight: 600 !important;
+    z-index: 1000 !important;
+    white-space: nowrap !important;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2) !important;
+}
+
+/* Enhanced active slide styling */
+.sliderberg-carousel-mode .block-editor-inner-blocks .block-editor-block-list__layout > .block-editor-block-list__block.active {
+    box-shadow: 0 0 0 3px #007cba, 0 4px 8px rgba(0, 0, 0, 0.1) !important;
+    border-radius: 8px !important;
+    transform: scale(1.02) !important;
+}
+
+/* Hover effect for non-active slides */
+.sliderberg-carousel-mode .block-editor-inner-blocks .block-editor-block-list__layout > .block-editor-block-list__block:not(.active):hover {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
+    transform: scale(1.01) !important;
 }
 
 /* Ensure slide content maintains its normal layout */
