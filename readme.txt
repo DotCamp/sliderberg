@@ -1,4 +1,4 @@
-=== Slider Block by Sliderberg - Best WordPress Slider & Carousel Plugin for Gutenberg ===
+=== Slider Block by Sliderberg - WordPress Slider & Carousel Plugin for Gutenberg ===
 Contributors: imtiazrayhan, dotcamp
 Tags: slider, carousel, text slider, block, gutenberg
 Requires at least: 5.8
@@ -11,7 +11,7 @@ Slider & Carousel Block For the Block Editor (Gutenberg). Create Beautiful Slide
 
 == Description ==
 
-[View Demo](https://sliderberg.com/demos/)
+[View Demo](https://sliderberg.com/demos/?utm_source=wporg&utm_medium=link)
 
 Sliderberg is a powerful and user-friendly slider and carousel block for WordPress that allows you to create beautiful, responsive slideshows and carousels with ease. Built with modern web technologies, it provides a seamless editing experience in the WordPress block editor.
 

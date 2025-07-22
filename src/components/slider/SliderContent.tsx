@@ -155,19 +155,62 @@ export const SliderContent: React.FC< SliderContentProps > = ( {
 		layout.style.transform = `translateX(${ offset }%)`;
 	}, [ startIndex, slidesToShow, isCarouselMode, clientId ] );
 
+	// Add click-to-select functionality for carousel mode
+	useEffect( () => {
+		if ( ! isCarouselMode || slidesToShow <= 1 ) return;
+
+		const container = document.querySelector(
+			`.sliderberg-slides-container[data-slider-id="${ clientId }"]`
+		);
+		if ( ! container ) return;
+
+		const slideBlocks = container.querySelectorAll(
+			'.block-editor-inner-blocks .block-editor-block-list__layout > .block-editor-block-list__block'
+		);
+
+		const handleSlideClick = ( event: Event ) => {
+			const target = event.target as HTMLElement;
+			const slideBlock = target.closest( '.block-editor-block-list__block' );
+			
+			if ( slideBlock ) {
+				const slideId = slideBlock.getAttribute( 'data-client-id' );
+				if ( slideId && slideId !== currentSlideId ) {
+					onSlideChange( slideId );
+					// Prevent the click from triggering block selection
+					event.stopPropagation();
+				}
+			}
+		};
+
+		slideBlocks.forEach( ( slideBlock ) => {
+			slideBlock.addEventListener( 'click', handleSlideClick );
+		} );
+
+		// Cleanup
+		return () => {
+			slideBlocks.forEach( ( slideBlock ) => {
+				slideBlock.removeEventListener( 'click', handleSlideClick );
+			} );
+		};
+	}, [ isCarouselMode, slidesToShow, clientId, currentSlideId, onSlideChange ] );
+
 	return (
 		<>
 			{ showSlideControls && (
 				<SliderControls
 					onAddSlide={ onAddSlide }
 					onDeleteSlide={ onDeleteSlide }
-					onDuplicateSlide={ () => {
-						if ( currentSlideId ) {
-							onDuplicateSlide( currentSlideId );
+					onDuplicateSlide={ ( slideId?: string ) => {
+						const targetSlideId = slideId || currentSlideId;
+						if ( targetSlideId ) {
+							onDuplicateSlide( targetSlideId );
 						}
 					} }
 					canDelete={ innerBlocks.length > 1 }
 					currentSlideId={ currentSlideId }
+					isCarouselMode={ isCarouselMode }
+					slidesToShow={ slidesToShow }
+					innerBlocks={ innerBlocks }
 				/>
 			) }
 
