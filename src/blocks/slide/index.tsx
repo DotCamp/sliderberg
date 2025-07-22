@@ -252,7 +252,7 @@ registerBlockType( 'sliderberg/slide', {
 			setDateEnd,
 			setDateBegin,
 			dateBegin,
-			dateEnd
+			dateEnd,
 			borderWidth,
 			borderColor,
 			borderStyle,
