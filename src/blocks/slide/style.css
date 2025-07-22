@@ -7,6 +7,12 @@
     display: flex;
     flex-direction: column;
     height: 100%;
+    box-sizing: border-box;
+}
+
+/* Ensure borders and border-radius are visible */
+.sliderberg-slide.has-border {
+    overflow: visible;
 }
 
 .sliderberg-overlay {

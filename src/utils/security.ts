@@ -208,6 +208,20 @@ export function sanitizeAttributeValue( value: string ): string {
 }
 
 /**
+ * Validates border style values
+ * @param style - The border style value to validate
+ * @return A valid border style value or default
+ */
+export function validateBorderStyle(
+	style: string
+): 'solid' | 'dashed' | 'dotted' | 'double' {
+	const validStyles = [ 'solid', 'dashed', 'dotted', 'double' ];
+	return validStyles.includes( style )
+		? ( style as 'solid' | 'dashed' | 'dotted' | 'double' )
+		: 'solid';
+}
+
+/**
  * Validates and sanitizes DOM element IDs
  * @param id - The ID to validate
  * @return A sanitized ID safe for DOM operations
