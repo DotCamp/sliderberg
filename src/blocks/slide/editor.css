@@ -9,6 +9,7 @@
     margin: 1rem 0;
     display: flex;
     flex-direction: column;
+    background-repeat: no-repeat;
 }
 
 /* Remove border and styling for posts slider type */

@@ -24,6 +24,7 @@ import {
 	ToolbarGroup,
 	ToolbarButton,
 	ColorPalette,
+	DateTimePicker,
 	GradientPicker,
 } from '@wordpress/components';
 import './style.css';
@@ -68,6 +69,11 @@ interface SlideAttributes {
 		| 'bottom-center'
 		| 'bottom-right';
 	isFixed: boolean;
+	isContained: boolean;
+	setDateEnd: boolean;
+	setDateBegin: boolean;
+	dateBegin: number;
+	dateEnd: number;
 }
 
 const ALLOWED_BLOCKS = [
@@ -182,6 +188,27 @@ registerBlockType( 'sliderberg/slide', {
 			type: 'boolean',
 			default: false,
 		},
+		isContained: {
+			type: 'boolean',
+			default: false,
+		},
+		setDateEnd: {
+			type: 'boolean',
+			default: false,
+		},
+		setDateBegin: {
+			type: 'boolean',
+			default: false,
+		},
+		dateBegin: {
+			type: 'number',
+			default: '',
+		},
+		dateEnd: {
+			type: 'number',
+			default: '',
+		},
+
 	},
 	edit: function Edit( props: {
 		attributes: SlideAttributes;
@@ -201,6 +228,11 @@ registerBlockType( 'sliderberg/slide', {
 			minHeight,
 			contentPosition,
 			isFixed,
+			isContained,
+			setDateEnd,
+			setDateBegin,
+			dateBegin,
+			dateEnd
 		} = attributes;
 
 		// Get theme color palette
@@ -273,7 +305,7 @@ registerBlockType( 'sliderberg/slide', {
 								50
 						  ) }%`
 						: 'center',
-				backgroundSize: 'cover',
+				backgroundSize: isContained ? 'contain' : 'cover',
 				backgroundAttachment: isFixed ? 'fixed' : 'scroll',
 			},
 			'data-client-id': clientId,
@@ -416,6 +448,7 @@ registerBlockType( 'sliderberg/slide', {
 						} )() }
 						{ backgroundType === 'image' && backgroundImage && (
 							<>
+
 								<div style={ { marginTop: '16px' } }>
 									<ToggleControl
 										label={ __(
@@ -428,6 +461,16 @@ registerBlockType( 'sliderberg/slide', {
 										}
 									/>
 								</div>
+								<ToggleControl
+									label={ __(
+										'Fit background image to slide',
+										'sliderberg'
+									) }
+									checked={ isContained }
+									onChange={ ( value ) =>
+										setAttributes( { isContained: value } )
+									}
+								/>
 								<div className="sliderberg-focal-point-picker">
 									<label>
 										{ __( 'Focal Point', 'sliderberg' ) }
@@ -462,7 +505,66 @@ registerBlockType( 'sliderberg/slide', {
 										) }
 									</div>
 								</div>
+
 							</>
+						) }
+					</PanelBody>
+					<PanelBody
+						title={ __( 'Visibility settings', 'sliderberg' ) }
+						initialOpen={ false }
+					>
+						<label>
+							<strong>
+								{ __( 'Begin', 'sliderberg' ) }
+							</strong>
+						</label>
+						<ToggleControl
+							label={ __(
+								'Start showing at',
+								'sliderberg'
+							) }
+							checked={ setDateBegin }
+							onChange={ ( value ) =>
+								setAttributes( { setDateBegin: value } )
+							}
+						/>
+						{ setDateBegin === true && (
+							<DateTimePicker
+								currentDate={ new Date().setTime(dateBegin*1000) }
+								onChange={ ( newDate ) =>
+									setAttributes( {
+										dateBegin : Math.round(new Date(newDate).getTime()/1000)
+									}
+								) }
+								is12Hour={ false }
+							/>
+						) }
+						<label>
+							<strong>
+							{ __( 'End', 'sliderberg' ) }
+							</strong>
+						</label>
+
+						<ToggleControl
+							label={ __(
+								'Stop showing after',
+								'sliderberg'
+							) }
+							checked={ setDateEnd }
+							onChange={ ( value ) =>
+								setAttributes( { setDateEnd: value } )
+							}
+						/>
+						{ setDateEnd === true && (
+							<DateTimePicker
+								currentDate={ new Date().setTime(dateEnd*1000)}
+								onChange={ ( newDate ) =>
+									setAttributes( {
+										dateEnd : Math.round(new Date(newDate).getTime()/1000)
+									}
+								) }
+								is12Hour={ false }
+							/>
 						) }
 					</PanelBody>
 					<PanelBody
@@ -547,6 +649,21 @@ registerBlockType( 'sliderberg/slide', {
 					</div>
 				) : (
 					<div { ...blockProps }>
+						<small>
+						{ setDateBegin === true && (
+								sprintf(__(
+												'Start showing at %s. ',
+												'sliderberg'
+											), new Date(dateBegin*1000).toLocaleString())
+
+							) }
+						{ setDateEnd === true && (
+								sprintf(__(
+												'Stop showing after %s. ',
+												'sliderberg'
+											), new Date(dateEnd*1000).toLocaleString())
+						) }
+						</small>
 						<div
 							className="sliderberg-overlay"
 							style={ {
