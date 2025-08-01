@@ -5,6 +5,13 @@
  */
 
 function render_sliderberg_slide_block($attributes, $content, $block) {
+
+    if(!is_admin()) {
+        $now = time();
+        if(isset($attributes['setDateEnd']) && $attributes['setDateEnd'] && isset($attributes['dateEnd']) && $attributes['dateEnd']<$now) return ;
+        if(isset($attributes['setDateBegin']) && $attributes['setDateBegin'] && isset($attributes['dateBegin']) && $attributes['dateBegin']>$now) return ;
+    }
+
     // Set defaults and sanitize
     $background_type = sanitize_text_field($attributes['backgroundType'] ?? 'color');
     $background_image = $attributes['backgroundImage'] ?? null;
@@ -68,6 +75,7 @@ function render_sliderberg_slide_block($attributes, $content, $block) {
     $min_height = max(100, min(1000, intval($attributes['minHeight'] ?? 400)));
     $content_position = sanitize_text_field($attributes['contentPosition'] ?? 'center-center');
     $is_fixed = (bool)($attributes['isFixed'] ?? false);
+    $is_contained = (bool)($attributes['isContained'] ?? false);
     
     // Border and radius attributes
     $border_width = max(0, min(50, intval($attributes['borderWidth'] ?? 0)));
@@ -142,7 +150,8 @@ function render_sliderberg_slide_block($attributes, $content, $block) {
             $focal_x = max(0, min(1, floatval($focal_point['x'] ?? 0.5))) * 100;
             $focal_y = max(0, min(1, floatval($focal_point['y'] ?? 0.5))) * 100;
             $styles[] = 'background-position: ' . esc_attr($focal_x) . '% ' . esc_attr($focal_y) . '%';
-            $styles[] = 'background-size: cover';
+            $styles[] = 'background-size: ' . ($is_contained ? 'contain' : 'cover');
+            $styles[] = 'background-repeat: no-repeat';
             $styles[] = 'background-attachment: ' . ($is_fixed ? 'fixed' : 'scroll');
         }
     }
@@ -166,6 +175,8 @@ function render_sliderberg_slide_block($attributes, $content, $block) {
     
     // Render template with security check
     ob_start();
+
+
     $template_file = __DIR__ . '/templates/slide-block.php';
     
     // Prevent TOCTOU race condition by using file handle
