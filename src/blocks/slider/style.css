@@ -395,4 +395,64 @@
 .wp-block-sliderberg-sliderberg .sliderberg-slides-container .sliderberg-slides-container[style*="transition"] {
     /* JS will set the transition inline, don't override it */
     transition: var(--slider-transition, transform 0.5s ease) !important;
+}
+
+/* Frontend-specific: Direct button positioning (no overlay container) */
+/* Higher specificity without !important for cleaner CSS cascade */
+.wp-block-sliderberg-sliderberg .sliderberg-nav-button.sliderberg-frontend-direct {
+    position: absolute;
+    z-index: 10;
+    top: 50%;
+    pointer-events: auto;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Position buttons using CSS custom properties for user settings */
+.wp-block-sliderberg-sliderberg .sliderberg-nav-button.sliderberg-frontend-direct.sliderberg-prev {
+    left: var(--sliderberg-nav-horizontal-position, 20px);
+    transform: translateY(calc(-50% + var(--sliderberg-nav-vertical-position, 20px)));
+}
+
+.wp-block-sliderberg-sliderberg .sliderberg-nav-button.sliderberg-frontend-direct.sliderberg-next {
+    right: var(--sliderberg-nav-horizontal-position, 20px);
+    transform: translateY(calc(-50% + var(--sliderberg-nav-vertical-position, 20px)));
+}
+
+/* Button sizes for frontend direct mode */
+.wp-block-sliderberg-sliderberg .sliderberg-nav-button.sliderberg-frontend-direct[data-size="small"] {
+    padding: 6px;
+    min-width: 32px;
+    min-height: 32px;
+}
+
+.wp-block-sliderberg-sliderberg .sliderberg-nav-button.sliderberg-frontend-direct[data-size="medium"] {
+    padding: 8px;
+    min-width: 40px;
+    min-height: 40px;
+}
+
+.wp-block-sliderberg-sliderberg .sliderberg-nav-button.sliderberg-frontend-direct[data-size="large"] {
+    padding: 12px;
+    min-width: 48px;
+    min-height: 48px;
+}
+
+/* Button shapes for frontend direct mode */
+.wp-block-sliderberg-sliderberg .sliderberg-nav-button.sliderberg-frontend-direct[data-shape="circle"] {
+    border-radius: 50%;
+}
+
+.wp-block-sliderberg-sliderberg .sliderberg-nav-button.sliderberg-frontend-direct[data-shape="square"] {
+    border-radius: 4px;
+}
+
+/* Hover effects for direct positioning */
+.wp-block-sliderberg-sliderberg .sliderberg-nav-button.sliderberg-frontend-direct:hover {
+    transform: translateY(calc(-50% + var(--sliderberg-nav-vertical-position, 20px))) scale(1.05);
 } 

@@ -170,8 +170,10 @@ export const SliderContent: React.FC< SliderContentProps > = ( {
 
 		const handleSlideClick = ( event: Event ) => {
 			const target = event.target as HTMLElement;
-			const slideBlock = target.closest( '.block-editor-block-list__block' );
-			
+			const slideBlock = target.closest(
+				'.block-editor-block-list__block'
+			);
+
 			if ( slideBlock ) {
 				const slideId = slideBlock.getAttribute( 'data-client-id' );
 				if ( slideId && slideId !== currentSlideId ) {
@@ -192,7 +194,13 @@ export const SliderContent: React.FC< SliderContentProps > = ( {
 				slideBlock.removeEventListener( 'click', handleSlideClick );
 			} );
 		};
-	}, [ isCarouselMode, slidesToShow, clientId, currentSlideId, onSlideChange ] );
+	}, [
+		isCarouselMode,
+		slidesToShow,
+		clientId,
+		currentSlideId,
+		onSlideChange,
+	] );
 
 	return (
 		<>

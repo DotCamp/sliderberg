@@ -45,7 +45,10 @@ function updateSliderbergSlidesVisibility(): void {
 					slides.forEach( ( slide ) => {
 						const slideId = slide.getAttribute( 'data-client-id' );
 						slide.style.display = '';
-						slide.classList.toggle( 'active', slideId === currentId );
+						slide.classList.toggle(
+							'active',
+							slideId === currentId
+						);
 					} );
 				} else {
 					// In regular mode, only show the current slide
@@ -59,7 +62,7 @@ function updateSliderbergSlidesVisibility(): void {
 			} );
 
 		// Pro functionality removed - can be extended via hooks/filters in pro version
-		
+
 		// Clear the RAF ID after execution
 		rafId = null;
 	} );

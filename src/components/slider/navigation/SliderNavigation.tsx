@@ -4,11 +4,18 @@ import { Button } from '@wordpress/components';
 import { chevronLeft, chevronRight } from '@wordpress/icons';
 import { useSelect } from '@wordpress/data';
 import { SlideIndicators } from './SlideIndicators';
+import { SliderAttributes } from '../../../types/slider';
+
+interface InnerBlock {
+	clientId: string;
+	name: string;
+	attributes: Record< string, any >;
+}
 
 interface SliderNavigationProps {
-	attributes: any;
+	attributes: SliderAttributes;
 	currentSlideId: string | null;
-	innerBlocks: any[];
+	innerBlocks: InnerBlock[];
 	onSlideChange: ( slideId: string ) => void;
 	position: 'top' | 'bottom' | 'split';
 	sliderId: string;
@@ -22,23 +29,25 @@ export const SliderNavigation: React.FC< SliderNavigationProps > = ( {
 	position,
 	sliderId,
 } ) => {
-	// Detect if we're in the block editor context
-	// Since this component only renders in the editor, we can use a simpler detection
-	const isEditor = React.useMemo( () => {
-		// Check if we're in the WordPress admin environment
-		if ( typeof window !== 'undefined' ) {
+	// Detect if we're in the block editor context using WordPress APIs
+	const isEditor = useSelect( ( select ) => {
+		// Use WordPress's block editor store to detect editor context
+		const blockEditorSelect = select( 'core/block-editor' );
+		if ( ! blockEditorSelect ) {
+			// Fallback: check if we're in WordPress admin
 			return (
-				window.location.pathname.includes( '/wp-admin/' ) ||
-				document.body.classList.contains( 'block-editor-page' ) ||
-				document.querySelector( '.block-editor' ) !== null
+				typeof window !== 'undefined' &&
+				window.location.pathname.includes( '/wp-admin/' )
 			);
 		}
-		return true; // Default to editor mode for SSR
+
+		// If block editor store exists, we're in the editor
+		return true;
 	}, [] );
 	const handlePrevSlide = () => {
 		if ( ! currentSlideId || innerBlocks.length === 0 ) return;
 		const idx = innerBlocks.findIndex(
-			( b: any ) => b.clientId === currentSlideId
+			( block: InnerBlock ) => block.clientId === currentSlideId
 		);
 
 		// For carousel mode, use slidesToScroll
@@ -67,7 +76,7 @@ export const SliderNavigation: React.FC< SliderNavigationProps > = ( {
 	const handleNextSlide = () => {
 		if ( ! currentSlideId || innerBlocks.length === 0 ) return;
 		const idx = innerBlocks.findIndex(
-			( b: any ) => b.clientId === currentSlideId
+			( block: InnerBlock ) => block.clientId === currentSlideId
 		);
 
 		// For carousel mode, use slidesToScroll
@@ -96,14 +105,19 @@ export const SliderNavigation: React.FC< SliderNavigationProps > = ( {
 	};
 
 	if ( position === 'split' ) {
-		// Editor mode: render buttons directly without overlay container
-		if ( isEditor && attributes.navigationPlacement === 'overlay' ) {
+		// Direct positioning mode: render buttons directly without overlay container
+		// This applies to both editor and frontend when overlay placement is used
+		if ( attributes.navigationPlacement === 'overlay' ) {
+			const directClass = isEditor
+				? 'sliderberg-editor-direct'
+				: 'sliderberg-frontend-direct';
+
 			return (
 				<>
 					{ ! attributes.hideNavigation && (
 						<>
 							<Button
-								className="sliderberg-nav-button sliderberg-prev sliderberg-editor-direct"
+								className={ `sliderberg-nav-button sliderberg-prev ${ directClass }` }
 								onClick={ handlePrevSlide }
 								icon={ chevronLeft }
 								label={ __( 'Previous Slide', 'sliderberg' ) }
@@ -122,7 +136,7 @@ export const SliderNavigation: React.FC< SliderNavigationProps > = ( {
 								}
 							/>
 							<Button
-								className="sliderberg-nav-button sliderberg-next sliderberg-editor-direct"
+								className={ `sliderberg-nav-button sliderberg-next ${ directClass }` }
 								onClick={ handleNextSlide }
 								icon={ chevronRight }
 								label={ __( 'Next Slide', 'sliderberg' ) }

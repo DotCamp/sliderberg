@@ -159,6 +159,7 @@ function render_sliderberg_slider_block($attributes, $content, $block) {
         'nav_button_styles' => $nav_button_styles,
         'split_nav_styles' => $split_nav_styles,
         'navigation_horizontal_pos' => $navigation_horizontal_pos,
+        'navigation_vertical_pos' => $navigation_vertical_pos,
         'hide_dots' => $hide_dots,
         'hide_navigation' => $hide_navigation,
         'content' => $slides_content // Modified content from filter
@@ -193,9 +194,15 @@ function build_css_vars_string($vars) {
 /**
  * Render navigation button
  */
-function render_nav_button($type, $styles, $shape, $size, $additional_styles = []) {
-    $all_styles = array_merge($styles, $additional_styles);
-    $style_string = build_inline_styles($all_styles);
+function render_nav_button($type, $styles, $shape, $size, $additional_class = '') {
+    $style_string = build_inline_styles($styles);
+    
+    // Build CSS classes
+    $classes = ['sliderberg-nav-button', "sliderberg-{$type}"];
+    if (!empty($additional_class)) {
+        $classes[] = $additional_class;
+    }
+    $class_string = implode(' ', $classes);
     
     // Hardcoded secure SVG icons
     $icons = [
@@ -207,8 +214,8 @@ function render_nav_button($type, $styles, $shape, $size, $additional_styles = [
     $label = $type === 'prev' ? __('Previous Slide', 'sliderberg') : __('Next Slide', 'sliderberg');
     
     return sprintf(
-        '<button class="sliderberg-nav-button sliderberg-%s" aria-label="%s" data-shape="%s" data-size="%s" style="%s">%s</button>',
-        esc_attr($type),
+        '<button class="%s" aria-label="%s" data-shape="%s" data-size="%s" style="%s">%s</button>',
+        esc_attr($class_string),
         esc_attr($label),
         esc_attr($shape),
         esc_attr($size),
@@ -228,14 +235,55 @@ function build_inline_styles($styles) {
     );
     
     foreach ($styles as $property => $value) {
+        // Allow CSS custom properties (CSS variables)
+        $is_custom_property = strpos($property, '--') === 0;
+        
         // Validate property name
-        if (!in_array($property, $safe_properties)) {
+        if (!$is_custom_property && !in_array($property, $safe_properties)) {
             continue;
         }
         
         if ($value) {
+            // Handle CSS custom properties (strict whitelist validation)
+            if ($is_custom_property) {
+                // Only allow specific SliderBerg custom properties
+                $allowed_custom_props = array(
+                    '--sliderberg-nav-horizontal-position',
+                    '--sliderberg-nav-vertical-position'
+                );
+                
+                if (!in_array($property, $allowed_custom_props)) {
+                    continue;
+                }
+                
+                // Validate value format for position properties
+                if (strpos($property, 'position') !== false) {
+                    // Must be in format: digits + 'px'
+                    if (!preg_match('/^\d+px$/', $value)) {
+                        continue;
+                    }
+                    
+                    // Extract numeric value for bounds checking
+                    $numeric_value = intval($value);
+                    
+                    // Bounds checking based on property type
+                    if (strpos($property, 'horizontal') !== false) {
+                        // Horizontal: 0-200px range
+                        if ($numeric_value < 0 || $numeric_value > 200) {
+                            continue;
+                        }
+                    } elseif (strpos($property, 'vertical') !== false) {
+                        // Vertical: -200 to +200px range (allows negative for centering adjustments)
+                        if ($numeric_value < -200 || $numeric_value > 200) {
+                            continue;
+                        }
+                    }
+                }
+                
+                $value = esc_attr($value);
+            } 
             // Escape the value based on property type
-            if ($property === 'color' || $property === 'background-color') {
+            elseif ($property === 'color' || $property === 'background-color') {
                 $value = sliderberg_sanitize_css_color($value);
             } elseif (in_array($property, array('left', 'right', 'top', 'bottom', 'width', 'height'))) {
                 // Ensure numeric values with px
@@ -286,6 +334,7 @@ function sliderberg_render_slider_template($vars) {
     $nav_button_styles = isset($vars['nav_button_styles']) ? $vars['nav_button_styles'] : array();
     $split_nav_styles = isset($vars['split_nav_styles']) ? $vars['split_nav_styles'] : array();
     $navigation_horizontal_pos = isset($vars['navigation_horizontal_pos']) ? intval($vars['navigation_horizontal_pos']) : 20;
+    $navigation_vertical_pos = isset($vars['navigation_vertical_pos']) ? intval($vars['navigation_vertical_pos']) : 20;
     $hide_dots = isset($vars['hide_dots']) ? (bool)$vars['hide_dots'] : false;
     $hide_navigation = isset($vars['hide_navigation']) ? (bool)$vars['hide_navigation'] : false;
     $content = isset($vars['content']) ? $vars['content'] : '';

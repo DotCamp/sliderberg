@@ -47,27 +47,53 @@ if (!defined('ABSPATH')) {
             </div>
             
             <?php if ($navigation_type === 'split'): ?>
-                <div class="sliderberg-navigation" 
-                     data-type="<?php echo esc_attr($navigation_type); ?>"
-                     data-placement="<?php echo esc_attr($navigation_placement); ?>"
-                     style="opacity: <?php echo esc_attr($navigation_opacity); ?>;">
-                    <div class="sliderberg-nav-controls">
-                        <?php if (!$hide_navigation): ?>
-                            <?php 
-                            $prev_styles = array_merge($nav_button_styles, $split_nav_styles, [
-                                'left' => intval($navigation_horizontal_pos) . 'px'
-                            ]);
-                            echo render_nav_button('prev', $prev_styles, $navigation_shape, $navigation_size);
-                            
-                            $next_styles = array_merge($nav_button_styles, $split_nav_styles, [
-                                'right' => intval($navigation_horizontal_pos) . 'px'
-                            ]);
-                            echo render_nav_button('next', $next_styles, $navigation_shape, $navigation_size);
-                            ?>
-                        <?php endif; ?>
+                <?php if ($navigation_placement === 'overlay'): ?>
+                    <!-- Direct positioning mode: render buttons without overlay container to avoid blocking slide content -->
+                    <?php if (!$hide_navigation): ?>
+                        <?php 
+                        // Defensive bounds checking for position values (security layer)
+                        $safe_horizontal_pos = isset($navigation_horizontal_pos) ? max(0, min(200, intval($navigation_horizontal_pos))) : 20;
+                        $safe_vertical_pos = isset($navigation_vertical_pos) ? max(-200, min(200, intval($navigation_vertical_pos))) : 20;
+                        
+                        // Use direct positioning with CSS custom properties (like React editor fix)
+                        $prev_direct_styles = array_merge($nav_button_styles, [
+                            '--sliderberg-nav-horizontal-position' => $safe_horizontal_pos . 'px',
+                            '--sliderberg-nav-vertical-position' => $safe_vertical_pos . 'px'
+                        ]);
+                        echo render_nav_button('prev', $prev_direct_styles, $navigation_shape, $navigation_size, 'sliderberg-frontend-direct');
+                        
+                        $next_direct_styles = array_merge($nav_button_styles, [
+                            '--sliderberg-nav-horizontal-position' => $safe_horizontal_pos . 'px',
+                            '--sliderberg-nav-vertical-position' => $safe_vertical_pos . 'px'
+                        ]);
+                        echo render_nav_button('next', $next_direct_styles, $navigation_shape, $navigation_size, 'sliderberg-frontend-direct');
+                        ?>
+                    <?php endif; ?>
+                    <?php echo render_slide_indicators($hide_dots); ?>
+                <?php else: ?>
+                    <!-- Standard overlay container mode (for non-overlay placement) -->
+                    <div class="sliderberg-navigation" 
+                         data-type="<?php echo esc_attr($navigation_type); ?>"
+                         data-placement="<?php echo esc_attr($navigation_placement); ?>"
+                         style="opacity: <?php echo esc_attr($navigation_opacity); ?>;">
+                        <div class="sliderberg-nav-controls">
+                            <?php if (!$hide_navigation): ?>
+                                <?php 
+                                $prev_styles = array_merge($nav_button_styles, $split_nav_styles, [
+                                    'left' => intval($navigation_horizontal_pos) . 'px'
+                                ]);
+                                echo render_nav_button('prev', $prev_styles, $navigation_shape, $navigation_size);
+                                
+                                $next_styles = array_merge($nav_button_styles, $split_nav_styles, [
+                                    'right' => intval($navigation_horizontal_pos) . 'px'
+                                ]);
+                                echo render_nav_button('next', $next_styles, $navigation_shape, $navigation_size);
+                                ?>
+                            <?php endif; ?>
+                        </div>
                     </div>
-                </div>
-                <?php echo render_slide_indicators($hide_dots); ?>
+                    <?php echo render_slide_indicators($hide_dots); ?>
+                <?php endif; ?>
             <?php endif; ?>
         </div>
     </div>

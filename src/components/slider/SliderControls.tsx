@@ -35,7 +35,7 @@ export const SliderControls: React.FC< SliderControlsProps > = ( {
 		if ( ! isCarouselMode || slidesToShow <= 1 ) {
 			return __( 'Duplicate Slide', 'sliderberg' );
 		}
-		
+
 		// In carousel mode, show which slide will be duplicated
 		return __( `Duplicate Slide ${ slideNumber }`, 'sliderberg' );
 	};
@@ -65,7 +65,10 @@ export const SliderControls: React.FC< SliderControlsProps > = ( {
 					disabled={ ! currentSlideId }
 					title={
 						isCarouselMode && slidesToShow > 1
-							? __( `Will duplicate slide ${ slideNumber } of ${ innerBlocks.length }`, 'sliderberg' )
+							? __(
+									`Will duplicate slide ${ slideNumber } of ${ innerBlocks.length }`,
+									'sliderberg'
+							  )
 							: __( 'Duplicate the current slide', 'sliderberg' )
 					}
 				>
