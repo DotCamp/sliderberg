@@ -3,7 +3,7 @@ Contributors: imtiazrayhan, dotcamp
 Tags: slider, carousel, text slider, block, gutenberg
 Requires at least: 5.8
 Tested up to: 6.8
-Stable tag: 1.0.3
+Stable tag: 1.0.5
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -135,6 +135,15 @@ Yes, carousel mode fully supports infinite loop scrolling, allowing your content
 8. Testimonials Slider
 
 == Changelog ==
+
+= 1.0.5 =
+
+* NEW: Vertical positioning support for navigation buttons
+* NEW: Enhanced direct button positioning for overlay placement
+* IMPROVED: Editor performance with requestAnimationFrame optimization
+* IMPROVED: Duplicate slide functionality in carousel mode
+* IMPROVED: Border and radius options for slides
+* IMPROVED: Code formatting and consistency throughout codebase
 
 = 1.0.4 =
 
