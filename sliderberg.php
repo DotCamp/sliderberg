@@ -36,8 +36,8 @@ if ( ! function_exists( 'sli_fs' ) ) {
                 'type'                => 'plugin',
                 'public_key'          => 'pk_f6a90542b187793a33ebb75752ce7', // This is a public key, safe to expose
                 'is_premium'          => false,
-                'has_addons'          => true,
-                'has_paid_plans'      => true,
+                'has_addons'          => false,
+                'has_paid_plans'      => false,
                 'menu'                => array(
                     'slug'           => 'sliderberg-welcome',
                     'contact'        => false,

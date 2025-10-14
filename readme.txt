@@ -143,7 +143,6 @@ Yes, carousel mode fully supports infinite loop scrolling, allowing your content
 * IMPROVED: Editor performance with requestAnimationFrame optimization
 * IMPROVED: Duplicate slide functionality in carousel mode
 * IMPROVED: Border and radius options for slides
-* IMPROVED: Code formatting and consistency throughout codebase
 
 = 1.0.4 =
 
