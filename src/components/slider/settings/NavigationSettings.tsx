@@ -3,7 +3,6 @@ import { __ } from '@wordpress/i18n';
 import {
 	SelectControl,
 	RangeControl,
-	ColorPicker,
 	ToggleControl,
 	ColorPalette,
 } from '@wordpress/components';
@@ -82,7 +81,9 @@ export const NavigationSettings: React.FC< NavigationSettingsProps > = ( {
 			/>
 			<div className="sliderberg-color-controls">
 				<div className="sliderberg-color-control">
-					<label>{ __( 'Arrow Color', 'sliderberg' ) }</label>
+					<span className="components-base-control__label">
+						{ __( 'Arrow Color', 'sliderberg' ) }
+					</span>
 					<ColorPalette
 						value={ attributes.navigationColor }
 						onChange={ ( color ) =>
@@ -94,7 +95,9 @@ export const NavigationSettings: React.FC< NavigationSettingsProps > = ( {
 					/>
 				</div>
 				<div className="sliderberg-color-control">
-					<label>{ __( 'Background Color', 'sliderberg' ) }</label>
+					<span className="components-base-control__label">
+						{ __( 'Background Color', 'sliderberg' ) }
+					</span>
 					<ColorPalette
 						value={ attributes.navigationBgColor }
 						onChange={ ( color ) =>

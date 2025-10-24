@@ -64,11 +64,19 @@ export function validateGradient( gradient: string ): string {
 	// Check for balanced parentheses
 	let parenthesesCount = 0;
 	for ( const char of cleaned ) {
-		if ( char === '(' ) parenthesesCount++;
-		if ( char === ')' ) parenthesesCount--;
-		if ( parenthesesCount < 0 ) return ''; // Closing parenthesis before opening
+		if ( char === '(' ) {
+			parenthesesCount++;
+		}
+		if ( char === ')' ) {
+			parenthesesCount--;
+		}
+		if ( parenthesesCount < 0 ) {
+			return '';
+		} // Closing parenthesis before opening
 	}
-	if ( parenthesesCount !== 0 ) return ''; // Unbalanced parentheses
+	if ( parenthesesCount !== 0 ) {
+		return '';
+	} // Unbalanced parentheses
 
 	// Additional safety check for common CSS gradient patterns
 	// This ensures the gradient contains valid CSS color values
@@ -90,13 +98,16 @@ export function validateGradient( gradient: string ): string {
  * @return Boolean indicating if the URL is valid
  */
 export function isValidMediaUrl( media: { url: string } | null ): boolean {
-	if ( ! media || ! media.url ) return false;
+	if ( ! media || ! media.url ) {
+		return false;
+	}
 
 	try {
 		// Basic URL validation
 		new URL( media.url );
 		return true;
 	} catch ( e ) {
+		// eslint-disable-next-line no-console
 		console.error( 'Invalid media URL:', e );
 		return false;
 	}
@@ -252,7 +263,9 @@ export function validateDOMNumeric(
 	max: number,
 	defaultValue: number
 ): number {
-	if ( ! value ) return defaultValue;
+	if ( ! value ) {
+		return defaultValue;
+	}
 
 	// Remove any non-numeric characters except decimal point and minus
 	const cleaned = value.replace( /[^0-9.\-]/g, '' );

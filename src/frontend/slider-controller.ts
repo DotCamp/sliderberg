@@ -353,7 +353,9 @@ export class SliderBergController {
 		index: number,
 		direction: 'next' | 'prev' | null
 	): void {
-		if ( this.state.isAnimating || this.state.destroyed ) return;
+		if ( this.state.isAnimating || this.state.destroyed ) {
+			return;
+		}
 
 		this.state.isAnimating = true;
 		const previousStartIndex = this.state.startIndex;
@@ -379,7 +381,9 @@ export class SliderBergController {
 	 * Go to next slide
 	 */
 	private nextSlide(): void {
-		if ( this.state.isAnimating || this.state.destroyed ) return;
+		if ( this.state.isAnimating || this.state.destroyed ) {
+			return;
+		}
 		const { isCarouselMode, infiniteLoop, transitionEffect } = this.config;
 
 		// Get responsive settings
@@ -388,7 +392,9 @@ export class SliderBergController {
 		const totalSlides = this.elements.slides.length;
 
 		// Don't navigate if there's only one slide
-		if ( totalSlides <= 1 ) return;
+		if ( totalSlides <= 1 ) {
+			return;
+		}
 
 		if (
 			! isCarouselMode &&
@@ -417,16 +423,20 @@ export class SliderBergController {
 	 * Go to previous slide
 	 */
 	private prevSlide(): void {
-		if ( this.state.isAnimating || this.state.destroyed ) return;
+		if ( this.state.isAnimating || this.state.destroyed ) {
+			return;
+		}
 		const { isCarouselMode, infiniteLoop, transitionEffect } = this.config;
-
-		// Get responsive settings
-		const { slidesToShow, slidesToScroll } = this.getResponsiveSettings();
 
 		const totalSlides = this.elements.slides.length;
 
 		// Don't navigate if there's only one slide
-		if ( totalSlides <= 1 ) return;
+		if ( totalSlides <= 1 ) {
+			return;
+		}
+
+		// Get responsive settings
+		const { slidesToScroll } = this.getResponsiveSettings();
 
 		if (
 			! isCarouselMode &&
@@ -456,8 +466,10 @@ export class SliderBergController {
 	 */
 	private createIndicators(): void {
 		const { indicators } = this.elements;
-		const { isCarouselMode, infiniteLoop } = this.config;
-		if ( ! indicators ) return;
+		const { infiniteLoop } = this.config;
+		if ( ! indicators ) {
+			return;
+		}
 
 		// Get responsive settings
 		const { slidesToShow } = this.getResponsiveSettings();
@@ -486,8 +498,10 @@ export class SliderBergController {
 	 */
 	private updateIndicators(): void {
 		const { indicators } = this.elements;
-		const { isCarouselMode, infiniteLoop, transitionEffect } = this.config;
-		if ( ! indicators ) return;
+		const { isCarouselMode } = this.config;
+		if ( ! indicators ) {
+			return;
+		}
 		const totalSlides = this.elements.slides.length;
 		const dotCount = totalSlides;
 		indicators.innerHTML = '';
@@ -537,8 +551,12 @@ export class SliderBergController {
 		const { transitionEffect } = this.config;
 		const slideCount = this.elements.slides.length;
 		if ( transitionEffect === 'slide' && slideCount > 1 ) {
-			if ( this.state.currentSlide === 0 ) return slideCount - 1;
-			if ( this.state.currentSlide === slideCount + 1 ) return 0;
+			if ( this.state.currentSlide === 0 ) {
+				return slideCount - 1;
+			}
+			if ( this.state.currentSlide === slideCount + 1 ) {
+				return 0;
+			}
 			return this.state.currentSlide - 1;
 		}
 		return this.state.currentSlide;
@@ -550,7 +568,9 @@ export class SliderBergController {
 	 */
 	private handleIntersection( entries: IntersectionObserverEntry[] ): void {
 		entries.forEach( ( entry ) => {
-			if ( this.state.destroyed ) return;
+			if ( this.state.destroyed ) {
+				return;
+			}
 			if ( entry.isIntersecting ) {
 				if ( this.config.autoplay ) {
 					this.eventHandler.startAutoplay();
@@ -585,7 +605,9 @@ export class SliderBergController {
 	 * Destroy slider instance
 	 */
 	public destroy(): void {
-		if ( this.state.destroyed ) return;
+		if ( this.state.destroyed ) {
+			return;
+		}
 
 		// Mark as destroyed immediately to prevent any further operations
 		this.state.destroyed = true;
@@ -604,10 +626,12 @@ export class SliderBergController {
 		// Null out all references to break circular dependencies
 		this.cleanupReferences();
 
-		// eslint-disable-next-line no-console
-		console.log(
-			`SliderBerg instance ${ this.id } destroyed and cleaned.`
-		);
+		if ( process.env.NODE_ENV === 'development' ) {
+			// eslint-disable-next-line no-console
+			console.log(
+				`SliderBerg instance ${ this.id } destroyed and cleaned.`
+			);
+		}
 	}
 
 	/**
@@ -699,7 +723,9 @@ export class SliderBergController {
 	 * Handle resize events
 	 */
 	private handleResize(): void {
-		if ( this.state.destroyed ) return;
+		if ( this.state.destroyed ) {
+			return;
+		}
 
 		// Recalculate layout with new responsive settings
 		if ( this.config.isCarouselMode ) {

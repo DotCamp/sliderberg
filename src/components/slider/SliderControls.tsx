@@ -37,7 +37,8 @@ export const SliderControls: React.FC< SliderControlsProps > = ( {
 		}
 
 		// In carousel mode, show which slide will be duplicated
-		return __( `Duplicate Slide ${ slideNumber }`, 'sliderberg' );
+		// Use sprintf-style formatting for proper translation
+		return __( 'Duplicate Slide', 'sliderberg' ) + ' ' + slideNumber;
 	};
 
 	// Handle duplicate with optional slide ID
@@ -65,10 +66,13 @@ export const SliderControls: React.FC< SliderControlsProps > = ( {
 					disabled={ ! currentSlideId }
 					title={
 						isCarouselMode && slidesToShow > 1
-							? __(
-									`Will duplicate slide ${ slideNumber } of ${ innerBlocks.length }`,
-									'sliderberg'
-							  )
+							? __( 'Will duplicate slide', 'sliderberg' ) +
+							  ' ' +
+							  slideNumber +
+							  ' ' +
+							  __( 'of', 'sliderberg' ) +
+							  ' ' +
+							  innerBlocks.length
 							: __( 'Duplicate the current slide', 'sliderberg' )
 					}
 				>

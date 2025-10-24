@@ -1,8 +1,6 @@
 // src/components/slider/SliderContent.tsx
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect } from 'react';
 import { InnerBlocks } from '@wordpress/block-editor';
-import { __ } from '@wordpress/i18n';
-import { Button } from '@wordpress/components';
 import { SliderNavigation } from './navigation/SliderNavigation';
 import { SliderControls } from './SliderControls';
 import classnames from 'classnames';
@@ -40,13 +38,8 @@ export const SliderContent: React.FC< SliderContentProps > = ( {
 	onSlideChange,
 	clientId,
 } ) => {
-	const {
-		isCarouselMode,
-		slidesToShow,
-		slidesToScroll,
-		slideSpacing,
-		infiniteLoop,
-	} = attributes;
+	const { isCarouselMode, slidesToShow, slidesToScroll, slideSpacing } =
+		attributes;
 
 	// Pro state removed - can be extended via hooks/filters in pro version
 
@@ -60,7 +53,6 @@ export const SliderContent: React.FC< SliderContentProps > = ( {
 
 	// Determine what navigation to show
 	const showRegularNavigation = hasRegularSlides;
-	const showProNavigation = false; // Pro navigation removed
 
 	// Show slide controls for regular blocks
 	const showSlideControls = hasRegularSlides || attributes.type === 'blocks';
@@ -74,37 +66,11 @@ export const SliderContent: React.FC< SliderContentProps > = ( {
 		template = [ [ 'sliderberg/slide', {} ] ];
 	}
 
-	// Calculate visible slides for carousel mode
-	const getVisibleSlides = () => {
-		if ( ! isCarouselMode ) return [ currentSlideId ];
-
-		const currentIndex = innerBlocks.findIndex(
-			( block ) => block.clientId === currentSlideId
-		);
-
-		if ( currentIndex === -1 ) return [];
-
-		const visibleSlides = [];
-		const totalSlides = innerBlocks.length;
-
-		for ( let i = 0; i < slidesToShow; i++ ) {
-			let slideIndex = currentIndex + i;
-
-			if ( infiniteLoop ) {
-				slideIndex = ( slideIndex + totalSlides ) % totalSlides;
-			} else if ( slideIndex >= totalSlides ) {
-				break;
-			}
-
-			visibleSlides.push( innerBlocks[ slideIndex ].clientId );
-		}
-
-		return visibleSlides;
-	};
-
 	// Calculate start index for carousel mode (like frontend)
 	const getStartIndex = () => {
-		if ( ! isCarouselMode ) return 0;
+		if ( ! isCarouselMode ) {
+			return 0;
+		}
 
 		const currentIndex = innerBlocks.findIndex(
 			( block ) => block.clientId === currentSlideId
@@ -112,8 +78,6 @@ export const SliderContent: React.FC< SliderContentProps > = ( {
 
 		return currentIndex >= 0 ? currentIndex : 0;
 	};
-
-	const visibleSlideIds = getVisibleSlides();
 
 	// Update slide visibility
 	useEffect( () => {
@@ -125,29 +89,27 @@ export const SliderContent: React.FC< SliderContentProps > = ( {
 		}
 	}, [ currentSlideId, isCarouselMode, slidesToShow, slidesToScroll ] );
 
-	// Ref for the block list layout (slides row)
-	const blockListLayoutRef = useRef< HTMLDivElement | null >( null );
-
-	// Find the index of the current slide
-	const currentIndex = innerBlocks.findIndex(
-		( block ) => block.clientId === currentSlideId
-	);
-
 	// Get start index for carousel mode
 	const startIndex = getStartIndex();
 
 	// Carousel scroll effect in editor
 	useEffect( () => {
-		if ( ! isCarouselMode ) return;
+		if ( ! isCarouselMode ) {
+			return;
+		}
 		// Find the .block-editor-block-list__layout inside the slides container with the correct path
 		const container = document.querySelector(
 			`.sliderberg-slides-container[data-slider-id="${ clientId }"]`
 		);
-		if ( ! container ) return;
+		if ( ! container ) {
+			return;
+		}
 		const layout = container.querySelector(
 			'.block-editor-inner-blocks .block-editor-block-list__layout'
 		) as HTMLElement | null;
-		if ( ! layout ) return;
+		if ( ! layout ) {
+			return;
+		}
 		// Calculate offset percentage based on start index like frontend
 		const offset =
 			startIndex > -1 ? -( startIndex * ( 100 / slidesToShow ) ) : 0;
@@ -157,12 +119,16 @@ export const SliderContent: React.FC< SliderContentProps > = ( {
 
 	// Add click-to-select functionality for carousel mode
 	useEffect( () => {
-		if ( ! isCarouselMode || slidesToShow <= 1 ) return;
+		if ( ! isCarouselMode || slidesToShow <= 1 ) {
+			return;
+		}
 
 		const container = document.querySelector(
 			`.sliderberg-slides-container[data-slider-id="${ clientId }"]`
 		);
-		if ( ! container ) return;
+		if ( ! container ) {
+			return;
+		}
 
 		const slideBlocks = container.querySelectorAll(
 			'.block-editor-inner-blocks .block-editor-block-list__layout > .block-editor-block-list__block'

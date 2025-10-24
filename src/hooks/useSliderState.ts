@@ -17,16 +17,20 @@ export const useSliderState = ( clientId: string, attributes: any ) => {
 
 	// Get the current inner blocks for this slider
 	const innerBlocks = useSelect(
-		( select: any ) =>
-			clientId ? select( blockEditorStore ).getBlocks( clientId ) : [],
+		( selectFunc: any ) =>
+			clientId
+				? selectFunc( blockEditorStore ).getBlocks( clientId )
+				: [],
 		[ clientId ]
 	);
 
 	const { insertBlock, removeBlock, insertBlocks, selectBlock } =
 		useDispatch( blockEditorStore );
 
-	const { getBlock, getBlockIndex } = useSelect( ( select ) => {
-		const editorSelect = select( blockEditorStore ) as BlockEditorSelect;
+	const { getBlock, getBlockIndex } = useSelect( ( selectFunc ) => {
+		const editorSelect = selectFunc(
+			blockEditorStore
+		) as BlockEditorSelect;
 		return {
 			getBlock: editorSelect.getBlock,
 			getBlockIndex: editorSelect.getBlockIndex,
@@ -56,7 +60,7 @@ export const useSliderState = ( clientId: string, attributes: any ) => {
 				}
 			}
 		}
-	}, [ innerBlocks ] );
+	}, [ innerBlocks, currentSlideId, selectBlock ] );
 
 	// Handle visibility updates after state changes
 	useEffect( () => {
@@ -129,7 +133,9 @@ export const useSliderState = ( clientId: string, attributes: any ) => {
 	};
 
 	const handleDeleteSlide = () => {
-		if ( innerBlocks.length <= 1 ) return;
+		if ( innerBlocks.length <= 1 ) {
+			return;
+		}
 
 		const currentIndex = innerBlocks.findIndex(
 			( block: any ) => block.clientId === currentSlideId
@@ -143,7 +149,9 @@ export const useSliderState = ( clientId: string, attributes: any ) => {
 	};
 
 	const handleDuplicateSlide = ( slideIdToDuplicate: string ) => {
-		if ( ! slideIdToDuplicate ) return;
+		if ( ! slideIdToDuplicate ) {
+			return;
+		}
 
 		// Store current scroll position
 		const scrollTop =
@@ -152,10 +160,14 @@ export const useSliderState = ( clientId: string, attributes: any ) => {
 			window.pageXOffset || document.documentElement.scrollLeft;
 
 		const originalBlock = getBlock( slideIdToDuplicate );
-		if ( ! originalBlock ) return;
+		if ( ! originalBlock ) {
+			return;
+		}
 
 		const duplicatedBlock = cloneBlock( originalBlock );
-		if ( ! duplicatedBlock ) return;
+		if ( ! duplicatedBlock ) {
+			return;
+		}
 
 		const originalSlideIndex = getBlockIndex(
 			slideIdToDuplicate,

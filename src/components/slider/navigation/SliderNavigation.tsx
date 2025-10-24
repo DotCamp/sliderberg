@@ -45,7 +45,9 @@ export const SliderNavigation: React.FC< SliderNavigationProps > = ( {
 		return true;
 	}, [] );
 	const handlePrevSlide = () => {
-		if ( ! currentSlideId || innerBlocks.length === 0 ) return;
+		if ( ! currentSlideId || innerBlocks.length === 0 ) {
+			return;
+		}
 		const idx = innerBlocks.findIndex(
 			( block: InnerBlock ) => block.clientId === currentSlideId
 		);
@@ -74,7 +76,9 @@ export const SliderNavigation: React.FC< SliderNavigationProps > = ( {
 	};
 
 	const handleNextSlide = () => {
-		if ( ! currentSlideId || innerBlocks.length === 0 ) return;
+		if ( ! currentSlideId || innerBlocks.length === 0 ) {
+			return;
+		}
 		const idx = innerBlocks.findIndex(
 			( block: InnerBlock ) => block.clientId === currentSlideId
 		);

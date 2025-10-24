@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { __ } from '@wordpress/i18n';
-import { ToggleControl, RangeControl, PanelBody } from '@wordpress/components';
+import { ToggleControl, PanelBody } from '@wordpress/components';
 import { ResponsiveCarouselSettings } from './ResponsiveCarouselSettings';
 
 interface CarouselSettingsProps {
@@ -26,13 +26,7 @@ export const CarouselSettings: React.FC< CarouselSettingsProps > = ( {
 	attributes,
 	setAttributes,
 } ) => {
-	const {
-		isCarouselMode,
-		slidesToShow,
-		slidesToScroll,
-		slideSpacing,
-		infiniteLoop,
-	} = attributes;
+	const { isCarouselMode, infiniteLoop } = attributes;
 
 	return (
 		<PanelBody

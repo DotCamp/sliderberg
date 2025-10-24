@@ -4,7 +4,8 @@ import { InnerBlocks, useBlockProps } from '@wordpress/block-editor';
 import * as React from 'react';
 
 // Deprecation for v1.0.1 - full HTML save version
-const deprecated_v1_0_1 = {
+// eslint-disable-next-line camelcase
+const deprecatedV1_0_1 = {
 	attributes: {
 		align: {
 			type: 'string',
@@ -314,14 +315,15 @@ const deprecated_v1_0_1 = {
 		// The inner blocks (slides) will be preserved automatically
 		return [ attributes, innerBlocks ];
 	},
-	isEligible: ( attributes: any, innerBlocks: any, outerHTML: any ) => {
+	isEligible: () => {
 		// This deprecation is eligible if we detect the old save structure
 		return true;
 	},
 };
 
 // Deprecation for v1.0.0 - minimal attributes version
-const deprecated_v1 = {
+// eslint-disable-next-line camelcase
+const deprecatedV1 = {
 	attributes: {
 		customWidth: {
 			type: 'string',
@@ -397,7 +399,8 @@ const deprecated_v1 = {
 };
 
 // Deprecation for v1.0.3 - before hideNavigation attribute
-const deprecated_v1_0_3 = {
+// eslint-disable-next-line camelcase
+const deprecatedV1_0_3 = {
 	attributes: {
 		align: {
 			type: 'string',
@@ -549,4 +552,5 @@ const deprecated_v1_0_3 = {
 };
 
 // Export all deprecations - add more as needed
-export default [ deprecated_v1_0_3, deprecated_v1_0_1, deprecated_v1 ];
+// eslint-disable-next-line camelcase
+export default [ deprecatedV1_0_3, deprecatedV1_0_1, deprecatedV1 ];

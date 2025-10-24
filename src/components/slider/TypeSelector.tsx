@@ -64,6 +64,13 @@ export const TypeSelector: React.FC< TypeSelectorProps > = ( {
 		}
 	};
 
+	const handleKeyDown = ( event: React.KeyboardEvent, typeId: string ) => {
+		if ( event.key === 'Enter' || event.key === ' ' ) {
+			event.preventDefault();
+			handleTypeSelect( typeId );
+		}
+	};
+
 	const renderTypeCard = ( type: SliderType ) => {
 		// Allow pro plugin to modify type card rendering
 		const cardContent = applyFilters(
@@ -108,6 +115,10 @@ export const TypeSelector: React.FC< TypeSelectorProps > = ( {
 							type.isComingSoon ? 'is-coming-soon' : ''
 						} ${ type.isPro ? 'is-pro' : '' }` }
 						onClick={ () => handleTypeSelect( type.id ) }
+						onKeyDown={ ( e ) => handleKeyDown( e, type.id ) }
+						role="button"
+						tabIndex={ 0 }
+						aria-label={ type.title }
 					>
 						{ renderTypeCard( type ) }
 					</div>
