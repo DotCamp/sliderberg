@@ -32,8 +32,12 @@ export const WidthControl: React.FC< WidthControlProps > = ( {
 			} );
 		} else {
 			let alignValue: 'wide' | 'full' | undefined;
-			if ( preset === 'wide' ) alignValue = 'wide';
-			if ( preset === 'full' ) alignValue = 'full';
+			if ( preset === 'wide' ) {
+				alignValue = 'wide';
+			}
+			if ( preset === 'full' ) {
+				alignValue = 'full';
+			}
 			setAttributes( {
 				widthPreset: preset,
 				align: alignValue,

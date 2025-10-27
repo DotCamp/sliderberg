@@ -82,12 +82,17 @@ function sliderberg_init() {
     // Register slide block with PHP rendering
     sliderberg_register_slide_block();
 
+    // Version assets by file modification time to avoid cache issues
+    $style_version  = file_exists( SLIDERBERG_PLUGIN_DIR . 'build/style-index.css' ) ? filemtime( SLIDERBERG_PLUGIN_DIR . 'build/style-index.css' ) : SLIDERBERG_VERSION;
+    $editor_version = file_exists( SLIDERBERG_PLUGIN_DIR . 'build/index.css' ) ? filemtime( SLIDERBERG_PLUGIN_DIR . 'build/index.css' ) : SLIDERBERG_VERSION;
+    $view_version   = file_exists( SLIDERBERG_PLUGIN_DIR . 'build/view.js' ) ? filemtime( SLIDERBERG_PLUGIN_DIR . 'build/view.js' ) : SLIDERBERG_VERSION;
+
     // Register block styles
     wp_register_style(
         'sliderberg-style',
         SLIDERBERG_PLUGIN_URL . 'build/style-index.css',
         array(),
-        SLIDERBERG_VERSION
+        $style_version
     );
 
     // Register editor styles
@@ -95,7 +100,7 @@ function sliderberg_init() {
         'sliderberg-editor',
         SLIDERBERG_PLUGIN_URL . 'build/index.css',
         array(),
-        SLIDERBERG_VERSION
+        $editor_version
     );
 
     // Register view script
@@ -103,7 +108,7 @@ function sliderberg_init() {
         'sliderberg-view',
         SLIDERBERG_PLUGIN_URL . 'build/view.js',
         array(),
-        SLIDERBERG_VERSION,
+        $view_version,
         true
     );
 }

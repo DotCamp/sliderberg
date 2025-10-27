@@ -130,17 +130,20 @@ export class EventHandler {
 	 * @param e
 	 */
 	private handleTouchStart( e: TouchEvent ): void {
-		if ( this.state.isAnimating || this.state.destroyed ) return;
-		if ( e.touches.length === 0 ) return;
+		if ( this.state.isAnimating || this.state.destroyed ) {
+			return;
+		}
+		if ( e.touches.length === 0 ) {
+			return;
+		}
 		this.state.touchStartX = e.touches[ 0 ].clientX;
 		this.state.touchStartY = e.touches[ 0 ].clientY;
 	}
 
 	/**
 	 * Handle touch move events
-	 * @param e
 	 */
-	private handleTouchMove( e: TouchEvent ): void {
+	private handleTouchMove(): void {
 		// Logic is primarily in handleTouchEnd for basic swipe
 	}
 
@@ -149,11 +152,17 @@ export class EventHandler {
 	 * @param e
 	 */
 	private handleTouchEnd( e: TouchEvent ): void {
-		if ( this.state.isAnimating || this.state.destroyed ) return;
-		if ( e.changedTouches.length === 0 ) return;
+		if ( this.state.isAnimating || this.state.destroyed ) {
+			return;
+		}
+		if ( e.changedTouches.length === 0 ) {
+			return;
+		}
 
 		// Don't handle swipe if there's only one slide
-		if ( this.elements.slides.length <= 1 ) return;
+		if ( this.elements.slides.length <= 1 ) {
+			return;
+		}
 
 		const touchEndX = e.changedTouches[ 0 ].clientX;
 		const touchEndY = e.changedTouches[ 0 ].clientY;
@@ -177,16 +186,22 @@ export class EventHandler {
 	 * @param e
 	 */
 	private handleKeyboard( e: Event ): void {
-		if ( this.state.destroyed ) return;
+		if ( this.state.destroyed ) {
+			return;
+		}
 		const keyboardEvent = e as KeyboardEvent;
 		const doc = this.elements.wrapper.ownerDocument || document;
 		const activeElement = doc.activeElement;
 
 		// Only process if slider or its children have focus
-		if ( ! this.elements.wrapper.contains( activeElement ) ) return;
+		if ( ! this.elements.wrapper.contains( activeElement ) ) {
+			return;
+		}
 
 		// Don't handle keyboard navigation if there's only one slide
-		if ( this.elements.slides.length <= 1 ) return;
+		if ( this.elements.slides.length <= 1 ) {
+			return;
+		}
 
 		switch ( keyboardEvent.key ) {
 			case 'ArrowLeft':
@@ -228,7 +243,9 @@ export class EventHandler {
 	 * Handle resize events
 	 */
 	private handleResize(): void {
-		if ( this.state.destroyed ) return;
+		if ( this.state.destroyed ) {
+			return;
+		}
 
 		// Call parent resize handler if provided
 		if ( this.onResize ) {
@@ -257,8 +274,9 @@ export class EventHandler {
 	 * Setup autoplay functionality
 	 */
 	setupAutoplay(): void {
-		if ( ! this.config.autoplay || this.elements.slides.length <= 1 )
+		if ( ! this.config.autoplay || this.elements.slides.length <= 1 ) {
 			return;
+		}
 		this.startAutoplay(); // Start initial autoplay
 		if ( this.config.pauseOnHover ) {
 			const { container } = this.elements;
@@ -283,8 +301,9 @@ export class EventHandler {
 			this.state.autoplayInterval ||
 			this.state.destroyed ||
 			this.elements.slides.length <= 1
-		)
+		) {
 			return;
+		}
 		this.state.autoplayInterval = window.setInterval( () => {
 			if ( ! this.state.isAnimating && ! this.state.destroyed ) {
 				this.onNextSlide();

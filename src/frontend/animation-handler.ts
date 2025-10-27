@@ -155,7 +155,7 @@ export class AnimationHandler {
 		const { transitionEffect, isCarouselMode, infiniteLoop } = this.config;
 
 		// Get responsive settings
-		const { slidesToShow, slidesToScroll } = this.getResponsiveSettings();
+		const { slidesToShow } = this.getResponsiveSettings();
 
 		const { container } = this.elements;
 		const realSlides = this.elements.slides.length;
@@ -168,7 +168,6 @@ export class AnimationHandler {
 			infiniteLoop
 		) {
 			const totalSlides = realSlides;
-			const allSlides = Array.from( container.children ) as HTMLElement[];
 			const cloneCount = slidesToShow;
 			// Move to the correct window (account for clones at start)
 			const visualIndex = targetIndex + cloneCount;
@@ -382,7 +381,9 @@ export class AnimationHandler {
 			return;
 		}
 		const currentActiveSlide = slides[ this.getVisibleSlideIndex() ]; // Use visible index for correct height
-		if ( ! currentActiveSlide ) return;
+		if ( ! currentActiveSlide ) {
+			return;
+		}
 
 		const slideHeight = currentActiveSlide.offsetHeight;
 		if ( slideHeight > 0 ) {
@@ -403,7 +404,9 @@ export class AnimationHandler {
 	 */
 	setupCloneSlides(): void {
 		const { container, slides } = this.elements;
-		if ( slides.length <= 1 ) return;
+		if ( slides.length <= 1 ) {
+			return;
+		}
 
 		const firstSlideClone = slides[ 0 ].cloneNode( true ) as HTMLElement;
 		const lastSlideClone = slides[ slides.length - 1 ].cloneNode(
@@ -521,8 +524,12 @@ export class AnimationHandler {
 		const { transitionEffect } = this.config;
 		const slideCount = this.elements.slides.length;
 		if ( transitionEffect === 'slide' && slideCount > 1 ) {
-			if ( this.state.currentSlide === 0 ) return slideCount - 1;
-			if ( this.state.currentSlide === slideCount + 1 ) return 0;
+			if ( this.state.currentSlide === 0 ) {
+				return slideCount - 1;
+			}
+			if ( this.state.currentSlide === slideCount + 1 ) {
+				return 0;
+			}
 			return this.state.currentSlide - 1;
 		}
 		return this.state.currentSlide;

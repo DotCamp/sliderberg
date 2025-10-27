@@ -1,8 +1,5 @@
 import React, { useEffect } from 'react';
 import { useBlockProps } from '@wordpress/block-editor';
-import { __ } from '@wordpress/i18n';
-import { useSelect } from '@wordpress/data';
-import { createBlock } from '@wordpress/blocks';
 import type { BlockInstance } from '@wordpress/blocks';
 
 // Import sub-components
@@ -11,20 +8,6 @@ import { SliderContent } from './SliderContent';
 import { SliderSettings } from './settings/SliderSettings';
 import { useSliderState } from '../../hooks/useSliderState';
 import { SliderAttributes } from '../../types/slider';
-
-// Declare wp namespace
-declare const wp: {
-	data: {
-		dispatch: ( store: string ) => {
-			removeBlocks: ( clientIds: string[] ) => void;
-			insertBlocks: (
-				blocks: BlockInstance[],
-				index: number,
-				rootClientId: string
-			) => void;
-		};
-	};
-};
 
 interface EditProps {
 	attributes: SliderAttributes;
@@ -150,11 +133,6 @@ export const Edit: React.FC< EditProps > = ( {
 			block.name === 'sliderberg-pro/woo-products'
 	);
 
-	// Check if it's a pro slider type or has pro children
-	const isProSliderType =
-		[ 'posts-slider', 'woo-products' ].includes( attributes.type ) ||
-		hasProChild;
-
 	return (
 		<div { ...blockProps }>
 			{ /* Only show settings after a type has been selected */ }
@@ -165,12 +143,14 @@ export const Edit: React.FC< EditProps > = ( {
 				/>
 			) }
 
-			{ ! attributes.type && ! hasProChild ? (
-				<TypeSelector onTypeSelect={ handleTypeSelect } />
-			) : isProSliderType ? (
-				// Render pro slider content with settings intact
-				<>
-					{ /* Render the pro slider content - it will be the child blocks */ }
+			{ ( () => {
+				// Show type selector if no type is set and no pro child
+				if ( ! attributes.type && ! hasProChild ) {
+					return <TypeSelector onTypeSelect={ handleTypeSelect } />;
+				}
+
+				// Render slider content (same for both pro and regular types)
+				return (
 					<SliderContent
 						attributes={ attributes }
 						currentSlideId={ currentSlideId }
@@ -181,20 +161,8 @@ export const Edit: React.FC< EditProps > = ( {
 						onSlideChange={ handleSlideChange }
 						clientId={ clientId }
 					/>
-				</>
-			) : (
-				// Render regular blocks slider
-				<SliderContent
-					attributes={ attributes }
-					currentSlideId={ currentSlideId }
-					innerBlocks={ innerBlocks }
-					onAddSlide={ handleAddSlide }
-					onDeleteSlide={ handleDeleteSlide }
-					onDuplicateSlide={ handleDuplicateSlide }
-					onSlideChange={ handleSlideChange }
-					clientId={ clientId }
-				/>
-			) }
+				);
+			} )() }
 		</div>
 	);
 };

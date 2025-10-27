@@ -23,6 +23,7 @@ export class ReviewStateManager {
 				return JSON.parse( stored );
 			}
 		} catch ( e ) {
+			// eslint-disable-next-line no-console
 			console.error( 'Failed to load review state:', e );
 		}
 
@@ -38,6 +39,7 @@ export class ReviewStateManager {
 		try {
 			localStorage.setItem( STORAGE_KEY, JSON.stringify( this.state ) );
 		} catch ( e ) {
+			// eslint-disable-next-line no-console
 			console.error( 'Failed to save review state:', e );
 		}
 	}

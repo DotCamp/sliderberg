@@ -339,31 +339,10 @@ function sliderberg_render_slider_template($vars) {
     $hide_navigation = isset($vars['hide_navigation']) ? (bool)$vars['hide_navigation'] : false;
     $content = isset($vars['content']) ? $vars['content'] : '';
     
-    // Sanitize content to prevent XSS - allow only safe HTML for slider content
-    $allowed_html = array(
-        'div' => array('class' => array(), 'id' => array(), 'style' => array()),
-        'p' => array('class' => array(), 'style' => array()),
-        'h1' => array('class' => array(), 'style' => array()),
-        'h2' => array('class' => array(), 'style' => array()),
-        'h3' => array('class' => array(), 'style' => array()),
-        'h4' => array('class' => array(), 'style' => array()),
-        'h5' => array('class' => array(), 'style' => array()),
-        'h6' => array('class' => array(), 'style' => array()),
-        'span' => array('class' => array(), 'style' => array()),
-        'a' => array('href' => array(), 'class' => array(), 'target' => array(), 'rel' => array()),
-        'img' => array('src' => array(), 'alt' => array(), 'class' => array(), 'width' => array(), 'height' => array()),
-        'button' => array('class' => array(), 'type' => array()),
-        'strong' => array(),
-        'em' => array(),
-        'br' => array(),
-        'ul' => array('class' => array()),
-        'ol' => array('class' => array()),
-        'li' => array('class' => array())
-    );
-    
-    // Note: Inner blocks are already rendered and sanitized by WordPress
-    // This additional sanitization provides defense in depth
-    $content = wp_kses($content, $allowed_html);
+    // Sanitize content using WordPress defaults for post content.
+    // Inner blocks are already rendered via the block system; this preserves
+    // semantic markup like <figure> used by core blocks (e.g., Image).
+    $content = wp_kses_post( $content );
     
     // Build wrapper attributes string
     $wrapper_attr_string = '';

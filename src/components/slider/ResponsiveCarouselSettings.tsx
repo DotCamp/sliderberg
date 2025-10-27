@@ -2,13 +2,10 @@ import * as React from 'react';
 import { __ } from '@wordpress/i18n';
 import {
 	RangeControl,
-	Panel,
-	PanelBody,
-	PanelRow,
 	TabPanel,
+	// eslint-disable-next-line @wordpress/no-unsafe-wp-apis -- Required for UI consistency with WordPress design system
 	__experimentalText as Text,
 } from '@wordpress/components';
-import { desktop, tablet, mobile } from '@wordpress/icons';
 import './responsive-carousel-settings.css';
 
 interface ResponsiveCarouselSettingsProps {

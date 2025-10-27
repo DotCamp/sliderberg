@@ -41,7 +41,7 @@ jQuery( document ).ready( function ( $ ) {
 					} else {
 						button.text( originalText );
 						// eslint-disable-next-line no-alert
-						alert(
+						window.alert(
 							response.data.message ||
 								'Installation failed. Please try again.'
 						);
@@ -50,7 +50,7 @@ jQuery( document ).ready( function ( $ ) {
 				error() {
 					button.text( originalText );
 					// eslint-disable-next-line no-alert
-					alert( 'Installation failed. Please try again.' );
+					window.alert( 'Installation failed. Please try again.' );
 				},
 				complete() {
 					button.prop( 'disabled', false );
@@ -72,11 +72,12 @@ jQuery( document ).ready( function ( $ ) {
 						button.text( 'Active' );
 						button.prop( 'disabled', true );
 						// Force a reflow to ensure the styles are applied
-						button[ 0 ].offsetHeight;
+						void button[ 0 ].offsetHeight;
 						button.addClass( 'active' );
 					} else {
 						button.text( originalText );
-						alert(
+						// eslint-disable-next-line no-alert
+						window.alert(
 							response.data.message ||
 								'Activation failed. Please try again.'
 						);
@@ -84,7 +85,8 @@ jQuery( document ).ready( function ( $ ) {
 				},
 				error() {
 					button.text( originalText );
-					alert( 'Activation failed. Please try again.' );
+					// eslint-disable-next-line no-alert
+					window.alert( 'Activation failed. Please try again.' );
 				},
 				complete() {
 					if ( button.data( 'status' ) !== 'active' ) {

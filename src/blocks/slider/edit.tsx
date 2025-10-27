@@ -1,5 +1,6 @@
 import React from 'react';
 import { Edit as SliderEdit } from '../../components/slider/Edit';
+import { ErrorBoundary } from '../../components/ErrorBoundary';
 import { SliderAttributes } from '../../types/slider';
 
 interface EditProps {
@@ -9,5 +10,9 @@ interface EditProps {
 }
 
 export const Edit = ( props: EditProps ) => {
-	return <SliderEdit { ...props } clientId={ props.clientId || '' } />;
+	return (
+		<ErrorBoundary>
+			<SliderEdit { ...props } clientId={ props.clientId || '' } />
+		</ErrorBoundary>
+	);
 };

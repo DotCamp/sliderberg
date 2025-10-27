@@ -5,7 +5,8 @@ import * as React from 'react';
 import classnames from 'classnames';
 
 // Deprecation for v1.0.1 - full HTML save version
-const deprecated_v1_0_1 = {
+// eslint-disable-next-line camelcase
+const deprecatedV1_0_1 = {
 	attributes: {
 		backgroundType: {
 			type: 'string',
@@ -104,6 +105,7 @@ const deprecated_v1_0_1 = {
 
 // Export all deprecations
 // Deprecation for v1.0.3 - before gradient support
+// eslint-disable-next-line camelcase
 const deprecatedV1_0_3 = {
 	attributes: {
 		backgroundType: {
@@ -155,4 +157,5 @@ const deprecatedV1_0_3 = {
 	},
 };
 
-export default [ deprecatedV1_0_3, deprecated_v1_0_1 ];
+// eslint-disable-next-line camelcase
+export default [ deprecatedV1_0_3, deprecatedV1_0_1 ];

@@ -1,5 +1,5 @@
 export interface HTMLElementWithDataClientId extends HTMLElement {
-	getAttribute( name: string ): string | null;
+	getAttribute: ( name: string ) => string | null;
 	style: CSSStyleDeclaration;
 }
 

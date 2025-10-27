@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { registerBlockType } from '@wordpress/blocks';
 import { __ } from '@wordpress/i18n';
 import {
@@ -8,9 +8,8 @@ import {
 	MediaUpload,
 	MediaUploadCheck,
 	MediaPlaceholder,
-	BlockControls,
-	BlockAlignmentToolbar,
 	// @ts-ignore - WordPress experimental API
+	// eslint-disable-next-line @wordpress/no-unsafe-wp-apis -- Required for color/gradient support across themes
 	__experimentalUseMultipleOriginColorsAndGradients as useMultipleOriginColorsAndGradients,
 	useSetting,
 } from '@wordpress/block-editor';
@@ -18,11 +17,8 @@ import {
 	PanelBody,
 	Button,
 	RangeControl,
-	ColorPicker,
 	SelectControl,
 	ToggleControl,
-	ToolbarGroup,
-	ToolbarButton,
 	ColorPalette,
 	GradientPicker,
 } from '@wordpress/components';
@@ -210,7 +206,7 @@ registerBlockType( 'sliderberg/slide', {
 		isSelected: boolean;
 		clientId: string;
 	} ) {
-		const { attributes, setAttributes, isSelected, clientId } = props;
+		const { attributes, setAttributes, clientId } = props;
 		const {
 			backgroundType,
 			backgroundImage,
@@ -749,9 +745,10 @@ registerBlockType( 'sliderberg/slide', {
 							} }
 						/>
 						<div className="sliderberg-slide-content">
-							<InnerBlocks
-								allowedBlocks={ ALLOWED_BLOCKS }
-								template={ [
+							<div className="sliderberg-slide-inner">
+								<InnerBlocks
+									allowedBlocks={ ALLOWED_BLOCKS }
+									template={ [
 									[
 										'core/heading',
 										{
@@ -773,7 +770,8 @@ registerBlockType( 'sliderberg/slide', {
 									],
 								] }
 								templateLock={ false }
-							/>
+								/>
+							</div>
 						</div>
 					</div>
 				) }
