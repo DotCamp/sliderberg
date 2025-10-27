@@ -38,11 +38,16 @@
     box-sizing: border-box;
 }
 
+/* Inner wrapper to avoid making child blocks flex items */
+.sliderberg-slide-inner {
+    width: 100%;
+    max-width: 100%;
+}
+
 /* Content Positioning - Fixed Implementation */
 .sliderberg-content-position-top-left .sliderberg-slide-content {
     justify-content: flex-start;
     align-items: flex-start;
-    text-align: left;
     margin-left: 0;
     margin-right: auto;
 }
@@ -50,7 +55,6 @@
 .sliderberg-content-position-top-center .sliderberg-slide-content {
     justify-content: flex-start;
     align-items: center;
-    text-align: center;
     margin-left: auto;
     margin-right: auto;
 }
@@ -58,7 +62,6 @@
 .sliderberg-content-position-top-right .sliderberg-slide-content {
     justify-content: flex-start;
     align-items: flex-end;
-    text-align: right;
     margin-left: auto;
     margin-right: 0;
 }
@@ -66,7 +69,6 @@
 .sliderberg-content-position-center-left .sliderberg-slide-content {
     justify-content: center;
     align-items: flex-start;
-    text-align: left;
     margin-left: 0;
     margin-right: auto;
 }
@@ -74,7 +76,6 @@
 .sliderberg-content-position-center-center .sliderberg-slide-content {
     justify-content: center;
     align-items: center;
-    text-align: center;
     margin-left: auto;
     margin-right: auto;
 }
@@ -82,7 +83,6 @@
 .sliderberg-content-position-center-right .sliderberg-slide-content {
     justify-content: center;
     align-items: flex-end;
-    text-align: right;
     margin-left: auto;
     margin-right: 0;
 }
@@ -90,7 +90,6 @@
 .sliderberg-content-position-bottom-left .sliderberg-slide-content {
     justify-content: flex-end;
     align-items: flex-start;
-    text-align: left;
     margin-left: 0;
     margin-right: auto;
 }
@@ -98,7 +97,6 @@
 .sliderberg-content-position-bottom-center .sliderberg-slide-content {
     justify-content: flex-end;
     align-items: center;
-    text-align: center;
     margin-left: auto;
     margin-right: auto;
 }
@@ -106,7 +104,6 @@
 .sliderberg-content-position-bottom-right .sliderberg-slide-content {
     justify-content: flex-end;
     align-items: flex-end;
-    text-align: right;
     margin-left: auto;
     margin-right: 0;
 }
@@ -136,24 +133,7 @@
     padding: 1.5rem;
 }
 
-/* Ensure content blocks inherit the text alignment */
-.sliderberg-content-position-top-left .sliderberg-slide-content *,
-.sliderberg-content-position-center-left .sliderberg-slide-content *,
-.sliderberg-content-position-bottom-left .sliderberg-slide-content * {
-    text-align: left;
-}
-
-.sliderberg-content-position-top-right .sliderberg-slide-content *,
-.sliderberg-content-position-center-right .sliderberg-slide-content *,
-.sliderberg-content-position-bottom-right .sliderberg-slide-content * {
-    text-align: right;
-}
-
-.sliderberg-content-position-top-center .sliderberg-slide-content *,
-.sliderberg-content-position-center-center .sliderberg-slide-content *,
-.sliderberg-content-position-bottom-center .sliderberg-slide-content * {
-    text-align: center;
-}
+/* Let child blocks manage their own text alignment */
 
 /* Fixed Background */
 .sliderberg-fixed-background {
@@ -271,6 +251,73 @@
     gap: 1rem;
     justify-content: center;
     margin: 1rem 0;
+}
+
+/* Compatibility: honor core block image alignments inside slides */
+.sliderberg-slide-content .aligncenter,
+.sliderberg-slide-inner .aligncenter {
+    display: table;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.sliderberg-slide-content .alignleft,
+.sliderberg-slide-inner .alignleft {
+    float: left;
+    margin-right: 1em;
+}
+
+.sliderberg-slide-content .alignright,
+.sliderberg-slide-inner .alignright {
+    float: right;
+    margin-left: 1em;
+}
+
+/* Increase specificity within Sliderberg to avoid theme overrides */
+.wp-block-sliderberg-sliderberg .sliderberg-slide-content .aligncenter,
+.wp-block-sliderberg-sliderberg .sliderberg-slide-inner .aligncenter {
+    display: table;
+    margin-left: auto;
+    margin-right: auto;
+    float: none;
+}
+
+.wp-block-sliderberg-sliderberg .sliderberg-slide-content .wp-block-image.aligncenter,
+.wp-block-sliderberg-sliderberg .sliderberg-slide-inner .wp-block-image.aligncenter {
+    display: table;
+    margin-left: auto;
+    margin-right: auto;
+    float: none;
+}
+
+.wp-block-sliderberg-sliderberg .sliderberg-slide-content .wp-block-image.aligncenter img,
+.wp-block-sliderberg-sliderberg .sliderberg-slide-content .wp-block-image.aligncenter a,
+.wp-block-sliderberg-sliderberg .sliderberg-slide-inner .wp-block-image.aligncenter img,
+.wp-block-sliderberg-sliderberg .sliderberg-slide-inner .wp-block-image.aligncenter a {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* Legacy markup: image elements carrying align classes */
+.wp-block-sliderberg-sliderberg .sliderberg-slide-content img.aligncenter,
+.wp-block-sliderberg-sliderberg .sliderberg-slide-inner img.aligncenter {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    float: none;
+}
+
+.wp-block-sliderberg-sliderberg .sliderberg-slide-content img.alignleft,
+.wp-block-sliderberg-sliderberg .sliderberg-slide-inner img.alignleft {
+    float: left;
+    margin-right: 1em;
+}
+
+.wp-block-sliderberg-sliderberg .sliderberg-slide-content img.alignright,
+.wp-block-sliderberg-sliderberg .sliderberg-slide-inner img.alignright {
+    float: right;
+    margin-left: 1em;
 }
 
 .sliderberg-placeholder-colors {

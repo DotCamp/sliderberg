@@ -745,9 +745,10 @@ registerBlockType( 'sliderberg/slide', {
 							} }
 						/>
 						<div className="sliderberg-slide-content">
-							<InnerBlocks
-								allowedBlocks={ ALLOWED_BLOCKS }
-								template={ [
+							<div className="sliderberg-slide-inner">
+								<InnerBlocks
+									allowedBlocks={ ALLOWED_BLOCKS }
+									template={ [
 									[
 										'core/heading',
 										{
@@ -769,7 +770,8 @@ registerBlockType( 'sliderberg/slide', {
 									],
 								] }
 								templateLock={ false }
-							/>
+								/>
+							</div>
 						</div>
 					</div>
 				) }
