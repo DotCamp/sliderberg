@@ -14,9 +14,9 @@
 .wp-block-sliderberg-sliderberg.alignfull,
 .wp-block-sliderberg-sliderberg[data-width-preset="full"] {
     width: 100% !important;
-    max-width: none !important;
-    margin-left: calc(50% - 50vw) !important;
-    margin-right: calc(50% - 50vw) !important;
+    max-width: 100% !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
     border: none;
     border-radius: 0;
     padding: 0;

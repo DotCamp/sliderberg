@@ -71,8 +71,8 @@ export const Edit: React.FC< EditProps > = ( {
         ) {
             styles.width = '100%';
             styles.maxWidth = 'none';
-            styles.marginLeft = 'calc(50% - 50vw)';
-            styles.marginRight = 'calc(50% - 50vw)';
+            styles.marginLeft = '0';
+            styles.marginRight = '0';
         }
 
 		// Handle wide alignment
