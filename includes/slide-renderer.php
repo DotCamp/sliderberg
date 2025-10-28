@@ -166,45 +166,9 @@ function render_sliderberg_slide_block($attributes, $content, $block) {
     // Centralized sanitization: allow embeds via allowed HTML
     $content = wp_kses($content, sliderberg_get_allowed_html());
     
-    // Render template with security check
+    // Render template
     ob_start();
-    $template_file = __DIR__ . '/templates/slide-block.php';
-    
-    // Prevent TOCTOU race condition by using file handle
-    $real_template_path = realpath($template_file);
-    $real_plugin_dir = realpath(SLIDERBERG_PLUGIN_DIR);
-    
-    // Validate path first
-    if (!$real_template_path || !$real_plugin_dir || strpos($real_template_path, $real_plugin_dir) !== 0) {
-        return '<!-- Template file not found or invalid -->';
-    }
-    
-    // Use file locking to prevent race conditions
-    $fp = @fopen($real_template_path, 'r');
-    if (!$fp) {
-        return '<!-- Template file could not be opened -->';
-    }
-    
-    // Lock file for reading
-    if (!flock($fp, LOCK_SH)) {
-        fclose($fp);
-        return '<!-- Template file is locked -->';
-    }
-    
-    // Verify file is still within bounds after locking
-    $locked_real_path = realpath(stream_get_meta_data($fp)['uri']);
-    if (!$locked_real_path || strpos($locked_real_path, $real_plugin_dir) !== 0) {
-        flock($fp, LOCK_UN);
-        fclose($fp);
-        return '<!-- Template security check failed -->';
-    }
-    
-    // Include file using the validated path
-    flock($fp, LOCK_UN);
-    fclose($fp);
-    
-    // Use include with full path to prevent manipulation
-    include $real_template_path;
+    include __DIR__ . '/templates/slide-block.php';
     return ob_get_clean();
 }
 

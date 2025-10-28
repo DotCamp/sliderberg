@@ -208,118 +208,206 @@ export class SliderBergController {
 	 * Parse configuration from DOM
 	 * @param container
 	 */
-	private parseConfig( container: HTMLElement ): SliderConfig {
-		// Check if carousel mode is enabled first
-		const isCarouselMode = this.parseBooleanAttribute(
-			container,
-			'data-is-carousel',
-			false
-		);
+    private parseConfig( container: HTMLElement ): SliderConfig {
+        // Prefer a single JSON config for simplicity
+        const rawConfig = container.getAttribute( 'data-config' );
+        if ( rawConfig ) {
+            try {
+                const cfg = JSON.parse( rawConfig );
+                const isCarouselMode = !! cfg.isCarouselMode;
+                const effect = isCarouselMode
+                    ? 'slide'
+                    : validateTransitionEffect( cfg.transitionEffect || 'slide' );
+                return {
+                    transitionEffect: effect,
+                    transitionDuration: validateNumericRange(
+                        cfg.transitionDuration ?? 500,
+                        200,
+                        2000,
+                        500
+                    ),
+                    transitionEasing: validateTransitionEasing(
+                        cfg.transitionEasing || 'ease'
+                    ),
+                    autoplay: !! cfg.autoplay,
+                    autoplaySpeed: validateNumericRange(
+                        cfg.autoplaySpeed ?? 5000,
+                        1000,
+                        10000,
+                        5000
+                    ),
+                    pauseOnHover: cfg.pauseOnHover !== false,
+                    // Carousel attributes
+                    isCarouselMode,
+                    slidesToShow: validateNumericRange(
+                        cfg.slidesToShow ?? 1,
+                        1,
+                        10,
+                        1
+                    ),
+                    slidesToScroll: validateNumericRange(
+                        cfg.slidesToScroll ?? 1,
+                        1,
+                        10,
+                        1
+                    ),
+                    slideSpacing: validateNumericRange(
+                        cfg.slideSpacing ?? 0,
+                        0,
+                        100,
+                        0
+                    ),
+                    infiniteLoop: !! cfg.infiniteLoop,
+                    // Responsive carousel attributes
+                    tabletSlidesToShow: validateNumericRange(
+                        cfg.tabletSlidesToShow ?? 2,
+                        1,
+                        10,
+                        2
+                    ),
+                    tabletSlidesToScroll: validateNumericRange(
+                        cfg.tabletSlidesToScroll ?? 1,
+                        1,
+                        10,
+                        1
+                    ),
+                    tabletSlideSpacing: validateNumericRange(
+                        cfg.tabletSlideSpacing ?? 15,
+                        0,
+                        100,
+                        15
+                    ),
+                    mobileSlidesToShow: validateNumericRange(
+                        cfg.mobileSlidesToShow ?? 1,
+                        1,
+                        10,
+                        1
+                    ),
+                    mobileSlidesToScroll: validateNumericRange(
+                        cfg.mobileSlidesToScroll ?? 1,
+                        1,
+                        10,
+                        1
+                    ),
+                    mobileSlideSpacing: validateNumericRange(
+                        cfg.mobileSlideSpacing ?? 10,
+                        0,
+                        100,
+                        10
+                    ),
+                };
+            } catch ( e ) {
+                // Fallback to legacy data-* attributes if JSON is invalid
+            }
+        }
 
-		// Force slide transition for carousel mode, regardless of saved transition effect
-		const rawTransitionEffect = this.parseAttribute(
-			container,
-			'data-transition-effect',
-			'slide'
-		);
-		const transitionEffect = isCarouselMode
-			? 'slide'
-			: validateTransitionEffect( rawTransitionEffect );
+        // Legacy parsing fallback
+        const isCarouselMode = this.parseBooleanAttribute(
+            container,
+            'data-is-carousel',
+            false
+        );
+        const rawTransitionEffect = this.parseAttribute(
+            container,
+            'data-transition-effect',
+            'slide'
+        );
+        const transitionEffect = isCarouselMode
+            ? 'slide'
+            : validateTransitionEffect( rawTransitionEffect );
 
-		return {
-			transitionEffect,
-			transitionDuration: validateNumericRange(
-				this.parseNumberAttribute(
-					container,
-					'data-transition-duration',
-					500
-				),
-				200,
-				2000,
-				500
-			),
-			transitionEasing: validateTransitionEasing(
-				this.parseAttribute(
-					container,
-					'data-transition-easing',
-					'ease'
-				)
-			),
-			autoplay: this.parseBooleanAttribute(
-				container,
-				'data-autoplay',
-				false
-			),
-			autoplaySpeed: validateNumericRange(
-				this.parseNumberAttribute(
-					container,
-					'data-autoplay-speed',
-					5000
-				),
-				1000,
-				10000,
-				5000
-			),
-			pauseOnHover: this.parseBooleanAttribute(
-				container,
-				'data-pause-on-hover',
-				true
-			),
-			// Carousel attributes
-			isCarouselMode,
-			slidesToShow: this.parseNumberAttribute(
-				container,
-				'data-slides-to-show',
-				1
-			),
-			slidesToScroll: this.parseNumberAttribute(
-				container,
-				'data-slides-to-scroll',
-				1
-			),
-			slideSpacing: this.parseNumberAttribute(
-				container,
-				'data-slide-spacing',
-				0
-			),
-			infiniteLoop: this.parseBooleanAttribute(
-				container,
-				'data-infinite-loop',
-				false
-			),
-			// Responsive carousel attributes
-			tabletSlidesToShow: this.parseNumberAttribute(
-				container,
-				'data-tablet-slides-to-show',
-				2
-			),
-			tabletSlidesToScroll: this.parseNumberAttribute(
-				container,
-				'data-tablet-slides-to-scroll',
-				1
-			),
-			tabletSlideSpacing: this.parseNumberAttribute(
-				container,
-				'data-tablet-slide-spacing',
-				15
-			),
-			mobileSlidesToShow: this.parseNumberAttribute(
-				container,
-				'data-mobile-slides-to-show',
-				1
-			),
-			mobileSlidesToScroll: this.parseNumberAttribute(
-				container,
-				'data-mobile-slides-to-scroll',
-				1
-			),
-			mobileSlideSpacing: this.parseNumberAttribute(
-				container,
-				'data-mobile-slide-spacing',
-				10
-			),
-		};
-	}
+        return {
+            transitionEffect,
+            transitionDuration: validateNumericRange(
+                this.parseNumberAttribute(
+                    container,
+                    'data-transition-duration',
+                    500
+                ),
+                200,
+                2000,
+                500
+            ),
+            transitionEasing: validateTransitionEasing(
+                this.parseAttribute(
+                    container,
+                    'data-transition-easing',
+                    'ease'
+                )
+            ),
+            autoplay: this.parseBooleanAttribute(
+                container,
+                'data-autoplay',
+                false
+            ),
+            autoplaySpeed: validateNumericRange(
+                this.parseNumberAttribute(
+                    container,
+                    'data-autoplay-speed',
+                    5000
+                ),
+                1000,
+                10000,
+                5000
+            ),
+            pauseOnHover: this.parseBooleanAttribute(
+                container,
+                'data-pause-on-hover',
+                true
+            ),
+            isCarouselMode,
+            slidesToShow: this.parseNumberAttribute(
+                container,
+                'data-slides-to-show',
+                1
+            ),
+            slidesToScroll: this.parseNumberAttribute(
+                container,
+                'data-slides-to-scroll',
+                1
+            ),
+            slideSpacing: this.parseNumberAttribute(
+                container,
+                'data-slide-spacing',
+                0
+            ),
+            infiniteLoop: this.parseBooleanAttribute(
+                container,
+                'data-infinite-loop',
+                false
+            ),
+            tabletSlidesToShow: this.parseNumberAttribute(
+                container,
+                'data-tablet-slides-to-show',
+                2
+            ),
+            tabletSlidesToScroll: this.parseNumberAttribute(
+                container,
+                'data-tablet-slides-to-scroll',
+                1
+            ),
+            tabletSlideSpacing: this.parseNumberAttribute(
+                container,
+                'data-tablet-slide-spacing',
+                15
+            ),
+            mobileSlidesToShow: this.parseNumberAttribute(
+                container,
+                'data-mobile-slides-to-show',
+                1
+            ),
+            mobileSlidesToScroll: this.parseNumberAttribute(
+                container,
+                'data-mobile-slides-to-scroll',
+                1
+            ),
+            mobileSlideSpacing: this.parseNumberAttribute(
+                container,
+                'data-mobile-slide-spacing',
+                10
+            ),
+        };
+    }
 
 	/**
 	 * Initialize the slider
