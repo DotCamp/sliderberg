@@ -163,6 +163,8 @@ function render_sliderberg_slide_block($attributes, $content, $block) {
     $style_string = esc_attr(implode('; ', $styles));
     $has_overlay = $overlay_opacity > 0;
     $content = $inner_content; // Use processed content
+    // Centralized sanitization: allow embeds via allowed HTML
+    $content = wp_kses($content, sliderberg_get_allowed_html());
     
     // Render template with security check
     ob_start();

@@ -12,6 +12,81 @@ if (!defined('ABSPATH')) {
 }
 
 /**
+ * Get allowed HTML tags/attributes for rendering slide content
+ * Extends WordPress 'post' context to allow safe media embeds.
+ *
+ * @return array Allowed HTML for wp_kses
+ */
+function sliderberg_get_allowed_html() {
+  // Start with WordPress defaults for post content
+  $allowed = wp_kses_allowed_html('post');
+
+  // Permit iframes for common oEmbed providers (YouTube, Vimeo, etc.)
+  $allowed['iframe'] = array(
+    'src' => true,
+    'width' => true,
+    'height' => true,
+    'title' => true,
+    'frameborder' => true,
+    'allow' => true,
+    'allowfullscreen' => true,
+    'referrerpolicy' => true,
+    'loading' => true,
+    'name' => true,
+    'id' => true,
+    'class' => true,
+    'style' => true,
+    'sandbox' => true,
+  );
+
+  // HTML5 video/audio sources
+  $allowed['video'] = array(
+    'src' => true,
+    'poster' => true,
+    'preload' => true,
+    'controls' => true,
+    'muted' => true,
+    'loop' => true,
+    'autoplay' => true,
+    'playsinline' => true,
+    'crossorigin' => true,
+    'width' => true,
+    'height' => true,
+    'id' => true,
+    'class' => true,
+    'style' => true,
+  );
+
+  $allowed['audio'] = array(
+    'src' => true,
+    'preload' => true,
+    'controls' => true,
+    'loop' => true,
+    'autoplay' => true,
+    'muted' => true,
+    'crossorigin' => true,
+    'id' => true,
+    'class' => true,
+    'style' => true,
+  );
+
+  $allowed['source'] = array(
+    'src' => true,
+    'type' => true,
+    'media' => true,
+  );
+
+  /**
+   * Filter the allowed HTML for SliderBerg content.
+   *
+   * @param array $allowed Allowed tags/attributes array.
+   */
+  return apply_filters('sliderberg_allowed_html', $allowed);
+}
+
+
+
+/**
  * Validate and sanitize color values (hex, rgb, rgba)
  * Enhanced to prevent CSS injection attacks
  * 

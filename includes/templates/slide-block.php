@@ -26,7 +26,7 @@ if (!defined('ABSPATH')) {
     
     <div class="sliderberg-slide-content">
         <div class="sliderberg-slide-inner">
-            <?php echo wp_kses_post($content); ?>
+            <?php echo $content; ?>
         </div>
     </div>
 </div>
