@@ -301,111 +301,25 @@ export class SliderBergController {
             }
         }
 
-        // Legacy parsing fallback
-        const isCarouselMode = this.parseBooleanAttribute(
-            container,
-            'data-is-carousel',
-            false
-        );
-        const rawTransitionEffect = this.parseAttribute(
-            container,
-            'data-transition-effect',
-            'slide'
-        );
-        const transitionEffect = isCarouselMode
-            ? 'slide'
-            : validateTransitionEffect( rawTransitionEffect );
-
+        // If no JSON config, fallback to defaults (should not happen after new build)
         return {
-            transitionEffect,
-            transitionDuration: validateNumericRange(
-                this.parseNumberAttribute(
-                    container,
-                    'data-transition-duration',
-                    500
-                ),
-                200,
-                2000,
-                500
-            ),
-            transitionEasing: validateTransitionEasing(
-                this.parseAttribute(
-                    container,
-                    'data-transition-easing',
-                    'ease'
-                )
-            ),
-            autoplay: this.parseBooleanAttribute(
-                container,
-                'data-autoplay',
-                false
-            ),
-            autoplaySpeed: validateNumericRange(
-                this.parseNumberAttribute(
-                    container,
-                    'data-autoplay-speed',
-                    5000
-                ),
-                1000,
-                10000,
-                5000
-            ),
-            pauseOnHover: this.parseBooleanAttribute(
-                container,
-                'data-pause-on-hover',
-                true
-            ),
-            isCarouselMode,
-            slidesToShow: this.parseNumberAttribute(
-                container,
-                'data-slides-to-show',
-                1
-            ),
-            slidesToScroll: this.parseNumberAttribute(
-                container,
-                'data-slides-to-scroll',
-                1
-            ),
-            slideSpacing: this.parseNumberAttribute(
-                container,
-                'data-slide-spacing',
-                0
-            ),
-            infiniteLoop: this.parseBooleanAttribute(
-                container,
-                'data-infinite-loop',
-                false
-            ),
-            tabletSlidesToShow: this.parseNumberAttribute(
-                container,
-                'data-tablet-slides-to-show',
-                2
-            ),
-            tabletSlidesToScroll: this.parseNumberAttribute(
-                container,
-                'data-tablet-slides-to-scroll',
-                1
-            ),
-            tabletSlideSpacing: this.parseNumberAttribute(
-                container,
-                'data-tablet-slide-spacing',
-                15
-            ),
-            mobileSlidesToShow: this.parseNumberAttribute(
-                container,
-                'data-mobile-slides-to-show',
-                1
-            ),
-            mobileSlidesToScroll: this.parseNumberAttribute(
-                container,
-                'data-mobile-slides-to-scroll',
-                1
-            ),
-            mobileSlideSpacing: this.parseNumberAttribute(
-                container,
-                'data-mobile-slide-spacing',
-                10
-            ),
+            transitionEffect: 'slide',
+            transitionDuration: 500,
+            transitionEasing: 'ease',
+            autoplay: false,
+            autoplaySpeed: 5000,
+            pauseOnHover: true,
+            isCarouselMode: false,
+            slidesToShow: 1,
+            slidesToScroll: 1,
+            slideSpacing: 0,
+            infiniteLoop: false,
+            tabletSlidesToShow: 2,
+            tabletSlidesToScroll: 1,
+            tabletSlideSpacing: 15,
+            mobileSlidesToShow: 1,
+            mobileSlidesToScroll: 1,
+            mobileSlideSpacing: 10,
         };
     }
 
@@ -779,33 +693,7 @@ export class SliderBergController {
 	}
 
 	// Keep all utility methods as private
-	private parseAttribute(
-		element: HTMLElement,
-		name: string,
-		defaultValue: string
-	): string {
-		const value = element.getAttribute( name );
-		return value !== null ? sanitizeAttributeValue( value ) : defaultValue;
-	}
-
-	private parseNumberAttribute(
-		element: HTMLElement,
-		name: string,
-		defaultValue: number
-	): number {
-		const value = element.getAttribute( name );
-		// Use validateDOMNumeric to prevent scientific notation and other bypasses
-		return validateDOMNumeric( value, -999999, 999999, defaultValue );
-	}
-
-	private parseBooleanAttribute(
-		element: HTMLElement,
-		name: string,
-		defaultValue: boolean
-	): boolean {
-		const value = element.getAttribute( name );
-		return value !== null ? value === 'true' : defaultValue;
-	}
+    // Legacy parse helpers removed (we now rely on data-config JSON)
 
 	/**
 	 * Handle resize events
