@@ -339,10 +339,8 @@ function sliderberg_render_slider_template($vars) {
     $hide_navigation = isset($vars['hide_navigation']) ? (bool)$vars['hide_navigation'] : false;
     $content = isset($vars['content']) ? $vars['content'] : '';
     
-    // Sanitize content using WordPress defaults for post content.
-    // Inner blocks are already rendered via the block system; this preserves
-    // semantic markup like <figure> used by core blocks (e.g., Image).
-    $content = wp_kses_post( $content );
+    // Sanitize content while allowing safe media embeds via allowed HTML.
+    $content = wp_kses( $content, sliderberg_get_allowed_html() );
     
     // Build wrapper attributes string
     $wrapper_attr_string = '';
