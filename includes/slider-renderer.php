@@ -129,8 +129,27 @@ function render_sliderberg_slider_block($attributes, $content, $block) {
         'mobileSlidesToScroll' => $mobile_slides_to_scroll,
         'mobileSlideSpacing' => $mobile_slide_spacing,
     ];
+    // For backward compatibility, include legacy data-* attributes alongside JSON config
     $container_attrs = [
         'data-config' => wp_json_encode( $config ),
+        'data-transition-effect' => $transition_effect,
+        'data-transition-duration' => $transition_duration,
+        'data-transition-easing' => $transition_easing,
+        'data-autoplay' => $autoplay ? 'true' : 'false',
+        'data-autoplay-speed' => $autoplay_speed,
+        'data-pause-on-hover' => $pause_on_hover ? 'true' : 'false',
+        'data-is-carousel' => $is_carousel_mode ? 'true' : 'false',
+        'data-slides-to-show' => $slides_to_show,
+        'data-slides-to-scroll' => $slides_to_scroll,
+        'data-slide-spacing' => $slide_spacing,
+        'data-infinite-loop' => $infinite_loop ? 'true' : 'false',
+        // Responsive carousel attributes
+        'data-tablet-slides-to-show' => $tablet_slides_to_show,
+        'data-tablet-slides-to-scroll' => $tablet_slides_to_scroll,
+        'data-tablet-slide-spacing' => $tablet_slide_spacing,
+        'data-mobile-slides-to-show' => $mobile_slides_to_show,
+        'data-mobile-slides-to-scroll' => $mobile_slides_to_scroll,
+        'data-mobile-slide-spacing' => $mobile_slide_spacing,
     ];
     
     // Navigation button styles
