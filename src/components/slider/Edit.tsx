@@ -64,16 +64,16 @@ export const Edit: React.FC< EditProps > = ( {
 			styles.marginRight = 'auto';
 		}
 
-		// Handle full width in editor - remove padding/margin
-		if (
-			attributes.widthPreset === 'full' ||
-			attributes.align === 'full'
-		) {
-			styles.width = '100%';
-			styles.maxWidth = 'none';
-			styles.marginLeft = 'calc(50% - 50vw)';
-			styles.marginRight = 'calc(50% - 50vw)';
-		}
+        // Handle full width in editor - break out of content width
+        if (
+            attributes.widthPreset === 'full' ||
+            attributes.align === 'full'
+        ) {
+            styles.width = '100vw';
+            styles.maxWidth = '100vw';
+            styles.marginLeft = 'calc(50% - 50vw)';
+            styles.marginRight = 'calc(50% - 50vw)';
+        }
 
 		// Handle wide alignment
 		if (
