@@ -69,8 +69,8 @@ export const Edit: React.FC< EditProps > = ( {
             attributes.widthPreset === 'full' ||
             attributes.align === 'full'
         ) {
-            styles.width = '100vw';
-            styles.maxWidth = '100vw';
+            styles.width = '100%';
+            styles.maxWidth = 'none';
             styles.marginLeft = 'calc(50% - 50vw)';
             styles.marginRight = 'calc(50% - 50vw)';
         }

@@ -13,8 +13,8 @@
 .sliderberg-editor-wrapper.is-full-width,
 .wp-block-sliderberg-sliderberg.alignfull,
 .wp-block-sliderberg-sliderberg[data-width-preset="full"] {
-    width: 100vw !important;
-    max-width: 100vw !important;
+    width: 100% !important;
+    max-width: none !important;
     margin-left: calc(50% - 50vw) !important;
     margin-right: calc(50% - 50vw) !important;
     border: none;
