@@ -9,26 +9,30 @@
     position: relative;
 }
 
-/* Full width handling in editor - Use editor-friendly approach */
-.sliderberg-editor-wrapper.is-full-width,
-.wp-block-sliderberg-sliderberg.alignfull,
-.wp-block-sliderberg-sliderberg[data-width-preset="full"] {
-    width: 100% !important;
-    max-width: 100% !important;
-    margin-left: 0 !important;
-    margin-right: 0 !important;
+/* Full width handling in editor - Trust WordPress alignment, prevent overflow */
+.wp-block-sliderberg-sliderberg[data-align="full"],
+.wp-block-sliderberg-sliderberg.alignfull {
+    overflow-x: clip; /* Prevent horizontal scrolling */
+    border: none;
+    border-radius: 0;
+    padding: 0;
+}
+
+/* Fallback for custom is-full-width class */
+.sliderberg-editor-wrapper.is-full-width {
+    overflow-x: clip; /* Prevent horizontal scrolling */
     border: none;
     border-radius: 0;
     padding: 0;
 }
 
 /* Ensure all children in full width have proper styling */
-.sliderberg-editor-wrapper.is-full-width .sliderberg-container,
-.sliderberg-editor-wrapper.is-full-width .sliderberg-slides,
+.wp-block-sliderberg-sliderberg[data-align="full"] .sliderberg-container,
+.wp-block-sliderberg-sliderberg[data-align="full"] .sliderberg-slides,
 .wp-block-sliderberg-sliderberg.alignfull .sliderberg-container,
 .wp-block-sliderberg-sliderberg.alignfull .sliderberg-slides,
-.wp-block-sliderberg-sliderberg[data-width-preset="full"] .sliderberg-container,
-.wp-block-sliderberg-sliderberg[data-width-preset="full"] .sliderberg-slides {
+.sliderberg-editor-wrapper.is-full-width .sliderberg-container,
+.sliderberg-editor-wrapper.is-full-width .sliderberg-slides {
     width: 100% !important;
     max-width: none !important;
     margin: 0 !important;
@@ -36,16 +40,16 @@
     border-radius: 0 !important;
 }
 
-.sliderberg-editor-wrapper.is-full-width .sliderberg-content,
+.wp-block-sliderberg-sliderberg[data-align="full"] .sliderberg-content,
 .wp-block-sliderberg-sliderberg.alignfull .sliderberg-content,
-.wp-block-sliderberg-sliderberg[data-width-preset="full"] .sliderberg-content {
+.sliderberg-editor-wrapper.is-full-width .sliderberg-content {
     padding: 0 !important;
 }
 
 /* Remove extra margin/padding for all children in full width */
-.sliderberg-editor-wrapper.is-full-width *,
+.wp-block-sliderberg-sliderberg[data-align="full"] *,
 .wp-block-sliderberg-sliderberg.alignfull *,
-.wp-block-sliderberg-sliderberg[data-width-preset="full"] * {
+.sliderberg-editor-wrapper.is-full-width * {
     box-sizing: border-box;
 }
 

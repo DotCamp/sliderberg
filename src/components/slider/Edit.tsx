@@ -64,16 +64,14 @@ export const Edit: React.FC< EditProps > = ( {
 			styles.marginRight = 'auto';
 		}
 
-		// Handle full width in editor - remove padding/margin
-		if (
-			attributes.widthPreset === 'full' ||
-			attributes.align === 'full'
-		) {
-			styles.width = '100%';
-			styles.maxWidth = 'none';
-			styles.marginLeft = 'calc(50% - 50vw)';
-			styles.marginRight = 'calc(50% - 50vw)';
-		}
+        // Handle full width in editor - let WordPress handle alignment via CSS
+        if (
+            attributes.widthPreset === 'full' ||
+            attributes.align === 'full'
+        ) {
+            // Remove inline styles - let CSS handle full-width via alignfull class
+            // WordPress's useBlockProps() will add the appropriate alignment classes
+        }
 
 		// Handle wide alignment
 		if (

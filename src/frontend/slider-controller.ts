@@ -208,118 +208,120 @@ export class SliderBergController {
 	 * Parse configuration from DOM
 	 * @param container
 	 */
-	private parseConfig( container: HTMLElement ): SliderConfig {
-		// Check if carousel mode is enabled first
-		const isCarouselMode = this.parseBooleanAttribute(
-			container,
-			'data-is-carousel',
-			false
-		);
+    private parseConfig( container: HTMLElement ): SliderConfig {
+        // Prefer a single JSON config for simplicity
+        const rawConfig = container.getAttribute( 'data-config' );
+        if ( rawConfig ) {
+            try {
+                const cfg = JSON.parse( rawConfig );
+                const isCarouselMode = !! cfg.isCarouselMode;
+                const effect = isCarouselMode
+                    ? 'slide'
+                    : validateTransitionEffect( cfg.transitionEffect || 'slide' );
+                return {
+                    transitionEffect: effect,
+                    transitionDuration: validateNumericRange(
+                        cfg.transitionDuration ?? 500,
+                        200,
+                        2000,
+                        500
+                    ),
+                    transitionEasing: validateTransitionEasing(
+                        cfg.transitionEasing || 'ease'
+                    ),
+                    autoplay: !! cfg.autoplay,
+                    autoplaySpeed: validateNumericRange(
+                        cfg.autoplaySpeed ?? 5000,
+                        1000,
+                        10000,
+                        5000
+                    ),
+                    pauseOnHover: cfg.pauseOnHover !== false,
+                    // Carousel attributes
+                    isCarouselMode,
+                    slidesToShow: validateNumericRange(
+                        cfg.slidesToShow ?? 1,
+                        1,
+                        10,
+                        1
+                    ),
+                    slidesToScroll: validateNumericRange(
+                        cfg.slidesToScroll ?? 1,
+                        1,
+                        10,
+                        1
+                    ),
+                    slideSpacing: validateNumericRange(
+                        cfg.slideSpacing ?? 0,
+                        0,
+                        100,
+                        0
+                    ),
+                    infiniteLoop: !! cfg.infiniteLoop,
+                    // Responsive carousel attributes
+                    tabletSlidesToShow: validateNumericRange(
+                        cfg.tabletSlidesToShow ?? 2,
+                        1,
+                        10,
+                        2
+                    ),
+                    tabletSlidesToScroll: validateNumericRange(
+                        cfg.tabletSlidesToScroll ?? 1,
+                        1,
+                        10,
+                        1
+                    ),
+                    tabletSlideSpacing: validateNumericRange(
+                        cfg.tabletSlideSpacing ?? 15,
+                        0,
+                        100,
+                        15
+                    ),
+                    mobileSlidesToShow: validateNumericRange(
+                        cfg.mobileSlidesToShow ?? 1,
+                        1,
+                        10,
+                        1
+                    ),
+                    mobileSlidesToScroll: validateNumericRange(
+                        cfg.mobileSlidesToScroll ?? 1,
+                        1,
+                        10,
+                        1
+                    ),
+                    mobileSlideSpacing: validateNumericRange(
+                        cfg.mobileSlideSpacing ?? 10,
+                        0,
+                        100,
+                        10
+                    ),
+                };
+            } catch ( e ) {
+                // Fallback to legacy data-* attributes if JSON is invalid
+            }
+        }
 
-		// Force slide transition for carousel mode, regardless of saved transition effect
-		const rawTransitionEffect = this.parseAttribute(
-			container,
-			'data-transition-effect',
-			'slide'
-		);
-		const transitionEffect = isCarouselMode
-			? 'slide'
-			: validateTransitionEffect( rawTransitionEffect );
-
-		return {
-			transitionEffect,
-			transitionDuration: validateNumericRange(
-				this.parseNumberAttribute(
-					container,
-					'data-transition-duration',
-					500
-				),
-				200,
-				2000,
-				500
-			),
-			transitionEasing: validateTransitionEasing(
-				this.parseAttribute(
-					container,
-					'data-transition-easing',
-					'ease'
-				)
-			),
-			autoplay: this.parseBooleanAttribute(
-				container,
-				'data-autoplay',
-				false
-			),
-			autoplaySpeed: validateNumericRange(
-				this.parseNumberAttribute(
-					container,
-					'data-autoplay-speed',
-					5000
-				),
-				1000,
-				10000,
-				5000
-			),
-			pauseOnHover: this.parseBooleanAttribute(
-				container,
-				'data-pause-on-hover',
-				true
-			),
-			// Carousel attributes
-			isCarouselMode,
-			slidesToShow: this.parseNumberAttribute(
-				container,
-				'data-slides-to-show',
-				1
-			),
-			slidesToScroll: this.parseNumberAttribute(
-				container,
-				'data-slides-to-scroll',
-				1
-			),
-			slideSpacing: this.parseNumberAttribute(
-				container,
-				'data-slide-spacing',
-				0
-			),
-			infiniteLoop: this.parseBooleanAttribute(
-				container,
-				'data-infinite-loop',
-				false
-			),
-			// Responsive carousel attributes
-			tabletSlidesToShow: this.parseNumberAttribute(
-				container,
-				'data-tablet-slides-to-show',
-				2
-			),
-			tabletSlidesToScroll: this.parseNumberAttribute(
-				container,
-				'data-tablet-slides-to-scroll',
-				1
-			),
-			tabletSlideSpacing: this.parseNumberAttribute(
-				container,
-				'data-tablet-slide-spacing',
-				15
-			),
-			mobileSlidesToShow: this.parseNumberAttribute(
-				container,
-				'data-mobile-slides-to-show',
-				1
-			),
-			mobileSlidesToScroll: this.parseNumberAttribute(
-				container,
-				'data-mobile-slides-to-scroll',
-				1
-			),
-			mobileSlideSpacing: this.parseNumberAttribute(
-				container,
-				'data-mobile-slide-spacing',
-				10
-			),
-		};
-	}
+        // If no JSON config, fallback to defaults (should not happen after new build)
+        return {
+            transitionEffect: 'slide',
+            transitionDuration: 500,
+            transitionEasing: 'ease',
+            autoplay: false,
+            autoplaySpeed: 5000,
+            pauseOnHover: true,
+            isCarouselMode: false,
+            slidesToShow: 1,
+            slidesToScroll: 1,
+            slideSpacing: 0,
+            infiniteLoop: false,
+            tabletSlidesToShow: 2,
+            tabletSlidesToScroll: 1,
+            tabletSlideSpacing: 15,
+            mobileSlidesToShow: 1,
+            mobileSlidesToScroll: 1,
+            mobileSlideSpacing: 10,
+        };
+    }
 
 	/**
 	 * Initialize the slider
@@ -691,33 +693,7 @@ export class SliderBergController {
 	}
 
 	// Keep all utility methods as private
-	private parseAttribute(
-		element: HTMLElement,
-		name: string,
-		defaultValue: string
-	): string {
-		const value = element.getAttribute( name );
-		return value !== null ? sanitizeAttributeValue( value ) : defaultValue;
-	}
-
-	private parseNumberAttribute(
-		element: HTMLElement,
-		name: string,
-		defaultValue: number
-	): number {
-		const value = element.getAttribute( name );
-		// Use validateDOMNumeric to prevent scientific notation and other bypasses
-		return validateDOMNumeric( value, -999999, 999999, defaultValue );
-	}
-
-	private parseBooleanAttribute(
-		element: HTMLElement,
-		name: string,
-		defaultValue: boolean
-	): boolean {
-		const value = element.getAttribute( name );
-		return value !== null ? value === 'true' : defaultValue;
-	}
+    // Legacy parse helpers removed (we now rely on data-config JSON)
 
 	/**
 	 * Handle resize events

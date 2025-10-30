@@ -108,26 +108,30 @@ function render_sliderberg_slider_block($attributes, $content, $block) {
     // Allow pro plugin to modify wrapper attributes
     $wrapper_attrs = apply_filters('sliderberg_wrapper_attributes', $wrapper_attrs, $attributes, $type);
     
-    // Build slides container data attributes for frontend JS
+    // Build a single JSON configuration for the frontend controller
+    $config = [
+        'transitionEffect' => $transition_effect,
+        'transitionDuration' => $transition_duration,
+        'transitionEasing' => $transition_easing,
+        'autoplay' => (bool) $autoplay,
+        'autoplaySpeed' => $autoplay_speed,
+        'pauseOnHover' => (bool) $pause_on_hover,
+        'isCarouselMode' => (bool) $is_carousel_mode,
+        'slidesToShow' => $slides_to_show,
+        'slidesToScroll' => $slides_to_scroll,
+        'slideSpacing' => $slide_spacing,
+        'infiniteLoop' => (bool) $infinite_loop,
+        // Responsive
+        'tabletSlidesToShow' => $tablet_slides_to_show,
+        'tabletSlidesToScroll' => $tablet_slides_to_scroll,
+        'tabletSlideSpacing' => $tablet_slide_spacing,
+        'mobileSlidesToShow' => $mobile_slides_to_show,
+        'mobileSlidesToScroll' => $mobile_slides_to_scroll,
+        'mobileSlideSpacing' => $mobile_slide_spacing,
+    ];
+    // Frontend reads a single JSON configuration
     $container_attrs = [
-        'data-transition-effect' => $transition_effect,
-        'data-transition-duration' => $transition_duration,
-        'data-transition-easing' => $transition_easing,
-        'data-autoplay' => $autoplay ? 'true' : 'false',
-        'data-autoplay-speed' => $autoplay_speed,
-        'data-pause-on-hover' => $pause_on_hover ? 'true' : 'false',
-        'data-is-carousel' => $is_carousel_mode ? 'true' : 'false',
-        'data-slides-to-show' => $slides_to_show,
-        'data-slides-to-scroll' => $slides_to_scroll,
-        'data-slide-spacing' => $slide_spacing,
-        'data-infinite-loop' => $infinite_loop ? 'true' : 'false',
-        // Responsive carousel attributes
-        'data-tablet-slides-to-show' => $tablet_slides_to_show,
-        'data-tablet-slides-to-scroll' => $tablet_slides_to_scroll,
-        'data-tablet-slide-spacing' => $tablet_slide_spacing,
-        'data-mobile-slides-to-show' => $mobile_slides_to_show,
-        'data-mobile-slides-to-scroll' => $mobile_slides_to_scroll,
-        'data-mobile-slide-spacing' => $mobile_slide_spacing
+        'data-config' => wp_json_encode( $config ),
     ];
     
     // Navigation button styles
@@ -354,199 +358,17 @@ function sliderberg_render_slider_template($vars) {
         $container_attr_string .= sprintf(' %s="%s"', $attr, esc_attr($value));
     }
     
-    // Security check for template file with TOCTOU prevention
-    $template_file = __DIR__ . '/templates/slider-block.php';
-    $real_template_path = realpath($template_file);
-    $real_plugin_dir = realpath(SLIDERBERG_PLUGIN_DIR);
-    
-    // Validate path first
-    if (!$real_template_path || !$real_plugin_dir || strpos($real_template_path, $real_plugin_dir) !== 0) {
-        echo '<!-- Template file not found or invalid -->';
-        return;
-    }
-    
-    // Use file locking to prevent race conditions
-    $fp = @fopen($real_template_path, 'r');
-    if (!$fp) {
-        echo '<!-- Template file could not be opened -->';
-        return;
-    }
-    
-    // Lock file for reading
-    if (!flock($fp, LOCK_SH)) {
-        fclose($fp);
-        echo '<!-- Template file is locked -->';
-        return;
-    }
-    
-    // Verify file is still within bounds after locking
-    $locked_real_path = realpath(stream_get_meta_data($fp)['uri']);
-    if (!$locked_real_path || strpos($locked_real_path, $real_plugin_dir) !== 0) {
-        flock($fp, LOCK_UN);
-        fclose($fp);
-        echo '<!-- Template security check failed -->';
-        return;
-    }
-    
-    // Include file using the validated path
-    flock($fp, LOCK_UN);
-    fclose($fp);
-    
-    include $real_template_path;
+    // Include the template directly from the plugin directory
+    include __DIR__ . '/templates/slider-block.php';
 }
 
 /**
  * Register the slider block with PHP rendering
  */
 function sliderberg_register_slider_block() {
-    register_block_type('sliderberg/sliderberg', [
-        'render_callback' => 'render_sliderberg_slider_block',
-        'editor_script' => 'sliderberg-editor',
-        'editor_style' => 'sliderberg-editor',
-        'style' => 'sliderberg-style',
-        'supports' => [
-            'html' => false,
-            'align' => ['wide', 'full'],
-            'alignWide' => true,
-            'fullWidth' => true
-        ],
-        'attributes' => [
-            'align' => [
-                'type' => 'string',
-                'default' => 'full'
-            ],
-            'type' => [
-                'type' => 'string',
-                'default' => ''
-            ],
-            'autoplay' => [
-                'type' => 'boolean',
-                'default' => false
-            ],
-            'autoplaySpeed' => [
-                'type' => 'number',
-                'default' => 5000
-            ],
-            'pauseOnHover' => [
-                'type' => 'boolean',
-                'default' => true
-            ],
-            'transitionEffect' => [
-                'type' => 'string',
-                'default' => 'slide'
-            ],
-            'transitionDuration' => [
-                'type' => 'number',
-                'default' => 500
-            ],
-            'transitionEasing' => [
-                'type' => 'string',
-                'default' => 'ease'
-            ],
-            'navigationType' => [
-                'type' => 'string',
-                'default' => 'bottom'
-            ],
-            'navigationPlacement' => [
-                'type' => 'string',
-                'default' => 'overlay'
-            ],
-            'navigationShape' => [
-                'type' => 'string',
-                'default' => 'circle'
-            ],
-            'navigationSize' => [
-                'type' => 'string',
-                'default' => 'medium'
-            ],
-            'navigationColor' => [
-                'type' => 'string',
-                'default' => '#ffffff'
-            ],
-            'navigationBgColor' => [
-                'type' => 'string',
-                'default' => 'rgba(0, 0, 0, 0.5)'
-            ],
-            'navigationOpacity' => [
-                'type' => 'number',
-                'default' => 1
-            ],
-            'navigationVerticalPosition' => [
-                'type' => 'number',
-                'default' => 20
-            ],
-            'navigationHorizontalPosition' => [
-                'type' => 'number',
-                'default' => 20
-            ],
-            'dotColor' => [
-                'type' => 'string',
-                'default' => '#6c757d'
-            ],
-            'dotActiveColor' => [
-                'type' => 'string',
-                'default' => '#ffffff'
-            ],
-            'hideDots' => [
-                'type' => 'boolean',
-                'default' => false
-            ],
-            'widthPreset' => [
-                'type' => 'string',
-                'default' => 'full'
-            ],
-            'customWidth' => [
-                'type' => 'string',
-                'default' => ''
-            ],
-            'widthUnit' => [
-                'type' => 'string',
-                'default' => 'px'
-            ],
-            'isCarouselMode' => [
-                'type' => 'boolean',
-                'default' => false
-            ],
-            'slidesToShow' => [
-                'type' => 'number',
-                'default' => 3
-            ],
-            'slidesToScroll' => [
-                'type' => 'number',
-                'default' => 1
-            ],
-            'slideSpacing' => [
-                'type' => 'number',
-                'default' => 20
-            ],
-            'infiniteLoop' => [
-                'type' => 'boolean',
-                'default' => true
-            ],
-            'tabletSlidesToShow' => [
-                'type' => 'number',
-                'default' => 2
-            ],
-            'tabletSlidesToScroll' => [
-                'type' => 'number',
-                'default' => 1
-            ],
-            'tabletSlideSpacing' => [
-                'type' => 'number',
-                'default' => 15
-            ],
-            'mobileSlidesToShow' => [
-                'type' => 'number',
-                'default' => 1
-            ],
-            'mobileSlidesToScroll' => [
-                'type' => 'number',
-                'default' => 1
-            ],
-            'mobileSlideSpacing' => [
-                'type' => 'number',
-                'default' => 10
-            ]
-        ]
-    ]);
+    // Use block.json as the single source of truth; only provide render callback here
+    register_block_type_from_metadata(
+        SLIDERBERG_PLUGIN_DIR . 'src/blocks/slider',
+        [ 'render_callback' => 'render_sliderberg_slider_block' ]
+    );
 }

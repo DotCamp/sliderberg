@@ -76,6 +76,103 @@ function sliderberg_get_allowed_html() {
     'media' => true,
   );
 
+  // SVG elements and attributes for inline SVG support
+  $svg_attributes = array(
+    'class' => true,
+    'id' => true,
+    'style' => true,
+    'xmlns' => true,
+    'viewbox' => true,
+    'width' => true,
+    'height' => true,
+    'fill' => true,
+    'stroke' => true,
+    'stroke-width' => true,
+    'stroke-linecap' => true,
+    'stroke-linejoin' => true,
+    'stroke-dasharray' => true,
+    'stroke-dashoffset' => true,
+    'opacity' => true,
+    'fill-opacity' => true,
+    'stroke-opacity' => true,
+    'transform' => true,
+    'x' => true,
+    'y' => true,
+    'x1' => true,
+    'y1' => true,
+    'x2' => true,
+    'y2' => true,
+    'cx' => true,
+    'cy' => true,
+    'r' => true,
+    'rx' => true,
+    'ry' => true,
+    'd' => true,
+    'points' => true,
+    'dx' => true,
+    'dy' => true,
+    'offset' => true,
+    'stop-color' => true,
+    'stop-opacity' => true,
+    'gradientunits' => true,
+    'gradienttransform' => true,
+    'patternunits' => true,
+    'patterntransform' => true,
+    'clip-path' => true,
+    'clip-rule' => true,
+    'mask' => true,
+    'href' => true,
+    'xlink:href' => true,
+    'preserveaspectratio' => true,
+    'aria-hidden' => true,
+    'aria-label' => true,
+    'role' => true,
+    'focusable' => true,
+    'text-anchor' => true,
+    'font-size' => true,
+    'font-family' => true,
+    'font-weight' => true,
+    'dominant-baseline' => true,
+    'alignment-baseline' => true,
+  );
+
+  // SVG container
+  $allowed['svg'] = $svg_attributes;
+
+  // SVG shapes
+  $allowed['path'] = $svg_attributes;
+  $allowed['circle'] = $svg_attributes;
+  $allowed['rect'] = $svg_attributes;
+  $allowed['ellipse'] = $svg_attributes;
+  $allowed['line'] = $svg_attributes;
+  $allowed['polygon'] = $svg_attributes;
+  $allowed['polyline'] = $svg_attributes;
+
+  // SVG text
+  $allowed['text'] = $svg_attributes;
+  $allowed['tspan'] = $svg_attributes;
+
+  // SVG grouping and structure
+  $allowed['g'] = $svg_attributes;
+  $allowed['defs'] = $svg_attributes;
+  $allowed['symbol'] = $svg_attributes;
+  $allowed['use'] = $svg_attributes;
+  $allowed['clippath'] = $svg_attributes;
+  $allowed['mask'] = $svg_attributes;
+
+  // SVG gradients and patterns
+  $allowed['lineargradient'] = $svg_attributes;
+  $allowed['radialgradient'] = $svg_attributes;
+  $allowed['stop'] = $svg_attributes;
+  $allowed['pattern'] = $svg_attributes;
+
+  // SVG filters
+  $allowed['filter'] = $svg_attributes;
+  $allowed['fegaussianblur'] = array_merge($svg_attributes, array('in' => true, 'stddeviation' => true, 'result' => true));
+  $allowed['feoffset'] = array_merge($svg_attributes, array('in' => true, 'result' => true));
+  $allowed['feblend'] = array_merge($svg_attributes, array('in' => true, 'in2' => true, 'mode' => true, 'result' => true));
+  $allowed['fecolormatrix'] = array_merge($svg_attributes, array('in' => true, 'type' => true, 'values' => true, 'result' => true));
+
   /**
    * Filter the allowed HTML for SliderBerg content.
    *
